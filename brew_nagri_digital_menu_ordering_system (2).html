@@ -1,0 +1,3341 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brew Nagri - Coffee • Food • Shakes (Tilkamanjhi, Bhagalpur)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- QRCode.js for dynamic Table QR code generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            coffee: {
+              50: '#fdf8f5',
+              100: '#f7eee6',
+              200: '#edd5c4',
+              300: '#dfb79e',
+              400: '#ce9474',
+              500: '#be7452',
+              600: '#a6593f',
+              700: '#844233',
+              800: '#643229',
+              900: '#43221b',
+              950: '#25120e',
+            },
+            accent: {
+              gold: '#e0a96d',
+              leaf: '#2e7d32',
+              crimson: '#c62828',
+            }
+          },
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+            heading: ['"Outfit"', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #dfb79e;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #ce9474;
+    }
+    .badge-veg {
+      border: 1.5px solid #22c55e;
+    }
+    .badge-veg-dot {
+      background-color: #22c55e;
+    }
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #print-standee-area, #print-standee-area * {
+        visibility: visible;
+      }
+      #print-standee-area {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: white;
+      }
+    }
+  </style>
+</head>
+<body class="bg-stone-100 dark:bg-stone-950 text-stone-800 dark:text-stone-100 font-sans antialiased selection:bg-coffee-200 selection:text-coffee-900 pb-28 transition-colors duration-200">
+
+  <!-- Top Navigation Bar -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800 transition-all duration-300 shadow-xs">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
+      
+      <!-- Brand & Official Logo -->
+      <div class="flex items-center space-x-2.5 sm:space-x-3">
+        <div class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-coffee-950 flex items-center justify-center shrink-0 border border-amber-300/40 shadow-sm">
+          <img 
+            id="brand-header-logo"
+            src="images/brew-nagri-logo.png" 
+            alt="Brew Nagri Official Logo" 
+            class="w-full h-full object-cover"
+            onerror="this.style.display='none'; document.getElementById('header-fallback-icon').classList.remove('hidden');"
+          />
+          <div id="header-fallback-icon" class="hidden text-amber-200">
+            <i data-lucide="coffee" class="w-5 h-5"></i>
+          </div>
+        </div>
+        <div>
+          <div class="flex items-center gap-1.5">
+            <h1 class="font-heading font-extrabold text-base sm:text-lg tracking-tight text-coffee-950 dark:text-amber-100">
+              Brew Nagri
+            </h1>
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pure Veg
+            </span>
+          </div>
+          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium hidden sm:block">
+            Coffee • Food • Shakes • Tilkamanjhi, Bhagalpur
+          </p>
+        </div>
+      </div>
+
+      <!-- Center 2-Tab Navigation Switcher (Customer Menu vs Owner Portal) -->
+      <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-1 rounded-full border border-stone-300 dark:border-stone-700">
+        <button id="tab-btn-customer" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1">
+          <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
+          <span>Menu</span>
+        </button>
+        <button id="tab-btn-owner" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1">
+          <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+          <span>Owner</span>
+        </button>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle-btn" aria-label="Toggle Dark/Light Mode" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition">
+          <i id="theme-toggle-icon" data-lucide="moon" class="w-4 h-4 sm:w-4.5 sm:h-4.5"></i>
+        </button>
+
+        <!-- AI Barista Button -->
+        <button id="open-ai-barista-btn" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-bold text-xs shadow-xs transition active:scale-95">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+          <span class="hidden md:inline">AI Barista</span>
+        </button>
+
+        <!-- Table QR Generator Button -->
+        <button id="open-qr-modal-btn" title="Generate Table QR Standee" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-coffee-900 dark:text-stone-200 font-semibold text-xs transition border border-stone-300 dark:border-stone-700">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+          <span class="hidden sm:inline">Table QR</span>
+        </button>
+
+        <!-- UPI Pay QR Quick Button -->
+        <button id="open-payment-modal-btn" title="Scan & Pay via UPI" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-900 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800 font-bold text-xs transition">
+          <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
+          <span class="hidden sm:inline">Pay QR</span>
+        </button>
+
+        <!-- Feedback Button -->
+        <button id="open-feedback-modal-btn" title="Send Feedback" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-amber-600 dark:text-amber-400 transition">
+          <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+
+        <!-- Info / About Button -->
+        <button id="open-info-modal-btn" aria-label="Cafe Info & Contact" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition">
+          <i data-lucide="info" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+        </button>
+
+        <!-- Tray Button -->
+        <button id="header-cart-btn" class="relative flex items-center gap-1.5 bg-coffee-800 hover:bg-coffee-900 text-amber-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-medium shadow-md transition transform active:scale-95">
+          <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <span class="text-xs sm:text-sm font-semibold hidden sm:inline">Tray</span>
+          <span id="cart-badge" class="bg-amber-400 text-coffee-950 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-xs">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== VIEW 1: CUSTOMER MENU ==================== -->
+  <div id="customer-view">
+    <!-- Hero Section -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-coffee-950 via-coffee-900 to-coffee-950 text-amber-50 py-8 sm:py-10 px-4 sm:px-6">
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f7eee6_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
+      <div class="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+        
+        <div class="max-w-xl text-center md:text-left">
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/40 text-xs font-bold text-emerald-200">
+              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 100% Pure Veg Café
+            </span>
+            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-medium text-amber-200">
+              <i data-lucide="map-pin" class="w-3 h-3 text-amber-400"></i> Hatia Rd, Tilkamanjhi, Bhagalpur
+            </span>
+          </div>
+
+          <h2 class="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-amber-50">
+            COFFEE • FOOD • SHAKES
+          </h2>
+          <p class="text-xs sm:text-sm text-coffee-200 mt-2 leading-relaxed">
+            Order freshly crafted roasts, crispy burgers, momos, and creamy shakes. Pay easily via PhonePe UPI QR or send your order directly to our counter via WhatsApp!
+          </p>
+
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4 text-xs text-amber-100/90">
+            <a href="tel:+917050300287" class="flex items-center gap-1 hover:text-amber-300 font-semibold transition bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+              <i data-lucide="phone" class="w-3.5 h-3.5 text-amber-400"></i> +91 7050300287
+            </a>
+            <a href="mailto:brewnagri@gmail.com" class="flex items-center gap-1 hover:text-amber-300 font-semibold transition bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
+              <i data-lucide="mail" class="w-3.5 h-3.5 text-amber-400"></i> brewnagri@gmail.com
+            </a>
+            <button id="hero-ai-btn" class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-400/20 hover:bg-amber-400/30 text-amber-200 border border-amber-400/40 text-xs font-semibold transition cursor-pointer">
+              <i data-lucide="sparkles" class="w-3 h-3 text-amber-300"></i> Ask Barista AI
+            </button>
+          </div>
+        </div>
+
+        <div class="w-full md:w-auto bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 text-left max-w-sm">
+          <label for="quick-table-input" class="block text-xs font-semibold uppercase tracking-wider text-amber-200 mb-1">
+            Are you dining in or takeaway?
+          </label>
+          <div class="flex items-center gap-2">
+            <div class="relative flex-1">
+              <i data-lucide="utensils" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-coffee-300"></i>
+              <input type="text" id="quick-table-input" placeholder="e.g., Table 4 or Takeaway" class="w-full pl-9 pr-3 py-2 bg-coffee-950/60 border border-coffee-700/60 rounded-xl text-sm text-amber-50 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
+            </div>
+            <button id="save-table-btn" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-xs rounded-xl transition shadow-xs">
+              Set
+            </button>
+          </div>
+          <p id="table-status-msg" class="text-[11px] text-coffee-300 mt-1.5 italic">Tagged automatically in your WhatsApp order.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Categories & Search Filter -->
+    <section class="sticky top-[57px] sm:top-[65px] z-30 bg-stone-100/95 dark:bg-stone-900/95 backdrop-blur-md pt-2.5 pb-2 border-b border-stone-200 dark:border-stone-800 px-3 sm:px-6">
+      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+        
+        <div class="w-full sm:w-auto overflow-x-auto custom-scrollbar flex items-center gap-1.5 py-0.5" id="category-tabs-container">
+          <!-- Injected via JavaScript -->
+        </div>
+
+        <div class="w-full sm:w-auto flex items-center gap-2">
+          <div class="relative flex-1 sm:w-56">
+            <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+            <input type="text" id="menu-search-input" placeholder="Search coffee, bites..." class="w-full pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-white dark:bg-stone-800 rounded-full border border-stone-300 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-coffee-500 shadow-xs transition">
+          </div>
+
+          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-full text-xs font-bold whitespace-nowrap shadow-xs">
+            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+            <span>100% Pure Veg</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Menu Items Grid -->
+    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
+      <div id="filter-indicator" class="hidden mb-4 p-2.5 bg-coffee-100 dark:bg-stone-800 border border-coffee-200 dark:border-stone-700 rounded-xl text-xs text-coffee-800 dark:text-amber-200 flex items-center justify-between">
+        <span id="filter-indicator-text">Showing results</span>
+        <button id="clear-filter-btn" class="font-bold underline text-coffee-900 dark:text-amber-300 hover:text-coffee-700">Clear filters</button>
+      </div>
+
+      <div id="no-items-state" class="hidden py-16 text-center">
+        <div class="w-16 h-16 bg-stone-200 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto text-stone-500 mb-3">
+          <i data-lucide="coffee" class="w-8 h-8"></i>
+        </div>
+        <h3 class="text-lg font-bold text-stone-700 dark:text-stone-300 font-heading">No items found</h3>
+        <p class="text-sm text-stone-500 mt-1">Try searching for coffee, maggie, momos, or burgers.</p>
+      </div>
+
+      <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <!-- Dynamic menu cards inserted here -->
+      </div>
+    </main>
+  </div>
+
+  <!-- ==================== VIEW 2: OWNER PORTAL ==================== -->
+  <div id="owner-view" class="hidden max-w-5xl mx-auto px-4 sm:px-6 py-6">
+    <!-- Portal Header & Controls Bar -->
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-5 border border-stone-200 dark:border-stone-800 shadow-xs mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-coffee-900 text-amber-300 flex items-center justify-center">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </div>
+          <h2 class="font-heading font-extrabold text-lg sm:text-xl text-coffee-950 dark:text-amber-100">
+            Brew Nagri Kitchen & Menu Portal
+          </h2>
+        </div>
+        <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">
+          Update prices, change cafe logo, replace payment QR code, upload dish photos, or toggle sold-out status.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Change Cafe Logo Button -->
+        <button id="open-change-logo-modal-btn" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="image" class="w-3.5 h-3.5"></i>
+          <span>Change Logo</span>
+        </button>
+        <!-- Change Payment QR Button -->
+        <button id="open-change-qr-modal-btn" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+          <span>Change Payment QR</span>
+        </button>
+        <!-- Add New Dish Button -->
+        <button id="open-add-item-modal-btn" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+          <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+          <span>Add New Item</span>
+        </button>
+        <!-- Backup JSON -->
+        <button id="owner-copy-json-btn" title="Backup or Export Menu JSON" class="px-3 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Backup JSON</span>
+        </button>
+        <!-- Lock Owner Portal -->
+        <button id="owner-lock-btn" class="px-3 py-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-900 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+          <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+          <span>Lock</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Owner Filter & Search -->
+    <div class="bg-stone-50 dark:bg-stone-900 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 mb-4 flex flex-col sm:flex-row items-center gap-2.5">
+      <div class="relative flex-1 w-full">
+        <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
+        <input type="text" id="owner-search-input" placeholder="Search dish to edit price or photo..." class="w-full pl-9 pr-3 py-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-coffee-600">
+      </div>
+      <div class="w-full sm:w-auto">
+        <select id="owner-category-filter" class="w-full sm:w-56 p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-medium focus:outline-none">
+          <option value="all">All Categories</option>
+          <option value="burgers-sandwiches">Burgers & Sandwiches</option>
+          <option value="maggie-chaat">Maggi, Chaat & Sides</option>
+          <option value="momos">Momos</option>
+          <option value="cold-coffee">Cold Coffee</option>
+          <option value="refreshing">Cold Refreshing</option>
+          <option value="hot-beverages">Hot Brews</option>
+          <option value="shakes">Thickshakes</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Owner Dish Item List -->
+    <div id="owner-items-container" class="space-y-2.5">
+      <!-- Injected via renderOwnerItems() -->
+    </div>
+  </div>
+
+  <!-- Floating Cart Bottom Bar -->
+  <div id="floating-cart-bar" class="fixed bottom-4 inset-x-4 max-w-xl mx-auto z-40 transform translate-y-32 transition-transform duration-300 ease-out">
+    <div class="bg-coffee-950 text-amber-50 rounded-2xl shadow-2xl p-3 sm:p-4 border border-coffee-800 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="relative bg-amber-400 text-coffee-950 font-bold w-10 h-10 rounded-xl flex items-center justify-center shadow-xs">
+          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+          <span id="float-badge-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-coffee-950 font-bold">0</span>
+        </div>
+        <div>
+          <p class="text-xs text-coffee-300 font-medium">Your Current Order</p>
+          <p class="text-base font-bold text-white flex items-center gap-1.5">
+            <span id="float-total-price">₹0</span>
+            <span class="text-xs text-stone-400 font-normal">(pure veg)</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button id="trigger-pay-qr-btn" class="hidden sm:flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl font-bold text-xs transition">
+          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
+          <span>Pay QR</span>
+        </button>
+        <button id="view-cart-btn" class="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-coffee-950 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs transition active:scale-95">
+          <span>View Order</span>
+          <i data-lucide="chevron-right" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cart / Checkout Drawer Overlay -->
+  <div id="cart-drawer" class="fixed inset-0 z-50 pointer-events-none transition-opacity duration-300 opacity-0">
+    <div id="cart-backdrop" class="absolute inset-0 bg-stone-950/60 backdrop-blur-sm"></div>
+
+    <div id="cart-panel" class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-stone-900 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 pointer-events-auto">
+      
+      <div class="px-5 py-3.5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-800/50">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-coffee-800 text-amber-100 flex items-center justify-center">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h2 class="font-heading font-bold text-base sm:text-lg text-coffee-950 dark:text-amber-100">Your Tray</h2>
+            <p class="text-xs text-stone-500 dark:text-stone-400" id="cart-items-subtitle">0 items selected</p>
+          </div>
+        </div>
+        <button id="close-cart-btn" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 custom-scrollbar" id="cart-items-container">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div class="border-t border-stone-200 dark:border-stone-800 p-4 sm:p-5 bg-stone-50 dark:bg-stone-900 space-y-3 shadow-inner">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Table # / Takeaway</label>
+            <input type="text" id="order-table-input" placeholder="e.g., Table 3" class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+          </div>
+          <div>
+            <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Your Name</label>
+            <input type="text" id="order-customer-name" placeholder="e.g., Rahul" class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Special Instructions</label>
+          <input type="text" id="order-notes-input" placeholder="e.g., Less sugar, extra crispy..." class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+        </div>
+
+        <div class="p-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 rounded-xl space-y-1.5">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider flex items-center gap-1">
+              <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i> Payment Mode
+            </span>
+            <button type="button" id="drawer-view-qr-btn" class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:underline flex items-center gap-1">
+              <i data-lucide="qr-code" class="w-3 h-3"></i> View UPI QR
+            </button>
+          </div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <label class="flex items-center gap-2 p-2 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
+              <input type="radio" name="payment-method" value="upi" checked class="text-indigo-600 focus:ring-indigo-500">
+              <span class="font-bold text-stone-800 dark:text-stone-200">PhonePe QR</span>
+            </label>
+            <label class="flex items-center gap-2 p-2 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
+              <input type="radio" name="payment-method" value="counter" class="text-indigo-600 focus:ring-indigo-500">
+              <span class="font-bold text-stone-800 dark:text-stone-200">At Counter</span>
+            </label>
+          </div>
+          <div id="utr-input-box" class="pt-1">
+            <input type="text" id="upi-utr-input" placeholder="UPI Ref / UTR (optional if already paid)" class="w-full px-2.5 py-1 text-xs bg-white dark:bg-stone-800 border border-indigo-200 dark:border-indigo-900 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
+          </div>
+        </div>
+
+        <div class="p-2.5 bg-amber-50 dark:bg-stone-800 border border-amber-200/80 dark:border-stone-700 rounded-xl">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1.5 text-xs font-bold text-coffee-950 dark:text-amber-200">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
+              <span>Smart Flavor Match</span>
+            </div>
+            <button id="get-cart-pairing-btn" type="button" class="text-[11px] text-coffee-800 dark:text-amber-300 font-bold underline cursor-pointer">Suggest Pair</button>
+          </div>
+          <div id="cart-ai-result" class="text-xs text-stone-600 dark:text-stone-300 mt-1 hidden"></div>
+        </div>
+
+        <div class="pt-1 border-t border-dashed border-stone-300 dark:border-stone-700 space-y-1 text-xs text-stone-600 dark:text-stone-400">
+          <div class="flex justify-between">
+            <span>Items Subtotal</span>
+            <span id="drawer-subtotal" class="font-medium text-stone-800 dark:text-stone-200">₹0</span>
+          </div>
+          <div class="flex justify-between text-base font-extrabold text-coffee-950 dark:text-amber-100 pt-1 border-t border-stone-300 dark:border-stone-700">
+            <span>Grand Total</span>
+            <span id="drawer-grand-total">₹0</span>
+          </div>
+        </div>
+
+        <button id="send-whatsapp-order-btn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition text-sm">
+          <i data-lucide="message-circle" class="w-4 h-4"></i>
+          <span>Send Order on WhatsApp (@BrewNagribgp)</span>
+        </button>
+
+        <p class="text-center text-[10px] text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1">
+          <i data-lucide="shield-check" class="w-3 h-3 text-emerald-600"></i> 100% Pure Veg • Verified Direct Order
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Owner PIN Authentication Modal (Passcode Protected: 5595) -->
+  <div id="owner-pin-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-xs w-full rounded-2xl p-5 shadow-2xl border border-stone-200 dark:border-stone-800 text-center">
+      <div class="w-12 h-12 rounded-full bg-coffee-100 dark:bg-stone-800 text-coffee-900 dark:text-amber-300 flex items-center justify-center mx-auto mb-3">
+        <i data-lucide="lock" class="w-6 h-6"></i>
+      </div>
+      <h3 class="font-heading font-bold text-base text-coffee-950 dark:text-amber-100">Owner Access</h3>
+      <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">Enter your manager passcode to unlock management tools.</p>
+
+      <div class="mt-4">
+        <input 
+          type="password" 
+          id="owner-pin-input" 
+          maxlength="8" 
+          placeholder="••••" 
+          class="w-full text-center text-xl font-bold tracking-widest py-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-coffee-600"
+        />
+        <p id="owner-pin-error" class="text-xs font-semibold text-red-600 mt-1.5 hidden"></p>
+      </div>
+
+      <div class="mt-4 flex gap-2">
+        <button id="cancel-pin-btn" class="flex-1 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-300 rounded-xl text-xs font-bold transition">
+          Cancel
+        </button>
+        <button id="submit-pin-btn" class="flex-1 py-2 bg-coffee-800 hover:bg-coffee-900 text-white rounded-xl text-xs font-bold transition">
+          Enter
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner Add / Edit Item Modal -->
+  <div id="add-item-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
+            <i data-lucide="edit" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 id="add-item-modal-title" class="font-heading font-bold text-base">Add New Menu Item</h3>
+            <p id="add-item-modal-subtitle" class="text-[10px] text-coffee-300">Set recipe details, pricing in ₹, and dish photo</p>
+          </div>
+        </div>
+        <button id="close-add-item-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3 overflow-y-auto custom-scrollbar text-xs">
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Dish Name *</label>
+          <input type="text" id="new-item-name" placeholder="e.g., Masala French Fries" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-coffee-600">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Category *</label>
+            <select id="new-item-category" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+              <option value="burgers-sandwiches">Burgers & Sandwiches</option>
+              <option value="maggie-chaat">Maggi, Chaat & Sides</option>
+              <option value="momos">Momos</option>
+              <option value="cold-coffee">Cold Coffee</option>
+              <option value="refreshing">Cold Refreshing</option>
+              <option value="hot-beverages">Hot Brews</option>
+              <option value="shakes">Thickshakes</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Price (in ₹) *</label>
+            <input type="number" id="new-item-price" min="1" placeholder="e.g., 99" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Badge Tag (Optional)</label>
+          <input type="text" id="new-item-tag" placeholder="e.g., Bestseller, Chef Special, Must Try" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Description</label>
+          <textarea id="new-item-desc" rows="2" placeholder="Brief details about fresh ingredients..." class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none"></textarea>
+        </div>
+
+        <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="block font-bold text-stone-700 dark:text-stone-300">Dish Photo</label>
+            <span class="text-[10px] text-stone-400">File upload or Image URL</span>
+          </div>
+
+          <div class="space-y-2">
+            <div>
+              <span class="text-[10px] font-semibold text-stone-500">Option 1: Upload from Phone / Computer</span>
+              <input type="file" id="new-item-file-input" accept="image/*" class="w-full mt-0.5 text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-coffee-800 file:text-amber-100 hover:file:bg-coffee-900 cursor-pointer">
+            </div>
+
+            <div>
+              <span class="text-[10px] font-semibold text-stone-500">Option 2: Or Paste Path / Image URL</span>
+              <input type="text" id="new-item-image-url" placeholder="e.g. images/my-dish.jpg or https://..." class="w-full mt-0.5 p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+            </div>
+          </div>
+
+          <div class="mt-2 w-full h-32 bg-stone-200 dark:bg-stone-800 rounded-xl border border-dashed border-stone-300 dark:border-stone-700 flex items-center justify-center overflow-hidden relative group">
+            <img id="new-item-preview-img" src="" alt="Preview" class="w-full h-full object-cover hidden">
+            <div id="preview-placeholder-icon" class="text-stone-400 text-center p-2">
+              <i data-lucide="image" class="w-6 h-6 mx-auto mb-1"></i>
+              <span class="text-[10px] block">Photo preview will appear here immediately</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
+        <button id="cancel-add-item-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-xl text-xs font-bold">
+          Cancel
+        </button>
+        <button id="save-menu-item-btn" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="check-circle" class="w-3.5 h-3.5"></i>
+          <span id="save-item-btn-label">Save to Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner Change Café Logo Sign Modal -->
+  <div id="change-logo-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
+            <i data-lucide="image" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-amber-100">Update Café Logo</h3>
+            <p class="text-[10px] text-coffee-300">Change brand logo across header, standee & modals</p>
+          </div>
+        </div>
+        <button id="close-change-logo-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3.5 text-xs">
+        <div class="flex flex-col items-center justify-center p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700">
+          <div class="w-20 h-20 rounded-full overflow-hidden bg-coffee-950 border-2 border-amber-400 shadow-md flex items-center justify-center mb-1.5">
+            <img id="logo-modal-preview-img" src="images/brew-nagri-logo.png" alt="Current Logo" class="w-full h-full object-cover">
+          </div>
+          <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300">Live Circular Sign Preview</span>
+        </div>
+
+        <div class="space-y-2">
+          <div>
+            <span class="text-[11px] font-bold text-stone-700 dark:text-stone-300">Option 1: Upload from Phone / Device</span>
+            <input type="file" id="new-logo-file-input" accept="image/*" class="w-full mt-1 text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-coffee-800 file:text-amber-100 hover:file:bg-coffee-900 cursor-pointer">
+          </div>
+
+          <div>
+            <span class="text-[11px] font-bold text-stone-700 dark:text-stone-300">Option 2: Or Image Path / Link</span>
+            <input type="text" id="new-logo-url-input" placeholder="e.g. images/brew-nagri-logo.png or https://..." class="w-full mt-1 p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-coffee-600">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex flex-col gap-2">
+        <div class="flex gap-2">
+          <button id="cancel-change-logo-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-xl text-xs font-bold transition">
+            Cancel
+          </button>
+          <button id="save-cafe-logo-btn" class="flex-1 py-2 bg-amber-500 hover:bg-amber-600 text-coffee-950 font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>Set New Logo</span>
+          </button>
+        </div>
+        <button id="reset-default-logo-btn" type="button" class="w-full py-1.5 text-stone-500 dark:text-stone-400 hover:text-red-600 text-[11px] font-semibold underline text-center transition">
+          Reset to Default Café Logo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Owner Change Payment UPI QR Code Modal -->
+  <div id="change-payment-qr-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-indigo-950 text-indigo-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-500 text-white flex items-center justify-center font-bold">
+            <i data-lucide="qr-code" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-indigo-50">Update Payment QR</h3>
+            <p class="text-[10px] text-indigo-300">Change customer scan-and-pay UPI code</p>
+          </div>
+        </div>
+        <button id="close-change-qr-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3 text-xs">
+        <div class="flex flex-col items-center justify-center p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700">
+          <div class="w-48 h-48 rounded-xl overflow-hidden bg-white border-2 border-indigo-200 shadow-sm flex items-center justify-center p-2">
+            <img id="payment-qr-preview-img" src="images/brew-nagri-upi-qr.png" alt="Payment QR Preview" class="w-full h-full object-contain">
+          </div>
+          <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300 mt-2">Active UPI Code Preview</span>
+        </div>
+
+        <div class="space-y-2">
+          <div>
+            <span class="text-[11px] font-bold text-stone-700 dark:text-stone-300">Option 1: Upload from Phone / Device</span>
+            <input type="file" id="new-payment-qr-file-input" accept="image/*" class="w-full mt-1 text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-800 file:text-indigo-100 hover:file:bg-indigo-900 cursor-pointer">
+          </div>
+
+          <div>
+            <span class="text-[11px] font-bold text-stone-700 dark:text-stone-300">Option 2: Or Image Path / Link</span>
+            <input type="text" id="new-payment-qr-url-input" placeholder="e.g. images/brew-nagri-upi-qr.png or https://..." class="w-full mt-1 p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-indigo-600">
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex flex-col gap-2">
+        <div class="flex gap-2">
+          <button id="cancel-change-qr-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-xl text-xs font-bold transition">
+            Cancel
+          </button>
+          <button id="save-payment-qr-btn" class="flex-1 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-xs flex items-center justify-center gap-1.5">
+            <i data-lucide="check" class="w-3.5 h-3.5"></i>
+            <span>Set New QR</span>
+          </button>
+        </div>
+        <button id="reset-default-payment-qr-btn" type="button" class="w-full py-1 text-stone-500 dark:text-stone-400 hover:text-red-600 text-[11px] font-semibold underline text-center transition">
+          Reset to Default PhonePe QR
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- UPI / PhonePe Payment Gateway Modal (Customer Scan & Pay) -->
+  <div id="payment-gateway-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden text-center flex flex-col">
+      <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white p-4 relative">
+        <button id="close-payment-modal-btn" class="absolute top-3 right-3 p-1 rounded-full hover:bg-white/20 text-white transition">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+        <div class="flex items-center justify-center gap-2 mb-1">
+          <div class="w-7 h-7 rounded-full bg-white text-purple-700 font-black flex items-center justify-center text-sm shadow-xs">
+            पे
+          </div>
+          <span class="font-heading font-black tracking-tight text-lg">PhonePe</span>
+        </div>
+        <div class="inline-block bg-amber-500 text-stone-950 text-xs font-black uppercase tracking-wider px-3 py-0.5 rounded-full shadow-xs">
+          Brew Nagri
+        </div>
+        <p class="text-[11px] text-purple-200 mt-1">Tilkamanjhi, Bhagalpur</p>
+      </div>
+
+      <div class="p-5 flex flex-col items-center">
+        <p class="text-xs text-stone-500 dark:text-stone-400 font-medium">Scan with any UPI App (PhonePe, GPay, Paytm)</p>
+        
+        <div class="mt-2 bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 px-4 py-1.5 rounded-xl">
+          <span class="text-xs text-purple-900 dark:text-purple-300 font-medium">Payable Amount: </span>
+          <span id="qr-modal-amount" class="text-base font-extrabold text-purple-950 dark:text-purple-200">₹0</span>
+        </div>
+
+        <div class="mt-3 p-2 bg-white rounded-xl border-2 border-stone-200 shadow-inner w-56 h-56 flex items-center justify-center overflow-hidden">
+          <img 
+            id="payment-modal-qr-img"
+            src="images/brew-nagri-upi-qr.png" 
+            alt="Brew Nagri Official PhonePe UPI QR" 
+            class="w-full h-full object-contain"
+            onerror="this.onerror=null; this.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=7050300287@ybl%26pn=BREW%20NAGRI%26cu=INR';"
+          />
+        </div>
+
+        <div class="mt-2 text-[11px] font-bold text-stone-600 dark:text-stone-400 flex items-center justify-center gap-1.5">
+          <span>BHIM UPI</span> • <span>Terminal: 9-Q146271805</span>
+        </div>
+
+        <p class="text-[11px] text-stone-400 mt-2">
+          After completing payment, return to tray & tap <strong>Send Order on WhatsApp</strong>.
+        </p>
+      </div>
+
+      <div class="p-3.5 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
+        <button id="dismiss-payment-modal-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-xs font-bold transition">
+          Close
+        </button>
+        <button id="confirm-payment-order-btn" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          <span>Order via WhatsApp</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Table QR Standee Generator Modal -->
+  <div id="qr-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
+            <i data-lucide="qr-code" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-amber-100">Table QR Standee Generator</h3>
+            <p class="text-[11px] text-coffee-300">Generate printable cards for each dining table</p>
+          </div>
+        </div>
+        <button id="close-qr-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 overflow-y-auto space-y-3.5 custom-scrollbar text-xs">
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Select Table #</label>
+            <select id="qr-table-select" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-xs">
+              <option value="General Menu">General Menu (Any Table / Takeaway)</option>
+              <option value="Table 1">Table 1</option>
+              <option value="Table 2">Table 2</option>
+              <option value="Table 3">Table 3</option>
+              <option value="Table 4">Table 4</option>
+              <option value="Table 5">Table 5</option>
+              <option value="Table 6">Table 6</option>
+              <option value="Table 7">Table 7</option>
+              <option value="Table 8">Table 8</option>
+              <option value="Takeaway Counter">Takeaway Counter</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">QR Target Link</label>
+            <select id="qr-target-type" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-xs">
+              <option value="menu">Digital Menu (Web App)</option>
+              <option value="whatsapp">Direct WhatsApp (@BrewNagribgp)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-0.5">Website Base URL</label>
+          <input type="text" id="qr-base-url-input" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-xs" placeholder="https://username.github.io/repo">
+          <p class="text-[10px] text-stone-400 mt-0.5">Defaults to your live domain or GitHub Pages link.</p>
+        </div>
+
+        <div id="print-standee-area" class="mt-2 p-5 bg-gradient-to-b from-coffee-50 to-amber-50/50 border-2 border-dashed border-coffee-300 rounded-2xl text-center shadow-xs">
+          <div class="flex items-center justify-center gap-2 mb-1">
+            <div class="w-9 h-9 rounded-full overflow-hidden bg-coffee-950 border border-amber-300 flex items-center justify-center">
+              <img id="brand-standee-logo" src="images/brew-nagri-logo.png" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'">
+            </div>
+            <div class="text-left">
+              <h4 class="font-heading font-extrabold text-base text-coffee-950 leading-tight">Brew Nagri</h4>
+              <p class="text-[9px] font-bold tracking-widest text-coffee-700 uppercase">Coffee • Food • Shakes</p>
+            </div>
+          </div>
+
+          <div class="inline-block px-3 py-0.5 my-1 bg-coffee-800 text-amber-200 text-[10px] font-bold rounded-full" id="card-table-label">
+            General Menu
+          </div>
+
+          <div class="my-3 flex justify-center">
+            <div id="qrcode-canvas-container" class="p-2 bg-white rounded-xl shadow-md border border-stone-200 inline-block"></div>
+          </div>
+
+          <p class="font-heading font-bold text-xs text-coffee-950">Scan with phone camera to order</p>
+          <p class="text-[10px] text-stone-500 mt-0.5">Hatia Rd, Tilkamanjhi, Bhagalpur • Ph: +91-7050300287</p>
+          <p class="text-[9px] font-bold text-emerald-700 mt-0.5">100% Pure Vegetarian Kitchen</p>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex items-center justify-between gap-2">
+        <button id="download-qr-btn" class="flex-1 py-2 px-3 bg-coffee-100 dark:bg-stone-700 hover:bg-coffee-200 text-coffee-900 dark:text-stone-200 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
+          <i data-lucide="download" class="w-3.5 h-3.5"></i>
+          <span>Download QR</span>
+        </button>
+        <button id="print-standee-btn" class="flex-1 py-2 px-3 bg-coffee-800 hover:bg-coffee-900 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 shadow-xs">
+          <i data-lucide="printer" class="w-3.5 h-3.5"></i>
+          <span>Print Standee</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Feedback & Review Modal -->
+  <div id="feedback-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-50">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
+            <i data-lucide="heart" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base text-amber-100">Café Feedback</h3>
+            <p class="text-[10px] text-coffee-300">Share your experience directly with us</p>
+          </div>
+        </div>
+        <button id="close-feedback-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-3.5 text-xs">
+        <div class="text-center">
+          <p class="font-bold text-stone-700 dark:text-stone-300 mb-1.5">How was your visit today?</p>
+          <div class="flex justify-center gap-2" id="star-rating-container">
+            <button type="button" class="star-btn text-2xl text-amber-400 transition transform hover:scale-110" data-val="1">★</button>
+            <button type="button" class="star-btn text-2xl text-amber-400 transition transform hover:scale-110" data-val="2">★</button>
+            <button type="button" class="star-btn text-2xl text-amber-400 transition transform hover:scale-110" data-val="3">★</button>
+            <button type="button" class="star-btn text-2xl text-amber-400 transition transform hover:scale-110" data-val="4">★</button>
+            <button type="button" class="star-btn text-2xl text-amber-400 transition transform hover:scale-110" data-val="5">★</button>
+          </div>
+          <span id="star-rating-label" class="text-[11px] text-stone-500 font-semibold mt-1 block">5 out of 5 stars</span>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Your Name (optional)</label>
+          <input type="text" id="feedback-name" placeholder="e.g. Aditi Sharma" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-coffee-600">
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">What did you enjoy most?</label>
+          <div class="flex flex-wrap gap-1.5" id="feedback-chips">
+            <button type="button" class="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 rounded-full text-[10px] font-semibold border border-stone-200 dark:border-stone-700 transition" onclick="toggleFeedbackTag(this, 'Crispy Momos')">🥟 Crispy Momos</button>
+            <button type="button" class="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 rounded-full text-[10px] font-semibold border border-stone-200 dark:border-stone-700 transition" onclick="toggleFeedbackTag(this, 'Melbourne Coffee')">☕ Melbourne Coffee</button>
+            <button type="button" class="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 rounded-full text-[10px] font-semibold border border-stone-200 dark:border-stone-700 transition" onclick="toggleFeedbackTag(this, 'Cheesy Maggi')">🍜 Cheesy Maggi</button>
+            <button type="button" class="px-2.5 py-1 bg-stone-100 dark:bg-stone-800 hover:bg-amber-100 rounded-full text-[10px] font-semibold border border-stone-200 dark:border-stone-700 transition" onclick="toggleFeedbackTag(this, 'Great Ambience')">✨ Ambience</button>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Your Thoughts / Suggestions</label>
+          <textarea id="feedback-notes" rows="2" placeholder="Tell us how we can make your next brew even better..." class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none"></textarea>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
+        <button id="cancel-feedback-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-200 rounded-xl text-xs font-bold transition">
+          Cancel
+        </button>
+        <button id="send-feedback-wa-btn" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition shadow-xs flex items-center justify-center gap-1.5">
+          <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
+          <span>Send via WhatsApp</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- About & Contact Modal -->
+  <div id="info-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
+      <div class="p-4 sm:p-5 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-50 dark:bg-stone-800/60">
+        <div class="flex items-center gap-3">
+          <div class="w-11 h-11 rounded-full overflow-hidden bg-coffee-950 border border-amber-300 shrink-0 flex items-center justify-center">
+            <img id="brand-info-logo" src="images/brew-nagri-logo.png" alt="Brew Nagri" class="w-full h-full object-cover" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-base sm:text-lg text-coffee-950 dark:text-amber-100">Brew Nagri</h3>
+            <p class="text-xs text-coffee-700 dark:text-amber-300 font-semibold">Coffee • Food • Shakes</p>
+          </div>
+        </div>
+        <button id="close-info-modal-btn" class="p-1.5 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 sm:p-5 space-y-3.5 text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
+        <p>
+          Welcome to <strong>Brew Nagri</strong>, your local spot in Bhagalpur for freshly ground roasts, burgers, crisp sandwiches, noodles, dumplings, and rich thickshakes.
+        </p>
+
+        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs font-medium flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0"></span>
+          <span><strong>100% Pure Vegetarian Kitchen</strong> — No eggs, no meat, pure dairy & fresh farm veggies.</span>
+        </div>
+
+        <div class="space-y-2 pt-1 border-t border-stone-200 dark:border-stone-800 text-xs text-stone-700 dark:text-stone-300">
+          <div class="flex items-start gap-2">
+            <i data-lucide="map-pin" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0 mt-0.5"></i>
+            <span><strong>Address:</strong> Hatia Rd, Tilkamanjhi, Bhagalpur, Bihar</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="phone" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0"></i>
+            <span><strong>Mobile:</strong> <a href="tel:+917050300287" class="font-bold text-coffee-950 dark:text-amber-200 hover:underline">+91 7050300287</a></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="mail" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0"></i>
+            <span><strong>Email:</strong> <a href="mailto:brewnagri@gmail.com" class="font-bold text-coffee-950 dark:text-amber-200 hover:underline">brewnagri@gmail.com</a></span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
+            <span><strong>Contact Support:</strong> <a href="https://wa.me/BrewNagribgp" target="_blank" rel="noopener noreferrer" class="font-bold text-coffee-900 dark:text-emerald-400 hover:underline">@BrewNagribgp</a> (WhatsApp)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-coffee-700 dark:text-stone-400 shrink-0"></i>
+            <span>Daily: 9:00 AM – 11:00 PM</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3.5 bg-stone-50 dark:bg-stone-800 border-t border-stone-100 dark:border-stone-800 flex justify-end">
+        <button id="dismiss-info-modal-btn" class="px-4 py-1.5 bg-coffee-800 hover:bg-coffee-900 text-white rounded-lg text-xs font-semibold transition">
+          Got it
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Advanced Mood AI Barista Modal Dialog -->
+  <div id="ai-barista-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-lg w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[85vh]">
+      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-amber-400 text-coffee-950 flex items-center justify-center font-bold shadow-xs">
+            <i data-lucide="sparkles" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-amber-100 flex items-center gap-1.5">
+              AI Mood Barista & Autobot
+              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 font-medium">Gemini</span>
+            </h3>
+            <p class="text-[11px] text-coffee-300">Intelligent pure veg mood matching & combo suggestions</p>
+          </div>
+        </div>
+        <button id="close-ai-modal-btn" class="p-1.5 rounded-full hover:bg-white/10 text-stone-300 hover:text-white transition cursor-pointer">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Interactive Mood Chips -->
+      <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700 flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I am feeling exhausted and need an instant energy boost!">⚡ Need Energy</button>
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="It feels like a cozy, rainy afternoon. What hot snacks should I get?">🌧️ Rainy Comfort</button>
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I'm craving something cheesy, melty, and super satisfying!">🧀 Cheesy Craving</button>
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="Give me something fiery and spicy with peri peri seasoning!">🌶️ Fiery & Spicy</button>
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I want a sweet chocolate treat to brighten up my day!">🍫 Sweet Tooth</button>
+        <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I am on a budget under ₹100. Suggest the best combo!">💰 Under ₹100</button>
+      </div>
+
+      <div id="ai-conversation-box" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar min-h-[220px]">
+        <div class="flex items-start gap-2.5">
+          <div class="w-7 h-7 rounded-lg bg-coffee-800 text-amber-200 flex items-center justify-center shrink-0 text-xs">
+            <i data-lucide="coffee" class="w-4 h-4"></i>
+          </div>
+          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3.5 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[85%] border border-stone-200 dark:border-stone-700">
+            👋 Namaste! I am your <strong>Brew Nagri Mood Autobot</strong>. Tell me your exact vibe, energy level, hunger cravings, or party size—and I will match you with our freshest 100% pure vegetarian recipes!
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 flex items-center gap-2">
+        <input type="text" id="ai-user-input" placeholder="Type your mood (e.g. 'feeling sleepy', 'need spicy food with coffee')..." class="flex-1 px-3.5 py-2 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-coffee-600 text-stone-900 dark:text-stone-100">
+        <button id="ai-send-btn" class="px-3 py-2 bg-coffee-800 hover:bg-coffee-900 text-amber-100 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer">
+          <span>Ask</span>
+          <i data-lucide="send" class="w-3.5 h-3.5"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const DEFAULT_LOGO = "images/brew-nagri-logo.png";
+    const DEFAULT_PAYMENT_QR = "images/brew-nagri-upi-qr.png";
+
+    let currentLogo = localStorage.getItem("brewnagri_custom_logo") || DEFAULT_LOGO;
+    let currentPaymentQr = localStorage.getItem("brewnagri_payment_qr") || DEFAULT_PAYMENT_QR;
+
+    const CAFE_CONFIG = {
+      name: "Brew Nagri",
+      tagline: "Coffee • Food • Shakes",
+      address: "Hatia Rd, Tilkamanjhi, Bhagalpur",
+      phone: "+91-7050300287",
+      email: "brewnagri@gmail.com",
+      whatsappUsername: "BrewNagribgp",
+      whatsappNumber: "BrewNagribgp",
+      contactSupport: "@BrewNagribgp",
+      currencySymbol: "₹",
+      logo: currentLogo,
+      paymentQr: currentPaymentQr
+    };
+
+    function updateLogoEverywhere(logoUrl) {
+      currentLogo = logoUrl;
+      CAFE_CONFIG.logo = logoUrl;
+      localStorage.setItem("brewnagri_custom_logo", logoUrl);
+
+      const headerLogo = document.getElementById("brand-header-logo");
+      const standeeLogo = document.getElementById("brand-standee-logo");
+      const infoLogo = document.getElementById("brand-info-logo");
+      const previewImg = document.getElementById("logo-modal-preview-img");
+
+      if (headerLogo) {
+        headerLogo.src = logoUrl;
+        headerLogo.style.display = "block";
+      }
+      if (standeeLogo) {
+        standeeLogo.src = logoUrl;
+        standeeLogo.style.display = "block";
+      }
+      if (infoLogo) {
+        infoLogo.src = logoUrl;
+        infoLogo.style.display = "block";
+      }
+      if (previewImg) {
+        previewImg.src = logoUrl;
+      }
+    }
+
+    function updatePaymentQrEverywhere(qrUrl) {
+      currentPaymentQr = qrUrl;
+      CAFE_CONFIG.paymentQr = qrUrl;
+      localStorage.setItem("brewnagri_payment_qr", qrUrl);
+
+      const modalQrImg = document.getElementById("payment-modal-qr-img");
+      const previewImg = document.getElementById("payment-qr-preview-img");
+
+      if (modalQrImg) modalQrImg.src = qrUrl;
+      if (previewImg) previewImg.src = qrUrl;
+    }
+
+    const CATEGORIES = [
+      { id: "all", label: "All Items", icon: "sparkles" },
+      { id: "burgers-sandwiches", label: "Burgers & Sandwiches", icon: "sandwich" },
+      { id: "maggie-chaat", label: "Maggi, Chaat & Sides", icon: "flame" },
+      { id: "momos", label: "Momos", icon: "utensils-crossed" },
+      { id: "cold-coffee", label: "Cold Coffee", icon: "snowflake" },
+      { id: "refreshing", label: "Cold Refreshing", icon: "glass-water" },
+      { id: "hot-beverages", label: "Hot Brews", icon: "coffee" },
+      { id: "shakes", label: "Thickshakes", icon: "cup-soda" }
+    ];
+
+    function initTheme() {
+      const savedTheme = localStorage.getItem("brewnagri_theme");
+      const systemPrefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+      if (savedTheme === "dark" || (!savedTheme && systemPrefersDark)) {
+        document.documentElement.classList.add("dark");
+        updateThemeIcon(true);
+      } else {
+        document.documentElement.classList.remove("dark");
+        updateThemeIcon(false);
+      }
+    }
+
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle("dark");
+      localStorage.setItem("brewnagri_theme", isDark ? "dark" : "light");
+      updateThemeIcon(isDark);
+    }
+
+    function updateThemeIcon(isDark) {
+      const icon = document.getElementById("theme-toggle-icon");
+      if (icon) {
+        icon.setAttribute("data-lucide", isDark ? "sun" : "moon");
+        lucide.createIcons();
+      }
+    }
+
+    const DEFAULT_MENU_ITEMS = [
+      {
+        id: "bg-1",
+        name: "Veg Burger",
+        category: "burgers-sandwiches",
+        price: 89,
+        isVeg: true,
+        description: "Golden crispy vegetable & potato herb patty, fresh garden tomatoes, lettuce, and rich eggless house mayo in a toasted bun.",
+        tag: "Value Pick",
+        image: "https://images.unsplash.com/photo-1585238342024-78d387f4a707?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "bg-2",
+        name: "Paneer Burger",
+        category: "burgers-sandwiches",
+        price: 99,
+        isVeg: true,
+        description: "Thick marinated malai paneer slab grilled in tandoori spices with crisp onion rings, mint cream, and green herbs.",
+        tag: "Bestseller",
+        image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "bg-3",
+        name: "Mushroom Tofu Burger",
+        category: "burgers-sandwiches",
+        price: 99,
+        isVeg: true,
+        description: "Herb-seasoned button mushrooms and protein-rich organic tofu patty drizzled with roasted garlic glaze in a sesame bun.",
+        tag: "Chef Special",
+        image: "https://images.unsplash.com/photo-1520072959219-c595dc870360?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sw-1",
+        name: "Veg Sandwich",
+        category: "burgers-sandwiches",
+        price: 89,
+        isVeg: true,
+        description: "Crisp cucumber, bell pepper, and ripe tomatoes layered with spiced potato mash and tangy coriander mint chutney.",
+        tag: "Classic",
+        image: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sw-2",
+        name: "Mushroom Sandwich",
+        category: "burgers-sandwiches",
+        price: 99,
+        isVeg: true,
+        description: "Butter-sautéed garlic mushrooms folded in melted cheese and cracked pepper, golden grilled on artisan slices.",
+        tag: "Gourmet",
+        image: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sw-3",
+        name: "Paneer Sandwich",
+        category: "burgers-sandwiches",
+        price: 99,
+        isVeg: true,
+        description: "Juicy tandoori spiced paneer cubes grilled with diced capsicums and creamy cheese between crisp toasted bread.",
+        tag: "Popular",
+        image: "https://images.unsplash.com/photo-1619096252214-ef06c45683e3?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mg-1",
+        name: "Veg Maggie",
+        category: "maggie-chaat",
+        price: 69,
+        isVeg: true,
+        description: "Piping hot classic masala noodles tossed with crisp carrots, fresh spring onions, mild red chili rings, and house spices.",
+        tag: "All-Time Fav",
+        image: "images/veg-maggie.jpg"
+      },
+      {
+        id: "mg-5",
+        name: "Sweet Corn Maggie",
+        category: "maggie-chaat",
+        price: 79,
+        isVeg: true,
+        description: "Signature masala noodles generously tossed with juicy golden sweet corn kernels, tender green peas, carrots, and French beans.",
+        tag: "Customer Favorite",
+        image: "images/sweet-corn-maggie.jpg"
+      },
+      {
+        id: "mg-2",
+        name: "Paneer Maggie",
+        category: "maggie-chaat",
+        price: 79,
+        isVeg: true,
+        description: "Spicy masala noodles tossed with golden pan-roasted paneer cubes, crunchy green capsicum, and fresh spring onions.",
+        tag: "Protein Rich",
+        image: "images/paneer-maggie.jpg"
+      },
+      {
+        id: "mg-3",
+        name: "Cheese Maggie",
+        category: "maggie-chaat",
+        price: 79,
+        isVeg: true,
+        description: "Comforting piping-hot Maggi smothered in melted rich cheese with sprinkled oregano and chili flakes.",
+        tag: "Cheesy",
+        image: "https://images.unsplash.com/photo-1585032226651-759b368d7246?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mg-4",
+        name: "Corn Cheese Maggie",
+        category: "maggie-chaat",
+        price: 89,
+        isVeg: true,
+        description: "Tender sweet American corn kernels combined with creamy molten cheese and spiced masala noodles.",
+        tag: "Must Try",
+        image: "https://images.unsplash.com/photo-1552611052-33e04de081de?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "ct-1",
+        name: "Wai Wai Chaat",
+        category: "maggie-chaat",
+        price: 50,
+        isVeg: true,
+        description: "Crispy roasted Wai Wai noodles tossed with crunchy red onions, juicy tomatoes, spiced potato bites, green chilies, fresh coriander, and zesty Himalayan chaat masala.",
+        tag: "Street Style",
+        image: "images/wai-wai-chaat.jpg"
+      },
+      {
+        id: "ct-2",
+        name: "Sweet Corn Chaat",
+        category: "maggie-chaat",
+        price: 40,
+        isVeg: true,
+        description: "Steamed sweet corn kernels tossed in country butter, black salt, zesty lemon juice, and roasted cumin.",
+        tag: "Healthy Bite",
+        image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "ff-1",
+        name: "French Fries Peri Peri",
+        category: "maggie-chaat",
+        price: 60,
+        isVeg: true,
+        description: "Crisp potato shoestrings shaken hot with fiery peri-peri seasoning. Served with pure veg eggless dip.",
+        tag: "Hot & Crisp",
+        image: "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "bm-1",
+        name: "Bun Maska",
+        category: "maggie-chaat",
+        price: 50,
+        isVeg: true,
+        description: "Warm, pillowy bakery bun generously slathered with creamy salted butter. The ultimate companion to hot chai or coffee.",
+        tag: "Café Classic",
+        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mo-1",
+        name: "Momos Veg Steam",
+        category: "momos",
+        price: 50,
+        isVeg: true,
+        description: "Delicate thin-skinned steamed dumplings filled with shredded cabbage, carrots, bell peppers, and mild ginger.",
+        tag: "Authentic",
+        image: "https://images.unsplash.com/photo-1625398407796-82650a8c135f?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mo-2",
+        name: "Momos Veg Fry",
+        category: "momos",
+        price: 80,
+        isVeg: true,
+        description: "Crispy golden fried veg dumplings served with spicy red momo chili sauce and eggless garlic dip.",
+        tag: "Crunchy",
+        image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mo-3",
+        name: "Paneer Veg Steam Momo",
+        category: "momos",
+        price: 80,
+        isVeg: true,
+        description: "Soft steamed dumplings packed with finely minced fresh paneer, crisp veggies, and aromatic Himalayan herbs.",
+        tag: "Rich & Soft",
+        image: "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "mo-4",
+        name: "Paneer Veg Fry Peri Peri Momo",
+        category: "momos",
+        price: 80,
+        isVeg: true,
+        description: "Crispy fried paneer & veggie momos tossed in aromatic peri-peri spices for an extra flavorful punch.",
+        tag: "Bestseller",
+        image: "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-1",
+        name: "Vanilla Frappé",
+        category: "cold-coffee",
+        price: 119,
+        isVeg: true,
+        description: "Blended chilled coffee with creamy vanilla bean, milk, and whipped topping. (Extra Ice-cream +₹10)",
+        tag: "Bestseller",
+        image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-2",
+        name: "Iced Mocha",
+        category: "cold-coffee",
+        price: 109,
+        isVeg: true,
+        description: "Rich espresso combined with decadent dark chocolate and cold milk over ice. (Extra Ice-cream +₹10)",
+        tag: "Choco Treat",
+        image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-3",
+        name: "Iced Latte",
+        category: "cold-coffee",
+        price: 89,
+        isVeg: true,
+        description: "Smooth roasted espresso poured over chilled fresh milk and clear ice cubes.",
+        tag: "Classic Cold",
+        image: "https://images.unsplash.com/photo-1461023058943-07fcbe16d735?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-4",
+        name: "Iced Hazelnut Latte",
+        category: "cold-coffee",
+        price: 119,
+        isVeg: true,
+        description: "Aromatic roasted hazelnut essence infused into double-shot espresso and chilled milk on rocks.",
+        tag: "Nutty Flavor",
+        image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-5",
+        name: "Iced Cappuccino",
+        category: "cold-coffee",
+        price: 99,
+        isVeg: true,
+        description: "Cold frothed milk foam sitting atop bold espresso shots and chilled milk with cocoa dusting.",
+        tag: "Frothy Cold",
+        image: "https://images.unsplash.com/photo-1577968897966-3d4325b36b61?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-6",
+        name: "Special Coffee",
+        category: "cold-coffee",
+        price: 129,
+        isVeg: true,
+        description: "Brew Nagri's signature iced creation with caramel swirls, thick espresso cream, and whipped layers.",
+        tag: "House Special",
+        image: "https://images.unsplash.com/photo-1541167760496-1628856ab772?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cc-7",
+        name: "Ice Americano",
+        category: "cold-coffee",
+        price: 60,
+        isVeg: true,
+        description: "Double shot of rich roasted espresso poured over iced filtered water. Pure, bold, crisp coffee.",
+        tag: "Bold Brew",
+        image: "https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "cr-1",
+        name: "Lemon Buzz",
+        category: "refreshing",
+        price: 60,
+        isVeg: true,
+        description: "Freshly squeezed lemon, crushed mint leaves, rock salt, and chilled soda fizz. Super refreshing.",
+        tag: "Chilled Cooler",
+        image: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-3",
+        name: "Black Coffee",
+        category: "hot-beverages",
+        price: 35,
+        isVeg: true,
+        description: "A classic, strong cup of black coffee made from freshly ground roasted beans.",
+        tag: "Pure Roast",
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-4",
+        name: "Americano",
+        category: "hot-beverages",
+        price: 35,
+        isVeg: true,
+        description: "Hot water added to a shot of rich espresso for a lighter, yet bold coffee.",
+        tag: "Classic",
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-5",
+        name: "Espresso",
+        category: "hot-beverages",
+        price: 35,
+        isVeg: true,
+        description: "A concentrated shot of strong black coffee made by forcing hot water through finely-ground coffee beans.",
+        tag: "Intense",
+        image: "https://images.unsplash.com/photo-1510591509098-f4fdc6d0ff04?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-6",
+        name: "Latte",
+        category: "hot-beverages",
+        price: 49,
+        isVeg: true,
+        description: "Espresso combined with steamed milk and topped with a delicate velvety layer of foam.",
+        tag: "Smooth",
+        image: "https://images.unsplash.com/photo-1534778101976-62847782c213?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-7",
+        name: "Cappuccino",
+        category: "hot-beverages",
+        price: 59,
+        isVeg: true,
+        description: "Equal parts espresso, steamed milk, and airy froth for a rich and creamy texture.",
+        tag: "Favorite",
+        image: "https://images.unsplash.com/photo-1572442388796-11668a67e53d?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-8",
+        name: "Mocha",
+        category: "hot-beverages",
+        price: 69,
+        isVeg: true,
+        description: "Espresso combined with steamed milk, sweet melted chocolate, and finished with whipped cream.",
+        tag: "Chocolaty",
+        image: "https://images.unsplash.com/photo-1578314675249-a6910f80cc4e?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-9",
+        name: "White Chocolate Mocha",
+        category: "hot-beverages",
+        price: 69,
+        isVeg: true,
+        description: "A creamy mix of smooth artisan coffee and sweet white chocolate for a soft, cozy sip.",
+        tag: "Sweet Delight",
+        image: "https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-10",
+        name: "Caramel Macchiato",
+        category: "hot-beverages",
+        price: 69,
+        isVeg: true,
+        description: "Creamy coffee layered with soft golden caramel sweetness for an easy, comforting treat.",
+        tag: "Caramel Kiss",
+        image: "https://images.unsplash.com/photo-1485808191679-5f86510681a2?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-11",
+        name: "Strong Coffee",
+        category: "hot-beverages",
+        price: 60,
+        isVeg: true,
+        description: "Bold flavor with a deep, rich roasted taste that wakes you up fast.",
+        tag: "Energy Boost",
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-1",
+        name: "Melbourne Coffee",
+        category: "hot-beverages",
+        price: 70,
+        isVeg: true,
+        description: "Artisan espresso poured over silky, micro-textured steamed fresh milk with velvety latte foam.",
+        tag: "Signature",
+        image: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "hb-2",
+        name: "Hot Chocolate",
+        category: "hot-beverages",
+        price: 60,
+        isVeg: true,
+        description: "Rich dark cocoa melted into steamed creamy milk. Pure comfort in every sip.",
+        tag: "Comforting",
+        image: "https://images.unsplash.com/photo-1542990253-0d0f5be5f0ed?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sh-1",
+        name: "Oreo Shake",
+        category: "shakes",
+        price: 110,
+        isVeg: true,
+        description: "Creamy fresh milk blended thick with crunchy vegetarian Oreo biscuits and chocolate drizzle.",
+        tag: "Indulgent",
+        image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sh-2",
+        name: "Kit Kat Shake",
+        category: "shakes",
+        price: 110,
+        isVeg: true,
+        description: "Crispy Kit Kat chocolate wafers blended thick with rich vanilla ice cream and chocolate sauce.",
+        tag: "Crispy Shake",
+        image: "https://images.unsplash.com/photo-1579954115545-a95591f28bfc?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: "sh-3",
+        name: "Vanilla Shake",
+        category: "shakes",
+        price: 89,
+        isVeg: true,
+        description: "Velvety smooth thickshake blended with pure vanilla bean ice cream, crowned with fluffy whipped cream and a cherry.",
+        tag: "Classic Drink",
+        image: "images/vanilla-shake.jpg"
+      }
+    ];
+
+    let MENU_ITEMS = DEFAULT_MENU_ITEMS;
+    try {
+      const savedMenu = localStorage.getItem("brewnagri_custom_menu");
+      if (savedMenu) {
+        MENU_ITEMS = JSON.parse(savedMenu);
+      }
+    } catch(e) {
+      console.warn("Could not load stored menu", e);
+    }
+
+    function saveMenuToStorage() {
+      try {
+        localStorage.setItem("brewnagri_custom_menu", JSON.stringify(MENU_ITEMS));
+      } catch(e) {
+        console.warn("Storage quota exceeded", e);
+        showNotification("Notice: Storage full. Please use Backup JSON to save your items!");
+      }
+    }
+
+    // Owner Portal State & Passcode (5595)
+    let isOwnerAuthenticated = false;
+    let ownerSearchQuery = "";
+    let ownerCategoryFilter = "all";
+    let editingItemId = null;
+
+    function getOwnerPin() {
+      return "5595";
+    }
+
+    function switchAppTab(targetTab) {
+      if (targetTab === "owner") {
+        if (!isOwnerAuthenticated) {
+          openOwnerPinModal();
+          return;
+        }
+        activateOwnerTab();
+      } else {
+        activateCustomerTab();
+      }
+    }
+
+    function activateCustomerTab() {
+      const customerView = document.getElementById("customer-view");
+      const ownerView = document.getElementById("owner-view");
+      const tabBtnCustomer = document.getElementById("tab-btn-customer");
+      const tabBtnOwner = document.getElementById("tab-btn-owner");
+
+      if (customerView) customerView.classList.remove("hidden");
+      if (ownerView) ownerView.classList.add("hidden");
+
+      if (tabBtnCustomer) {
+        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1";
+      }
+      if (tabBtnOwner) {
+        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 flex items-center gap-1";
+      }
+      renderMenu();
+      lucide.createIcons();
+    }
+
+    function activateOwnerTab() {
+      const customerView = document.getElementById("customer-view");
+      const ownerView = document.getElementById("owner-view");
+      const tabBtnCustomer = document.getElementById("tab-btn-customer");
+      const tabBtnOwner = document.getElementById("tab-btn-owner");
+
+      if (customerView) customerView.classList.add("hidden");
+      if (ownerView) ownerView.classList.remove("hidden");
+
+      if (tabBtnOwner) {
+        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-coffee-950 text-amber-300 shadow-xs flex items-center gap-1";
+      }
+      if (tabBtnCustomer) {
+        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 flex items-center gap-1";
+      }
+      renderOwnerItems();
+      lucide.createIcons();
+    }
+
+    function openOwnerPinModal() {
+      const modal = document.getElementById("owner-pin-modal");
+      const input = document.getElementById("owner-pin-input");
+      const err = document.getElementById("owner-pin-error");
+      if (err) err.classList.add("hidden");
+      if (input) input.value = "";
+      if (modal) {
+        modal.classList.remove("hidden");
+        if (input) input.focus();
+        lucide.createIcons();
+      }
+    }
+
+    function closeOwnerPinModal() {
+      const modal = document.getElementById("owner-pin-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function verifyOwnerPin() {
+      const input = document.getElementById("owner-pin-input");
+      const err = document.getElementById("owner-pin-error");
+      if (!input) return;
+
+      const entered = input.value.trim();
+      const currentPin = getOwnerPin();
+
+      if (entered === currentPin) {
+        isOwnerAuthenticated = true;
+        closeOwnerPinModal();
+        activateOwnerTab();
+        showNotification("Owner management unlocked.");
+      } else {
+        if (err) {
+          err.textContent = "Incorrect passcode. Access denied.";
+          err.classList.remove("hidden");
+        }
+      }
+    }
+
+    function renderOwnerItems() {
+      const container = document.getElementById("owner-items-container");
+      if (!container) return;
+
+      const filtered = MENU_ITEMS.filter(item => {
+        const matchesCat = (ownerCategoryFilter === "all" || item.category === ownerCategoryFilter);
+        const matchesSearch = item.name.toLowerCase().includes(ownerSearchQuery.toLowerCase());
+        return matchesCat && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="p-8 text-center bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 text-stone-500">
+            No dishes matching your search. Click <strong>Add New Item</strong> above to create one!
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const isSoldOut = item.soldOut === true;
+
+        return `
+          <div class="p-3.5 bg-white dark:bg-stone-900 rounded-2xl border ${isSoldOut ? 'border-red-200 bg-red-50/20 opacity-80' : 'border-stone-200 dark:border-stone-800'} shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0">
+              <button 
+                type="button" 
+                onclick="openEditItemModal('${item.id}')" 
+                title="Click to change photo and details" 
+                class="relative w-14 h-14 rounded-xl bg-stone-100 dark:bg-stone-800 overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 group cursor-pointer">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100/3e2723/ffffff?text=Food'">
+                <div class="absolute inset-0 bg-stone-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
+                  <i data-lucide="camera" class="w-4 h-4"></i>
+                </div>
+              </button>
+
+              <div class="min-w-0">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  <h4 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100 truncate">${item.name}</h4>
+                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold uppercase">${item.category}</span>
+                  ${item.tag ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">${item.tag}</span>` : ''}
+                  ${isSoldOut ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 font-black">SOLD OUT</span>` : ''}
+                </div>
+                <p class="text-[11px] text-stone-500 dark:text-stone-400 truncate max-w-sm mt-0.5">${item.description || 'No description'}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 self-end sm:self-center flex-wrap">
+              <div class="flex items-center bg-stone-100 dark:bg-stone-800 rounded-xl p-1 border border-stone-300 dark:border-stone-700">
+                <span class="text-xs font-bold text-stone-500 px-1.5">₹</span>
+                <input 
+                  type="number" 
+                  min="1" 
+                  value="${item.price}" 
+                  id="price-input-${item.id}" 
+                  class="w-16 py-1 px-1 text-xs font-black text-coffee-950 dark:text-amber-100 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-center focus:outline-none focus:ring-1 focus:ring-coffee-600"
+                  onkeydown="if(event.key==='Enter') saveQuickPrice('${item.id}')"
+                >
+                <button onclick="saveQuickPrice('${item.id}')" class="ml-1 px-2 py-1 bg-coffee-800 hover:bg-coffee-900 text-amber-100 font-bold text-xs rounded-lg transition active:scale-95">
+                  Set
+                </button>
+              </div>
+
+              <button 
+                onclick="openEditItemModal('${item.id}')" 
+                title="Change Image & Edit Details"
+                class="px-2.5 py-1.5 bg-amber-50 dark:bg-stone-800 hover:bg-amber-100 text-coffee-900 dark:text-amber-200 border border-amber-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                <i data-lucide="image" class="w-3.5 h-3.5 text-amber-700 dark:text-amber-400"></i>
+                <span class="hidden md:inline">Change Photo</span>
+              </button>
+
+              <button 
+                onclick="toggleItemStock('${item.id}')" 
+                title="${isSoldOut ? 'Mark In Stock' : 'Mark Out of Stock'}"
+                class="p-2 rounded-xl text-xs font-bold transition border ${isSoldOut ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}">
+                <i data-lucide="${isSoldOut ? 'eye-off' : 'eye'}" class="w-3.5 h-3.5"></i>
+              </button>
+
+              <button 
+                onclick="deleteMenuItem('${item.id}')" 
+                title="Delete item"
+                class="p-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 border border-red-200 dark:border-red-900 rounded-xl transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+      lucide.createIcons();
+    }
+
+    function saveQuickPrice(itemId) {
+      const input = document.getElementById(`price-input-${itemId}`);
+      if (!input) return;
+
+      const newPrice = parseInt(input.value, 10);
+      if (isNaN(newPrice) || newPrice < 1) {
+        showNotification("Please enter a valid price.");
+        return;
+      }
+
+      const item = MENU_ITEMS.find(m => m.id === itemId);
+      if (item) {
+        item.price = newPrice;
+        saveMenuToStorage();
+        updateAllCartViews();
+        renderOwnerItems();
+        showNotification(`Price updated for ${item.name} to ₹${newPrice}!`);
+      }
+    }
+
+    function toggleItemStock(itemId) {
+      const item = MENU_ITEMS.find(m => m.id === itemId);
+      if (item) {
+        item.soldOut = !item.soldOut;
+        saveMenuToStorage();
+        updateAllCartViews();
+        renderOwnerItems();
+        showNotification(`${item.name} marked as ${item.soldOut ? 'Sold Out' : 'In Stock'}.`);
+      }
+    }
+
+    function deleteMenuItem(itemId) {
+      const item = MENU_ITEMS.find(m => m.id === itemId);
+      if (!item) return;
+
+      if (!confirm(`Are you sure you want to delete "${item.name}"?`)) {
+        return;
+      }
+
+      MENU_ITEMS = MENU_ITEMS.filter(m => m.id !== itemId);
+      if (cart[itemId]) {
+        delete cart[itemId];
+      }
+      saveMenuToStorage();
+      updateAllCartViews();
+      renderOwnerItems();
+      showNotification(`Deleted "${item.name}" from menu.`);
+    }
+
+    function openAddItemModal() {
+      editingItemId = null;
+      const modal = document.getElementById("add-item-modal");
+      const title = document.getElementById("add-item-modal-title");
+      const subtitle = document.getElementById("add-item-modal-subtitle");
+      const saveBtnLabel = document.getElementById("save-item-btn-label");
+      const nameInput = document.getElementById("new-item-name");
+      const categoryInput = document.getElementById("new-item-category");
+      const priceInput = document.getElementById("new-item-price");
+      const tagInput = document.getElementById("new-item-tag");
+      const descInput = document.getElementById("new-item-desc");
+      const urlInput = document.getElementById("new-item-image-url");
+      const fileInput = document.getElementById("new-item-file-input");
+      const previewImg = document.getElementById("new-item-preview-img");
+      const placeholder = document.getElementById("preview-placeholder-icon");
+
+      if (title) title.textContent = "Add New Menu Item";
+      if (subtitle) subtitle.textContent = "Set recipe details, pricing in ₹, and dish photo";
+      if (saveBtnLabel) saveBtnLabel.textContent = "Save to Menu";
+
+      if (nameInput) nameInput.value = "";
+      if (categoryInput) categoryInput.value = "burgers-sandwiches";
+      if (priceInput) priceInput.value = "";
+      if (tagInput) tagInput.value = "";
+      if (descInput) descInput.value = "";
+      if (urlInput) urlInput.value = "";
+      if (fileInput) fileInput.value = "";
+      if (previewImg) {
+        previewImg.src = "";
+        previewImg.classList.add("hidden");
+      }
+      if (placeholder) placeholder.classList.remove("hidden");
+
+      if (modal) {
+        modal.classList.remove("hidden");
+        if (nameInput) nameInput.focus();
+        lucide.createIcons();
+      }
+    }
+
+    function openEditItemModal(itemId) {
+      const item = MENU_ITEMS.find(m => m.id === itemId);
+      if (!item) return;
+
+      editingItemId = itemId;
+      const modal = document.getElementById("add-item-modal");
+      const title = document.getElementById("add-item-modal-title");
+      const subtitle = document.getElementById("add-item-modal-subtitle");
+      const saveBtnLabel = document.getElementById("save-item-btn-label");
+      const nameInput = document.getElementById("new-item-name");
+      const categoryInput = document.getElementById("new-item-category");
+      const priceInput = document.getElementById("new-item-price");
+      const tagInput = document.getElementById("new-item-tag");
+      const descInput = document.getElementById("new-item-desc");
+      const urlInput = document.getElementById("new-item-image-url");
+      const fileInput = document.getElementById("new-item-file-input");
+      const previewImg = document.getElementById("new-item-preview-img");
+      const placeholder = document.getElementById("preview-placeholder-icon");
+
+      if (title) title.textContent = `Edit Dish: ${item.name}`;
+      if (subtitle) subtitle.textContent = "Change dish photo, update price in ₹, or edit ingredients";
+      if (saveBtnLabel) saveBtnLabel.textContent = "Update Dish";
+
+      if (nameInput) nameInput.value = item.name;
+      if (categoryInput) categoryInput.value = item.category;
+      if (priceInput) priceInput.value = item.price;
+      if (tagInput) tagInput.value = item.tag || "";
+      if (descInput) descInput.value = item.description || "";
+      if (urlInput) urlInput.value = item.image || "";
+      if (fileInput) fileInput.value = "";
+
+      if (previewImg) {
+        previewImg.src = item.image || "";
+        previewImg.classList.remove("hidden");
+      }
+      if (placeholder) placeholder.classList.add("hidden");
+
+      if (modal) {
+        modal.classList.remove("hidden");
+        if (priceInput) priceInput.focus();
+        lucide.createIcons();
+      }
+    }
+
+    function closeAddItemModal() {
+      const modal = document.getElementById("add-item-modal");
+      if (modal) modal.classList.add("hidden");
+      editingItemId = null;
+    }
+
+    function saveMenuItemFromModal() {
+      const name = document.getElementById("new-item-name").value.trim();
+      const category = document.getElementById("new-item-category").value;
+      const price = parseInt(document.getElementById("new-item-price").value, 10);
+      const tag = document.getElementById("new-item-tag").value.trim();
+      const desc = document.getElementById("new-item-desc").value.trim();
+      const image = document.getElementById("new-item-image-url").value.trim() || "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&auto=format&fit=crop&q=80";
+
+      if (!name) {
+        showNotification("Please provide dish name.");
+        return;
+      }
+      if (isNaN(price) || price < 1) {
+        showNotification("Please specify a valid price.");
+        return;
+      }
+
+      if (editingItemId) {
+        const item = MENU_ITEMS.find(m => m.id === editingItemId);
+        if (item) {
+          item.name = name;
+          item.category = category;
+          item.price = price;
+          item.tag = tag || null;
+          item.description = desc;
+          item.image = image;
+
+          saveMenuToStorage();
+          closeAddItemModal();
+          updateAllCartViews();
+          renderOwnerItems();
+          showNotification(`Updated "${name}" photo and details successfully!`);
+        }
+      } else {
+        const newItem = {
+          id: "custom-" + Date.now(),
+          name: name,
+          category: category,
+          price: price,
+          isVeg: true,
+          tag: tag || null,
+          description: desc || "Freshly handcrafted pure vegetarian specialty.",
+          image: image
+        };
+
+        MENU_ITEMS.unshift(newItem);
+        saveMenuToStorage();
+        closeAddItemModal();
+        updateAllCartViews();
+        renderOwnerItems();
+        showNotification(`Added "${name}" (₹${price}) to the menu!`);
+      }
+    }
+
+    function exportMenuJson() {
+      const jsonStr = JSON.stringify(MENU_ITEMS, null, 2);
+      const tempInput = document.createElement("textarea");
+      tempInput.value = jsonStr;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showNotification("Menu JSON copied to clipboard! Ready to backup.");
+      } catch (err) {
+        showNotification("Could not auto-copy JSON.");
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function compressImageFile(file, maxWidth, maxHeight, quality, callback) {
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const img = new Image();
+        img.onload = function () {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          if (width > maxWidth) {
+            height = Math.round((height * maxWidth) / width);
+            width = maxWidth;
+          }
+          if (height > maxHeight) {
+            width = Math.round((width * maxHeight) / height);
+            height = maxHeight;
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          callback(canvas.toDataURL("image/jpeg", quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Logo Management Functions
+    function openChangeLogoModal() {
+      const modal = document.getElementById("change-logo-modal");
+      const preview = document.getElementById("logo-modal-preview-img");
+      const urlInput = document.getElementById("new-logo-url-input");
+      const fileInput = document.getElementById("new-logo-file-input");
+
+      if (preview) preview.src = currentLogo;
+      if (urlInput) urlInput.value = currentLogo;
+      if (fileInput) fileInput.value = "";
+
+      if (modal) {
+        modal.classList.remove("hidden");
+        lucide.createIcons();
+      }
+    }
+
+    function closeChangeLogoModal() {
+      const modal = document.getElementById("change-logo-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function saveNewLogo() {
+      const urlInput = document.getElementById("new-logo-url-input");
+      const newLogoVal = urlInput ? urlInput.value.trim() : "";
+
+      if (!newLogoVal) {
+        showNotification("Please provide an image URL or choose a photo.");
+        return;
+      }
+
+      updateLogoEverywhere(newLogoVal);
+      closeChangeLogoModal();
+      showNotification("Café logo updated successfully across the entire site!");
+    }
+
+    function resetToDefaultLogo() {
+      if (confirm("Reset café logo back to the original Brew Nagri sign?")) {
+        updateLogoEverywhere(DEFAULT_LOGO);
+        closeChangeLogoModal();
+        showNotification("Restored default café logo sign.");
+      }
+    }
+
+    // Payment QR Code Management Functions
+    function openChangePaymentQrModal() {
+      const modal = document.getElementById("change-payment-qr-modal");
+      const preview = document.getElementById("payment-qr-preview-img");
+      const urlInput = document.getElementById("new-payment-qr-url-input");
+      const fileInput = document.getElementById("new-payment-qr-file-input");
+
+      if (preview) preview.src = currentPaymentQr;
+      if (urlInput) urlInput.value = currentPaymentQr;
+      if (fileInput) fileInput.value = "";
+
+      if (modal) {
+        modal.classList.remove("hidden");
+        lucide.createIcons();
+      }
+    }
+
+    function closeChangePaymentQrModal() {
+      const modal = document.getElementById("change-payment-qr-modal");
+      if (modal) modal.classList.add("hidden");
+    }
+
+    function saveNewPaymentQr() {
+      const urlInput = document.getElementById("new-payment-qr-url-input");
+      const newQrVal = urlInput ? urlInput.value.trim() : "";
+
+      if (!newQrVal) {
+        showNotification("Please provide a QR image URL or upload an image.");
+        return;
+      }
+
+      updatePaymentQrEverywhere(newQrVal);
+      closeChangePaymentQrModal();
+      showNotification("UPI Payment QR Code updated successfully!");
+    }
+
+    function resetToDefaultPaymentQr() {
+      if (confirm("Reset Payment QR image back to the default PhonePe QR?")) {
+        updatePaymentQrEverywhere(DEFAULT_PAYMENT_QR);
+        closeChangePaymentQrModal();
+        showNotification("Restored default PhonePe QR Code.");
+      }
+    }
+
+    let activeCategory = "all";
+    let searchQuery = "";
+    let tableNumber = localStorage.getItem("brewnagri_table") || "";
+    let customerName = localStorage.getItem("brewnagri_name") || "";
+    let qrCodeInstance = null;
+
+    function generateQRCode() {
+      const container = document.getElementById("qrcode-canvas-container");
+      if (!container) return;
+      
+      container.innerHTML = "";
+
+      const tableSelect = document.getElementById("qr-table-select");
+      const targetType = document.getElementById("qr-target-type");
+      const baseUrlInput = document.getElementById("qr-base-url-input");
+      const tableLabel = document.getElementById("card-table-label");
+
+      const selectedTable = tableSelect ? tableSelect.value : "General Menu";
+      const mode = targetType ? targetType.value : "menu";
+
+      if (tableLabel) {
+        tableLabel.innerText = selectedTable;
+      }
+
+      let targetUrl = "";
+
+      if (mode === "whatsapp") {
+        targetUrl = `https://wa.me/${CAFE_CONFIG.whatsappUsername}?text=${encodeURIComponent(`Hi Brew Nagri! I am at ${selectedTable}. Please share the specials.`)}`;
+      } else {
+        const base = baseUrlInput && baseUrlInput.value.trim() 
+          ? baseUrlInput.value.trim() 
+          : window.location.origin + window.location.pathname;
+
+        if (selectedTable === "General Menu") {
+          targetUrl = base;
+        } else {
+          const sep = base.includes("?") ? "&" : "?";
+          targetUrl = `${base}${sep}table=${encodeURIComponent(selectedTable)}`;
+        }
+      }
+
+      if (typeof QRCode !== "undefined") {
+        qrCodeInstance = new QRCode(container, {
+          text: targetUrl,
+          width: 150,
+          height: 150,
+          colorDark: "#25120e",
+          colorLight: "#ffffff",
+          correctLevel: QRCode.CorrectLevel.H
+        });
+      }
+    }
+
+    let cart = {};
+
+    try {
+      const savedCart = sessionStorage.getItem("brewnagri_cart");
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+      }
+    } catch(e) {
+      console.warn("Could not restore session cart", e);
+    }
+
+    function saveCartState() {
+      try {
+        sessionStorage.setItem("brewnagri_cart", JSON.stringify(cart));
+      } catch(e) {}
+    }
+
+    function renderCategories() {
+      const container = document.getElementById("category-tabs-container");
+      if (!container) return;
+      container.innerHTML = CATEGORIES.map(cat => {
+        const isActive = cat.id === activeCategory;
+        const activeClass = isActive 
+          ? "bg-coffee-800 text-amber-100 dark:bg-amber-400 dark:text-stone-950 shadow-xs scale-100" 
+          : "bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 hover:bg-stone-200/70 dark:hover:bg-stone-800 border border-stone-200 dark:border-stone-700";
+        return `
+          <button 
+            onclick="setCategory('${cat.id}')"
+            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${activeClass}">
+            <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
+            <span>${cat.label}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function setCategory(id) {
+      activeCategory = id;
+      renderCategories();
+      renderMenu();
+      updateFilterBanner();
+      lucide.createIcons();
+    }
+
+    function renderMenu() {
+      const grid = document.getElementById("menu-grid");
+      const emptyState = document.getElementById("no-items-state");
+      if (!grid) return;
+
+      const filtered = MENU_ITEMS.filter(item => {
+        const matchesCategory = (activeCategory === "all" || item.category === activeCategory);
+        const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                              item.description.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCategory && matchesSearch;
+      });
+
+      if (filtered.length === 0) {
+        grid.innerHTML = "";
+        if (emptyState) emptyState.classList.remove("hidden");
+        return;
+      }
+
+      if (emptyState) emptyState.classList.add("hidden");
+
+      grid.innerHTML = filtered.map(item => {
+        const qtyInCart = cart[item.id] || 0;
+        const isSoldOut = item.soldOut === true;
+
+        return `
+          <div class="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-stone-800 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group ${isSoldOut ? 'opacity-60' : ''}">
+            
+            <div class="relative h-44 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+              <img 
+                src="${item.image}" 
+                alt="${item.name}" 
+                loading="lazy"
+                onerror="this.onerror=null;this.src='https://placehold.co/600x400/3e2723/ffffff?text=${encodeURIComponent(item.name)}';" 
+                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+              />
+              
+              <div class="absolute top-3 left-3 bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm p-1 rounded-md shadow-xs flex items-center justify-center" title="100% Pure Vegetarian">
+                <div class="w-4 h-4 rounded-xs flex items-center justify-center badge-veg">
+                  <span class="w-2 h-2 rounded-full badge-veg-dot"></span>
+                </div>
+              </div>
+
+              ${item.tag ? `
+                <div class="absolute top-3 right-3 bg-coffee-950/80 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                  ${item.tag}
+                </div>
+              ` : ''}
+
+              <div class="absolute bottom-2.5 right-2.5 bg-stone-900/85 backdrop-blur-sm text-white font-extrabold px-3 py-1 rounded-xl text-sm shadow-xs">
+                ${CAFE_CONFIG.currencySymbol}${item.price}
+              </div>
+            </div>
+
+            <div class="p-4 flex-1 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between">
+                  <h3 class="font-heading font-bold text-base text-coffee-950 dark:text-amber-100 leading-snug group-hover:text-coffee-700 dark:group-hover:text-amber-300 transition">
+                    ${item.name}
+                  </h3>
+                  ${isSoldOut ? `<span class="text-[9px] px-1.5 py-0.5 rounded bg-red-100 text-red-700 font-black uppercase">Sold Out</span>` : ''}
+                </div>
+                <p class="text-xs text-stone-500 dark:text-stone-400 mt-1 line-clamp-2 leading-relaxed">
+                  ${item.description}
+                </p>
+              </div>
+
+              <div class="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+                <span class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pure Veg
+                </span>
+
+                ${isSoldOut ? `
+                  <span class="text-xs text-red-600 font-bold">Currently Unavailable</span>
+                ` : qtyInCart > 0 ? `
+                  <div class="flex items-center bg-coffee-100 dark:bg-stone-800 border border-coffee-300 dark:border-stone-700 rounded-xl p-1 gap-2 shadow-xs">
+                    <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-7 h-7 rounded-lg bg-white dark:bg-stone-700 text-coffee-900 dark:text-stone-100 hover:bg-coffee-200 flex items-center justify-center font-bold text-sm shadow-xs transition active:scale-90">
+                      -
+                    </button>
+                    <span class="text-xs font-extrabold text-coffee-950 dark:text-amber-300 px-1">${qtyInCart}</span>
+                    <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-7 h-7 rounded-lg bg-coffee-800 dark:bg-amber-400 text-white dark:text-stone-950 hover:bg-coffee-900 flex items-center justify-center font-bold text-sm shadow-xs transition active:scale-90">
+                      +
+                    </button>
+                  </div>
+                ` : `
+                  <button 
+                    onclick="incrementItem('${item.id}')" 
+                    class="px-4 py-2 bg-coffee-50 dark:bg-stone-800 hover:bg-coffee-800 dark:hover:bg-amber-400 text-coffee-800 dark:text-stone-200 hover:text-white dark:hover:text-stone-950 border border-coffee-300 dark:border-stone-700 hover:border-transparent font-bold text-xs rounded-xl transition-all duration-200 flex items-center gap-1.5 active:scale-95 shadow-xs">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span>Add</span>
+                  </button>
+                `}
+              </div>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+    }
+
+    function incrementItem(id) {
+      cart[id] = (cart[id] || 0) + 1;
+      saveCartState();
+      updateAllCartViews();
+    }
+
+    function decrementItem(id) {
+      if (!cart[id]) return;
+      cart[id]--;
+      if (cart[id] <= 0) {
+        delete cart[id];
+      }
+      saveCartState();
+      updateAllCartViews();
+    }
+
+    function removeItemCompletely(id) {
+      delete cart[id];
+      saveCartState();
+      updateAllCartViews();
+    }
+
+    function calculateCartSummary() {
+      let totalCount = 0;
+      let totalPrice = 0;
+
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = MENU_ITEMS.find(m => m.id === id);
+        if (item) {
+          totalCount += qty;
+          totalPrice += item.price * qty;
+        }
+      }
+
+      return { totalCount, totalPrice };
+    }
+
+    function updateAllCartViews() {
+      const { totalCount, totalPrice } = calculateCartSummary();
+
+      const badge = document.getElementById("cart-badge");
+      if (badge) badge.innerText = totalCount;
+
+      const floatBadge = document.getElementById("float-badge-count");
+      if (floatBadge) floatBadge.innerText = totalCount;
+
+      const floatTotal = document.getElementById("float-total-price");
+      if (floatTotal) floatTotal.innerText = `${CAFE_CONFIG.currencySymbol}${totalPrice}`;
+      
+      const drawerSub = document.getElementById("drawer-subtotal");
+      if (drawerSub) drawerSub.innerText = `${CAFE_CONFIG.currencySymbol}${totalPrice}`;
+
+      const drawerGrand = document.getElementById("drawer-grand-total");
+      if (drawerGrand) drawerGrand.innerText = `${CAFE_CONFIG.currencySymbol}${totalPrice}`;
+
+      const subTitle = document.getElementById("cart-items-subtitle");
+      if (subTitle) subTitle.innerText = `${totalCount} item${totalCount === 1 ? '' : 's'} in order`;
+
+      const qrModalAmount = document.getElementById("qr-modal-amount");
+      if (qrModalAmount) {
+        qrModalAmount.innerText = `${CAFE_CONFIG.currencySymbol}${totalPrice}`;
+      }
+
+      const floatingBar = document.getElementById("floating-cart-bar");
+      if (floatingBar) {
+        if (totalCount > 0) {
+          floatingBar.classList.remove("translate-y-32");
+        } else {
+          floatingBar.classList.add("translate-y-32");
+        }
+      }
+
+      renderMenu();
+      renderCartDrawerItems();
+      lucide.createIcons();
+    }
+
+    function renderCartDrawerItems() {
+      const container = document.getElementById("cart-items-container");
+      if (!container) return;
+      const cartKeys = Object.keys(cart);
+
+      if (cartKeys.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-stone-400">
+            <div class="w-14 h-14 mx-auto mb-2.5 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400">
+              <i data-lucide="shopping-bag" class="w-7 h-7"></i>
+            </div>
+            <p class="font-heading font-semibold text-stone-600 dark:text-stone-300">Your tray is empty</p>
+            <p class="text-xs text-stone-400 mt-0.5">Pick your favorite coffee, burger, or snack from the menu!</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = cartKeys.map(id => {
+        const item = MENU_ITEMS.find(m => m.id === id);
+        if (!item) return '';
+        const qty = cart[id];
+        const lineTotal = item.price * qty;
+
+        return `
+          <div class="flex items-center justify-between p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800/60 border border-stone-200/80 dark:border-stone-700 gap-2.5">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <div class="w-11 h-11 rounded-lg bg-stone-200 overflow-hidden shrink-0">
+                <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover">
+              </div>
+              <div class="min-w-0">
+                <h4 class="text-xs font-bold text-coffee-950 dark:text-amber-100 truncate">${item.name}</h4>
+                <p class="text-[10px] text-stone-500">${CAFE_CONFIG.currencySymbol}${item.price} each</p>
+                <p class="text-xs font-extrabold text-coffee-800 dark:text-amber-300">${CAFE_CONFIG.currencySymbol}${lineTotal}</p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-1.5">
+              <div class="flex items-center bg-white dark:bg-stone-700 border border-stone-300 dark:border-stone-600 rounded-lg p-0.5">
+                <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100">
+                  -
+                </button>
+                <span class="text-xs font-bold px-1.5 text-stone-800 dark:text-stone-100">${qty}</span>
+                <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold text-coffee-900 dark:text-amber-300 hover:bg-coffee-100">
+                  +
+                </button>
+              </div>
+              <button onclick="removeItemCompletely('${item.id}')" class="text-stone-400 hover:text-red-600 p-1 transition" title="Remove item">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function generateWhatsAppOrderMessage() {
+      const { totalCount, totalPrice } = calculateCartSummary();
+      if (totalCount === 0) return null;
+
+      const customer = document.getElementById("order-customer-name").value.trim() || "Guest";
+      const table = document.getElementById("order-table-input").value.trim() || "Dine-in / Takeaway";
+      const notes = document.getElementById("order-notes-input").value.trim();
+
+      const paymentMethodRadio = document.querySelector('input[name="payment-method"]:checked');
+      const paymentMethod = paymentMethodRadio ? paymentMethodRadio.value : "upi";
+      const utrInput = document.getElementById("upi-utr-input");
+      const utrNumber = utrInput ? utrInput.value.trim() : "";
+
+      localStorage.setItem("brewnagri_name", customer);
+      localStorage.setItem("brewnagri_table", table);
+
+      let text = `☕ *NEW ORDER - ${CAFE_CONFIG.name.toUpperCase()} (@${CAFE_CONFIG.whatsappUsername})*\n`;
+      text += `📍 *Location:* Hatia Rd, Tilkamanjhi, Bhagalpur\n`;
+      text += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `👤 *Customer:* ${customer}\n`;
+      text += `📍 *Table/Type:* ${table}\n`;
+      text += `🕒 *Time:* ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}\n`;
+      
+      if (paymentMethod === "upi") {
+        text += `💳 *Payment Mode:* PhonePe UPI QR (Terminal 9-Q146271805)\n`;
+        if (utrNumber) {
+          text += `🔢 *UPI Ref / UTR:* ${utrNumber}\n`;
+        } else {
+          text += `📌 *Payment Status:* Paid via PhonePe QR / Receipt attached\n`;
+        }
+      } else {
+        text += `💵 *Payment Mode:* Pay at Counter (Cash / Card)\n`;
+      }
+      text += `━━━━━━━━━━━━━━━━━━━━━\n\n`;
+      text += `📋 *ORDER DETAILS (100% Pure Veg):*\n`;
+
+      let index = 1;
+      for (const [id, qty] of Object.entries(cart)) {
+        const item = MENU_ITEMS.find(m => m.id === id);
+        if (item) {
+          text += `${index}. *${item.name}* x ${qty} = ${CAFE_CONFIG.currencySymbol}${item.price * qty}\n`;
+          index++;
+        }
+      }
+
+      text += `\n💰 *Total Amount:* ${CAFE_CONFIG.currencySymbol}${totalPrice}\n`;
+
+      if (notes) {
+        text += `\n📝 *Notes/Customization:* ${notes}\n`;
+      }
+
+      text += `\n━━━━━━━━━━━━━━━━━━━━━\n`;
+      text += `_Sent via Brew Nagri Digital Menu_`;
+
+      return encodeURIComponent(text);
+    }
+
+    function handleWhatsAppOrder() {
+      const encodedMsg = generateWhatsAppOrderMessage();
+      if (!encodedMsg) {
+        showNotification("Your tray is currently empty. Please add items first!");
+        return;
+      }
+
+      const waTarget = CAFE_CONFIG.whatsappUsername;
+      const waUrl = `https://wa.me/${waTarget}?text=${encodedMsg}`;
+      window.open(waUrl, '_blank');
+    }
+
+    function showNotification(msg) {
+      const existing = document.getElementById("brew-toast");
+      if (existing) existing.remove();
+
+      const toast = document.createElement("div");
+      toast.id = "brew-toast";
+      toast.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl transition-all duration-300 border border-stone-700 flex items-center gap-2";
+      toast.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i> <span>${msg}</span>`;
+      document.body.appendChild(toast);
+      lucide.createIcons();
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        setTimeout(() => toast.remove(), 300);
+      }, 3000);
+    }
+
+    function updateFilterBanner() {
+      const banner = document.getElementById("filter-indicator");
+      const text = document.getElementById("filter-indicator-text");
+      if (!banner || !text) return;
+      const isFiltered = activeCategory !== "all" || searchQuery !== "";
+
+      if (isFiltered) {
+        banner.classList.remove("hidden");
+        let desc = [];
+        if (activeCategory !== "all") {
+          const cat = CATEGORIES.find(c => c.id === activeCategory);
+          desc.push(`Category: ${cat ? cat.label : activeCategory}`);
+        }
+        if (searchQuery) desc.push(`"${searchQuery}"`);
+
+        text.textContent = `Active Filters: ${desc.join(' • ')}`;
+      } else {
+        banner.classList.add("hidden");
+      }
+    }
+
+    function clearAllFilters() {
+      activeCategory = "all";
+      searchQuery = "";
+      const searchInput = document.getElementById("menu-search-input");
+      if (searchInput) searchInput.value = "";
+      renderCategories();
+      renderMenu();
+      updateFilterBanner();
+      lucide.createIcons();
+    }
+
+    // Feedback Modal State
+    let selectedRating = 5;
+    let selectedFeedbackTags = [];
+
+    function toggleFeedbackTag(btn, tag) {
+      const idx = selectedFeedbackTags.indexOf(tag);
+      if (idx > -1) {
+        selectedFeedbackTags.splice(idx, 1);
+        btn.classList.remove("bg-amber-400", "text-coffee-950", "border-amber-500");
+        btn.classList.add("bg-stone-100", "dark:bg-stone-800");
+      } else {
+        selectedFeedbackTags.push(tag);
+        btn.classList.add("bg-amber-400", "text-coffee-950", "border-amber-500");
+        btn.classList.remove("bg-stone-100", "dark:bg-stone-800");
+      }
+    }
+
+    function updateRatingDisplay(val) {
+      selectedRating = val;
+      const stars = document.querySelectorAll(".star-btn");
+      stars.forEach((s, idx) => {
+        if (idx < val) {
+          s.classList.remove("text-stone-300");
+          s.classList.add("text-amber-400");
+        } else {
+          s.classList.remove("text-amber-400");
+          s.classList.add("text-stone-300");
+        }
+      });
+      const lbl = document.getElementById("star-rating-label");
+      if (lbl) lbl.textContent = `${val} out of 5 stars`;
+    }
+
+    function submitFeedbackViaWhatsApp() {
+      const name = document.getElementById("feedback-name").value.trim() || "Valued Guest";
+      const notes = document.getElementById("feedback-notes").value.trim();
+      const starsStr = "⭐".repeat(selectedRating);
+
+      let msg = `🌟 *CUSTOMER FEEDBACK - BREW NAGRI (@BrewNagribgp)*\n`;
+      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      msg += `👤 *Customer:* ${name}\n`;
+      msg += `✨ *Rating:* ${starsStr} (${selectedRating}/5)\n`;
+      if (selectedFeedbackTags.length > 0) {
+        msg += `❤️ *Highlights:* ${selectedFeedbackTags.join(", ")}\n`;
+      }
+      if (notes) {
+        msg += `💬 *Comments:* "${notes}"\n`;
+      }
+      msg += `━━━━━━━━━━━━━━━━━━━━━\n`;
+      msg += `_Sent via Brew Nagri Digital Menu_`;
+
+      const modal = document.getElementById("feedback-modal");
+      if (modal) modal.classList.add("hidden");
+
+      window.open(`https://wa.me/${CAFE_CONFIG.whatsappUsername}?text=${encodeURIComponent(msg)}`, '_blank');
+      showNotification("Thank you for your feedback!");
+    }
+
+    async function callGeminiAPI(userQuery, systemPrompt) {
+      const apiKey = "";
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKey}`;
+
+      const payload = {
+        contents: [{ parts: [{ text: userQuery }] }],
+        systemInstruction: {
+          parts: [{ text: systemPrompt }]
+        }
+      };
+
+      const maxRetries = 3;
+      let delay = 1000;
+
+      for (let attempt = 0; attempt < maxRetries; attempt++) {
+        try {
+          const response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error ${response.status}`);
+          }
+
+          const result = await response.json();
+          const text = result?.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text;
+          throw new Error("No text candidate returned from Gemini");
+        } catch (err) {
+          if (attempt === maxRetries - 1) throw err;
+          await new Promise(res => setTimeout(res, delay));
+          delay *= 2;
+        }
+      }
+    }
+
+    function getMenuGroundingContext() {
+      return MENU_ITEMS.map(item => {
+        return `- ID: ${item.id} | Name: "${item.name}" | Category: ${item.category} | Price: ₹${item.price} | Veg: Yes | Description: ${item.description}`;
+      }).join("\n");
+    }
+
+    async function askAIBarista(userMessage) {
+      const conversationBox = document.getElementById("ai-conversation-box");
+      const sendBtn = document.getElementById("ai-send-btn");
+      const input = document.getElementById("ai-user-input");
+      if (!conversationBox) return;
+
+      const userBubble = document.createElement("div");
+      userBubble.className = "flex items-start justify-end gap-2.5";
+      userBubble.innerHTML = `
+        <div class="bg-coffee-800 text-amber-50 rounded-2xl rounded-tr-none p-3.5 text-xs leading-relaxed max-w-[85%] shadow-xs font-medium">
+          ${userMessage}
+        </div>
+      `;
+      conversationBox.appendChild(userBubble);
+      conversationBox.scrollTop = conversationBox.scrollHeight;
+
+      const loadingBubble = document.createElement("div");
+      loadingBubble.className = "flex items-start gap-2.5";
+      loadingBubble.id = "ai-loading-bubble";
+      loadingBubble.innerHTML = `
+        <div class="w-7 h-7 rounded-lg bg-coffee-800 text-amber-200 flex items-center justify-center shrink-0 text-xs">
+          <i data-lucide="bot" class="w-4 h-4 animate-spin"></i>
+        </div>
+        <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3 text-stone-600 dark:text-stone-300 text-xs flex items-center gap-2 border border-stone-200 dark:border-stone-700">
+          <span>Barista Autobot is matching your mood with the kitchen recipes...</span>
+        </div>
+      `;
+      conversationBox.appendChild(loadingBubble);
+      conversationBox.scrollTop = conversationBox.scrollHeight;
+      lucide.createIcons();
+
+      if (sendBtn) sendBtn.disabled = true;
+      if (input) input.disabled = true;
+
+      const systemPrompt = `You are the empathetic, witty, and master Autobot Barista & Chef at "Brew Nagri Café" (Hatia Rd, Tilkamanjhi, Bhagalpur).
+Our kitchen is strictly 100% PURE VEGETARIAN (no eggs, no meat, no poultry, pure dairy, fresh veggies).
+
+Here is our official menu:
+${getMenuGroundingContext()}
+
+AUTOBOT MOOD-MATCHING RULES:
+1. Act as a warm, lively café concierge who intuitively interprets moods, emotions, cravings, and energy levels:
+   - Exhausted/Tired/Exam study: Recommend high-energy roasts (Strong Coffee, Ice Americano, Espresso) + protein or crispy bite.
+   - Rainy/Cozy/Nostalgic: Recommend piping-hot noodles (Sweet Corn Maggi, Veg Maggi, Bun Maska, Melbourne Coffee).
+   - Spicy/Fiery/Crunchy: Recommend French Fries Peri Peri, Paneer Veg Fry Peri Peri Momo, or spicy Wai Wai Chaat.
+   - Cheesy/Comfort: Recommend Cheese Maggie, Corn Cheese Maggie, Mushroom Sandwich.
+   - Sweet/Chocolate/Happy: Recommend Oreo Shake, Kit Kat Shake, Vanilla Frappé, or Hot Chocolate.
+   - Budget < ₹100: Suggest combos totaling under ₹100 (e.g. Bun Maska ₹50 + Espresso ₹35, or Veg Steam Momos ₹50 + Sweet Corn Chaat ₹40).
+2. Keep the answer upbeat and brief (2-3 concise conversational sentences explaining WHY this matches their mood).
+3. At the end of your response, ALWAYS append the machine tag format: [RECOMMEND:id1,id2] with 1 or 2 exact menu item IDs matching your suggestion. Never invent IDs outside the menu.`;
+
+      try {
+        const response = await callGeminiAPI(userMessage, systemPrompt);
+        if (loadingBubble) loadingBubble.remove();
+
+        let cleanText = response;
+        let recommendedIds = [];
+        const match = response.match(/\[RECOMMEND:([^\]]+)\]/);
+        if (match) {
+          cleanText = response.replace(match[0], "").trim();
+          recommendedIds = match[1].split(',').map(s => s.trim());
+        }
+
+        const botBubble = document.createElement("div");
+        botBubble.className = "flex items-start gap-2.5";
+
+        let itemsHtml = "";
+        recommendedIds.forEach(id => {
+          const item = MENU_ITEMS.find(m => m.id === id);
+          if (item) {
+            itemsHtml += `
+              <div class="mt-2 p-2 bg-white dark:bg-stone-700 rounded-xl border border-stone-200 dark:border-stone-600 flex items-center justify-between gap-2 shadow-xs">
+                <div class="min-w-0">
+                  <p class="font-bold text-coffee-950 dark:text-amber-100 text-xs truncate">${item.name}</p>
+                  <p class="text-[11px] text-stone-500 dark:text-stone-300">${CAFE_CONFIG.currencySymbol}${item.price}</p>
+                </div>
+                <button onclick="incrementItem('${item.id}'); showNotification('Added ${item.name} to tray!');" class="px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-[11px] rounded-lg transition active:scale-95 flex items-center gap-1 shrink-0">
+                  <i data-lucide="plus" class="w-3 h-3"></i>
+                  <span>Add</span>
+                </button>
+              </div>
+            `;
+          }
+        });
+
+        botBubble.innerHTML = `
+          <div class="w-7 h-7 rounded-lg bg-coffee-800 text-amber-200 flex items-center justify-center shrink-0 text-xs">
+            <i data-lucide="coffee" class="w-4 h-4"></i>
+          </div>
+          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3.5 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[85%] border border-stone-200 dark:border-stone-700">
+            <p>${cleanText.replace(/\n/g, '<br>')}</p>
+            ${itemsHtml}
+          </div>
+        `;
+        conversationBox.appendChild(botBubble);
+        lucide.createIcons();
+      } catch (err) {
+        if (loadingBubble) loadingBubble.remove();
+        const errBubble = document.createElement("div");
+        errBubble.className = "flex items-start gap-2.5";
+        errBubble.innerHTML = `
+          <div class="w-7 h-7 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0 text-xs">
+            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+          </div>
+          <div class="bg-red-50 text-red-700 rounded-2xl rounded-tl-none p-3 text-xs border border-red-200">
+            Could not connect to the recipes right now. Please try again!
+          </div>
+        `;
+        conversationBox.appendChild(errBubble);
+        lucide.createIcons();
+      } finally {
+        if (sendBtn) sendBtn.disabled = false;
+        if (input) {
+          input.disabled = false;
+          input.focus();
+        }
+        conversationBox.scrollTop = conversationBox.scrollHeight;
+      }
+    }
+
+    async function handleCartPairing() {
+      const resultBox = document.getElementById("cart-ai-result");
+      if (!resultBox) return;
+      const currentCartKeys = Object.keys(cart);
+
+      if (currentCartKeys.length === 0) {
+        resultBox.classList.remove("hidden");
+        resultBox.innerHTML = `<span class="text-stone-500 italic">Add at least one item to your tray first, and I will recommend its best pure veg match!</span>`;
+        return;
+      }
+
+      resultBox.classList.remove("hidden");
+      resultBox.innerHTML = `
+        <div class="flex items-center gap-2 text-stone-600 dark:text-stone-300">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500 animate-spin"></i>
+          <span>Chef is analyzing your tray flavors...</span>
+        </div>
+      `;
+      lucide.createIcons();
+
+      const cartItemsSummary = currentCartKeys.map(id => {
+        const item = MENU_ITEMS.find(m => m.id === id);
+        return `${item.name} (${item.category})`;
+      }).join(", ");
+
+      const systemPrompt = `You are a sommelier at Brew Nagri Cafe (100% pure veg).
+Given the customer's current tray: "${cartItemsSummary}".
+Recommend exactly ONE complementary item from our menu that is not already in their tray.
+Menu options:
+${getMenuGroundingContext()}
+
+Format response as:
+Explanation (1 concise sentence why this pairs great).
+[RECOMMEND:itemId]`;
+
+      try {
+        const response = await callGeminiAPI(`What should I pair with: ${cartItemsSummary}?`, systemPrompt);
+        let cleanText = response;
+        let matchId = null;
+        const match = response.match(/\[RECOMMEND:([^\]]+)\]/);
+        if (match) {
+          cleanText = response.replace(match[0], "").trim();
+          matchId = match[1].trim();
+        }
+
+        const suggestedItem = MENU_ITEMS.find(m => m.id === matchId);
+        if (suggestedItem) {
+          resultBox.innerHTML = `
+            <p class="text-stone-700 dark:text-stone-300 font-medium">${cleanText}</p>
+            <div class="mt-2 pt-2 border-t border-amber-200/60 flex items-center justify-between">
+              <div>
+                <span class="font-bold text-coffee-950 dark:text-amber-100">${suggestedItem.name}</span>
+                <span class="text-stone-500 ml-1">(${CAFE_CONFIG.currencySymbol}${suggestedItem.price})</span>
+              </div>
+              <button onclick="incrementItem('${suggestedItem.id}'); showNotification('Added ${suggestedItem.name} to tray!');" class="px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold rounded-lg text-xs transition active:scale-95 flex items-center gap-1">
+                <i data-lucide="plus" class="w-3 h-3"></i>
+                <span>Add Pair</span>
+              </button>
+            </div>
+          `;
+        } else {
+          resultBox.innerHTML = `<p class="text-stone-700 dark:text-stone-300">${cleanText}</p>`;
+        }
+        lucide.createIcons();
+      } catch (e) {
+        resultBox.innerHTML = `<span class="text-stone-500">Could not generate pairing recommendation right now.</span>`;
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      initTheme();
+      updateLogoEverywhere(currentLogo);
+      updatePaymentQrEverywhere(currentPaymentQr);
+      lucide.createIcons();
+
+      const themeToggleBtn = document.getElementById("theme-toggle-btn");
+      if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", toggleTheme);
+      }
+
+      renderCategories();
+      renderMenu();
+      updateAllCartViews();
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const scannedTable = urlParams.get("table");
+      if (scannedTable) {
+        tableNumber = scannedTable;
+        localStorage.setItem("brewnagri_table", scannedTable);
+        showNotification(`Welcome to ${scannedTable}! Tray initialized.`);
+      }
+
+      if (tableNumber) {
+        const qTable = document.getElementById("quick-table-input");
+        const oTable = document.getElementById("order-table-input");
+        if (qTable) qTable.value = tableNumber;
+        if (oTable) oTable.value = tableNumber;
+      }
+      if (customerName) {
+        const cName = document.getElementById("order-customer-name");
+        if (cName) cName.value = customerName;
+      }
+
+      // Payment Gateway Modal
+      const paymentModal = document.getElementById("payment-gateway-modal");
+      const openPaymentBtn = document.getElementById("open-payment-modal-btn");
+      const triggerPayQrBtn = document.getElementById("trigger-pay-qr-btn");
+      const drawerViewQrBtn = document.getElementById("drawer-view-qr-btn");
+      const closePaymentBtn = document.getElementById("close-payment-modal-btn");
+      const dismissPaymentBtn = document.getElementById("dismiss-payment-modal-btn");
+      const confirmPaymentBtn = document.getElementById("confirm-payment-order-btn");
+
+      function openPaymentGateway() {
+        const { totalPrice } = calculateCartSummary();
+        const qrModalAmount = document.getElementById("qr-modal-amount");
+        if (qrModalAmount) {
+          qrModalAmount.innerText = `${CAFE_CONFIG.currencySymbol}${totalPrice}`;
+        }
+        if (paymentModal) {
+          paymentModal.classList.remove("hidden");
+          lucide.createIcons();
+        }
+      }
+
+      function closePaymentGateway() {
+        if (paymentModal) paymentModal.classList.add("hidden");
+      }
+
+      if (openPaymentBtn) openPaymentBtn.addEventListener("click", openPaymentGateway);
+      if (triggerPayQrBtn) triggerPayQrBtn.addEventListener("click", openPaymentGateway);
+      if (drawerViewQrBtn) drawerViewQrBtn.addEventListener("click", openPaymentGateway);
+      if (closePaymentBtn) closePaymentBtn.addEventListener("click", closePaymentGateway);
+      if (dismissPaymentBtn) dismissPaymentBtn.addEventListener("click", closePaymentGateway);
+      if (paymentModal) {
+        paymentModal.addEventListener("click", (e) => {
+          if (e.target === paymentModal) closePaymentGateway();
+        });
+      }
+      if (confirmPaymentBtn) {
+        confirmPaymentBtn.addEventListener("click", () => {
+          closePaymentGateway();
+          handleWhatsAppOrder();
+        });
+      }
+
+      // Table QR Modal
+      const qrModal = document.getElementById("qr-modal");
+      const openQrBtn = document.getElementById("open-qr-modal-btn");
+      const closeQrBtn = document.getElementById("close-qr-modal-btn");
+      const qrTableSelect = document.getElementById("qr-table-select");
+      const qrTargetType = document.getElementById("qr-target-type");
+      const qrBaseUrlInput = document.getElementById("qr-base-url-input");
+      const downloadQrBtn = document.getElementById("download-qr-btn");
+      const printStandeeBtn = document.getElementById("print-standee-btn");
+
+      if (qrBaseUrlInput) {
+        qrBaseUrlInput.value = window.location.origin + window.location.pathname;
+      }
+
+      function openQRModal() {
+        if (qrModal) {
+          qrModal.classList.remove("hidden");
+          generateQRCode();
+          lucide.createIcons();
+        }
+      }
+
+      function closeQRModal() {
+        if (qrModal) qrModal.classList.add("hidden");
+      }
+
+      if (openQrBtn) openQrBtn.addEventListener("click", openQRModal);
+      if (closeQrBtn) closeQrBtn.addEventListener("click", closeQRModal);
+      if (qrModal) {
+        qrModal.addEventListener("click", (e) => {
+          if (e.target === qrModal) closeQRModal();
+        });
+      }
+
+      if (qrTableSelect) qrTableSelect.addEventListener("change", generateQRCode);
+      if (qrTargetType) qrTargetType.addEventListener("change", generateQRCode);
+      if (qrBaseUrlInput) qrBaseUrlInput.addEventListener("input", generateQRCode);
+
+      if (printStandeeBtn) {
+        printStandeeBtn.addEventListener("click", () => window.print());
+      }
+
+      if (downloadQrBtn) {
+        downloadQrBtn.addEventListener("click", () => {
+          const qrCanvas = document.querySelector("#qrcode-canvas-container canvas");
+          const qrImg = document.querySelector("#qrcode-canvas-container img");
+
+          let dataUrl = null;
+          if (qrCanvas) {
+            dataUrl = qrCanvas.toDataURL("image/png");
+          } else if (qrImg && qrImg.src) {
+            dataUrl = qrImg.src;
+          }
+
+          if (dataUrl) {
+            const tableVal = qrTableSelect ? qrTableSelect.value.replace(/\s+/g, '_') : 'Menu';
+            const link = document.createElement("a");
+            link.download = `BrewNagri_QR_${tableVal}.png`;
+            link.href = dataUrl;
+            link.click();
+            showNotification("QR code downloaded successfully!");
+          } else {
+            showNotification("Please wait for QR to render.");
+          }
+        });
+      }
+
+      // AI Barista Modal
+      const aiModal = document.getElementById("ai-barista-modal");
+      const openAiBtn = document.getElementById("open-ai-barista-btn");
+      const heroAiBtn = document.getElementById("hero-ai-btn");
+      const closeAiBtn = document.getElementById("close-ai-modal-btn");
+      const aiSendBtn = document.getElementById("ai-send-btn");
+      const aiInput = document.getElementById("ai-user-input");
+
+      function openAIBaristaModal() {
+        if (aiModal) {
+          aiModal.classList.remove("hidden");
+          if (aiInput) aiInput.focus();
+        }
+      }
+
+      function closeAIBaristaModal() {
+        if (aiModal) aiModal.classList.add("hidden");
+      }
+
+      if (openAiBtn) openAiBtn.addEventListener("click", openAIBaristaModal);
+      if (heroAiBtn) heroAiBtn.addEventListener("click", openAIBaristaModal);
+      if (closeAiBtn) closeAiBtn.addEventListener("click", closeAIBaristaModal);
+      if (aiModal) {
+        aiModal.addEventListener("click", (e) => {
+          if (e.target === aiModal) closeAIBaristaModal();
+        });
+      }
+
+      function submitUserAIMessage() {
+        if (!aiInput) return;
+        const query = aiInput.value.trim();
+        if (!query) return;
+        aiInput.value = "";
+        askAIBarista(query);
+      }
+
+      if (aiSendBtn) aiSendBtn.addEventListener("click", submitUserAIMessage);
+      if (aiInput) {
+        aiInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") submitUserAIMessage();
+        });
+      }
+
+      document.querySelectorAll(".ai-prompt-chip").forEach(chip => {
+        chip.addEventListener("click", () => {
+          const promptText = chip.getAttribute("data-prompt");
+          if (promptText) askAIBarista(promptText);
+        });
+      });
+
+      const getPairingBtn = document.getElementById("get-cart-pairing-btn");
+      if (getPairingBtn) {
+        getPairingBtn.addEventListener("click", handleCartPairing);
+      }
+
+      // Customer Search Filter
+      const searchInput = document.getElementById("menu-search-input");
+      if (searchInput) {
+        searchInput.addEventListener("input", (e) => {
+          searchQuery = e.target.value.trim();
+          renderMenu();
+          updateFilterBanner();
+          lucide.createIcons();
+        });
+      }
+
+      const clearFilterBtn = document.getElementById("clear-filter-btn");
+      if (clearFilterBtn) clearFilterBtn.addEventListener("click", clearAllFilters);
+
+      const saveTableBtn = document.getElementById("save-table-btn");
+      if (saveTableBtn) {
+        saveTableBtn.addEventListener("click", () => {
+          const val = document.getElementById("quick-table-input").value.trim();
+          if (val) {
+            tableNumber = val;
+            localStorage.setItem("brewnagri_table", val);
+            const oTable = document.getElementById("order-table-input");
+            if (oTable) oTable.value = val;
+            showNotification(`Saved: "${val}"`);
+          }
+        });
+      }
+
+      // Tray Drawer
+      const drawer = document.getElementById("cart-drawer");
+      const drawerPanel = document.getElementById("cart-panel");
+      const drawerBackdrop = document.getElementById("cart-backdrop");
+
+      function openCartDrawer() {
+        if (drawer && drawerPanel) {
+          drawer.classList.remove("pointer-events-none");
+          drawer.classList.add("opacity-100");
+          drawerPanel.classList.remove("translate-x-full");
+        }
+      }
+
+      function closeCartDrawer() {
+        if (drawer && drawerPanel) {
+          drawer.classList.add("pointer-events-none");
+          drawer.classList.remove("opacity-100");
+          drawerPanel.classList.add("translate-x-full");
+        }
+      }
+
+      const headerCartBtn = document.getElementById("header-cart-btn");
+      if (headerCartBtn) headerCartBtn.addEventListener("click", openCartDrawer);
+
+      const viewCartBtn = document.getElementById("view-cart-btn");
+      if (viewCartBtn) viewCartBtn.addEventListener("click", openCartDrawer);
+
+      const closeCartBtn = document.getElementById("close-cart-btn");
+      if (closeCartBtn) closeCartBtn.addEventListener("click", closeCartDrawer);
+
+      if (drawerBackdrop) drawerBackdrop.addEventListener("click", closeCartDrawer);
+
+      const sendWaBtn = document.getElementById("send-whatsapp-order-btn");
+      if (sendWaBtn) sendWaBtn.addEventListener("click", handleWhatsAppOrder);
+
+      // --- OWNER PORTAL & PIN AUTHENTICATION (Passcode: 5595) ---
+      const tabBtnCustomer = document.getElementById("tab-btn-customer");
+      if (tabBtnCustomer) tabBtnCustomer.addEventListener("click", () => switchAppTab("customer"));
+
+      const tabBtnOwner = document.getElementById("tab-btn-owner");
+      if (tabBtnOwner) tabBtnOwner.addEventListener("click", () => switchAppTab("owner"));
+
+      const submitPinBtn = document.getElementById("submit-pin-btn");
+      if (submitPinBtn) submitPinBtn.addEventListener("click", verifyOwnerPin);
+
+      const pinInput = document.getElementById("owner-pin-input");
+      if (pinInput) {
+        pinInput.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") verifyOwnerPin();
+        });
+      }
+
+      const cancelPinBtn = document.getElementById("cancel-pin-btn");
+      if (cancelPinBtn) cancelPinBtn.addEventListener("click", closeOwnerPinModal);
+
+      const ownerLockBtn = document.getElementById("owner-lock-btn");
+      if (ownerLockBtn) {
+        ownerLockBtn.addEventListener("click", () => {
+          isOwnerAuthenticated = false;
+          activateCustomerTab();
+          showNotification("Owner session locked.");
+        });
+      }
+
+      const openAddBtn = document.getElementById("open-add-item-modal-btn");
+      if (openAddBtn) openAddBtn.addEventListener("click", openAddItemModal);
+
+      const closeAddBtn = document.getElementById("close-add-item-modal-btn");
+      if (closeAddBtn) closeAddBtn.addEventListener("click", closeAddItemModal);
+
+      const cancelAddBtn = document.getElementById("cancel-add-item-btn");
+      if (cancelAddBtn) cancelAddBtn.addEventListener("click", closeAddItemModal);
+
+      const saveItemBtn = document.getElementById("save-menu-item-btn");
+      if (saveItemBtn) saveItemBtn.addEventListener("click", saveMenuItemFromModal);
+
+      const copyJsonBtn = document.getElementById("owner-copy-json-btn");
+      if (copyJsonBtn) copyJsonBtn.addEventListener("click", exportMenuJson);
+
+      // Logo Controls
+      const openChangeLogoBtn = document.getElementById("open-change-logo-modal-btn");
+      if (openChangeLogoBtn) openChangeLogoBtn.addEventListener("click", openChangeLogoModal);
+
+      const closeChangeLogoBtn = document.getElementById("close-change-logo-modal-btn");
+      if (closeChangeLogoBtn) closeChangeLogoBtn.addEventListener("click", closeChangeLogoModal);
+
+      const cancelChangeLogoBtn = document.getElementById("cancel-change-logo-btn");
+      if (cancelChangeLogoBtn) cancelChangeLogoBtn.addEventListener("click", closeChangeLogoModal);
+
+      const saveCafeLogoBtn = document.getElementById("save-cafe-logo-btn");
+      if (saveCafeLogoBtn) saveCafeLogoBtn.addEventListener("click", saveNewLogo);
+
+      const resetDefaultLogoBtn = document.getElementById("reset-default-logo-btn");
+      if (resetDefaultLogoBtn) resetDefaultLogoBtn.addEventListener("click", resetToDefaultLogo);
+
+      const logoFileInput = document.getElementById("new-logo-file-input");
+      const logoUrlInput = document.getElementById("new-logo-url-input");
+      const logoModalPreview = document.getElementById("logo-modal-preview-img");
+
+      if (logoUrlInput) {
+        logoUrlInput.addEventListener("input", (e) => {
+          const url = e.target.value.trim();
+          if (url && logoModalPreview) {
+            logoModalPreview.src = url;
+          }
+        });
+      }
+
+      if (logoFileInput) {
+        logoFileInput.addEventListener("change", function () {
+          const file = this.files[0];
+          if (file) {
+            compressImageFile(file, 400, 400, 0.88, (dataUrl) => {
+              if (logoUrlInput) logoUrlInput.value = dataUrl;
+              if (logoModalPreview) logoModalPreview.src = dataUrl;
+            });
+          }
+        });
+      }
+
+      // Payment QR Code Controls
+      const openChangeQrBtn = document.getElementById("open-change-qr-modal-btn");
+      if (openChangeQrBtn) openChangeQrBtn.addEventListener("click", openChangePaymentQrModal);
+
+      const closeChangeQrBtn = document.getElementById("close-change-qr-modal-btn");
+      if (closeChangeQrBtn) closeChangeQrBtn.addEventListener("click", closeChangePaymentQrModal);
+
+      const cancelChangeQrBtn = document.getElementById("cancel-change-qr-btn");
+      if (cancelChangeQrBtn) cancelChangeQrBtn.addEventListener("click", closeChangePaymentQrModal);
+
+      const savePaymentQrBtn = document.getElementById("save-payment-qr-btn");
+      if (savePaymentQrBtn) savePaymentQrBtn.addEventListener("click", saveNewPaymentQr);
+
+      const resetDefaultPaymentQrBtn = document.getElementById("reset-default-payment-qr-btn");
+      if (resetDefaultPaymentQrBtn) resetDefaultPaymentQrBtn.addEventListener("click", resetToDefaultPaymentQr);
+
+      const paymentQrFileInput = document.getElementById("new-payment-qr-file-input");
+      const paymentQrUrlInput = document.getElementById("new-payment-qr-url-input");
+      const paymentQrPreview = document.getElementById("payment-qr-preview-img");
+
+      if (paymentQrUrlInput) {
+        paymentQrUrlInput.addEventListener("input", (e) => {
+          const url = e.target.value.trim();
+          if (url && paymentQrPreview) {
+            paymentQrPreview.src = url;
+          }
+        });
+      }
+
+      if (paymentQrFileInput) {
+        paymentQrFileInput.addEventListener("change", function () {
+          const file = this.files[0];
+          if (file) {
+            compressImageFile(file, 600, 600, 0.90, (dataUrl) => {
+              if (paymentQrUrlInput) paymentQrUrlInput.value = dataUrl;
+              if (paymentQrPreview) paymentQrPreview.src = dataUrl;
+            });
+          }
+        });
+      }
+
+      // Feedback Form Controls
+      const openFeedbackBtn = document.getElementById("open-feedback-modal-btn");
+      const feedbackModal = document.getElementById("feedback-modal");
+      const closeFeedbackBtn = document.getElementById("close-feedback-modal-btn");
+      const cancelFeedbackBtn = document.getElementById("cancel-feedback-btn");
+      const sendFeedbackBtn = document.getElementById("send-feedback-wa-btn");
+
+      if (openFeedbackBtn) {
+        openFeedbackBtn.addEventListener("click", () => {
+          if (feedbackModal) {
+            feedbackModal.classList.remove("hidden");
+            lucide.createIcons();
+          }
+        });
+      }
+
+      if (closeFeedbackBtn) {
+        closeFeedbackBtn.addEventListener("click", () => {
+          if (feedbackModal) feedbackModal.classList.add("hidden");
+        });
+      }
+
+      if (cancelFeedbackBtn) {
+        cancelFeedbackBtn.addEventListener("click", () => {
+          if (feedbackModal) feedbackModal.classList.add("hidden");
+        });
+      }
+
+      if (feedbackModal) {
+        feedbackModal.addEventListener("click", (e) => {
+          if (e.target === feedbackModal) feedbackModal.classList.add("hidden");
+        });
+      }
+
+      if (sendFeedbackBtn) {
+        sendFeedbackBtn.addEventListener("click", submitFeedbackViaWhatsApp);
+      }
+
+      document.querySelectorAll(".star-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const rating = parseInt(btn.getAttribute("data-val"), 10);
+          updateRatingDisplay(rating);
+        });
+      });
+
+      const ownerSearch = document.getElementById("owner-search-input");
+      if (ownerSearch) {
+        ownerSearch.addEventListener("input", (e) => {
+          ownerSearchQuery = e.target.value.trim();
+          renderOwnerItems();
+        });
+      }
+
+      const ownerCategorySelect = document.getElementById("owner-category-filter");
+      if (ownerCategorySelect) {
+        ownerCategorySelect.addEventListener("change", (e) => {
+          ownerCategoryFilter = e.target.value;
+          renderOwnerItems();
+        });
+      }
+
+      const modalUrlInput = document.getElementById("new-item-image-url");
+      const modalFileInput = document.getElementById("new-item-file-input");
+      const previewImg = document.getElementById("new-item-preview-img");
+      const placeholderIcon = document.getElementById("preview-placeholder-icon");
+
+      if (modalUrlInput) {
+        modalUrlInput.addEventListener("input", (e) => {
+          const url = e.target.value.trim();
+          if (url && previewImg) {
+            previewImg.src = url;
+            previewImg.classList.remove("hidden");
+            if (placeholderIcon) placeholderIcon.classList.add("hidden");
+          } else if (previewImg) {
+            previewImg.classList.add("hidden");
+            if (placeholderIcon) placeholderIcon.classList.remove("hidden");
+          }
+        });
+      }
+
+      if (modalFileInput) {
+        modalFileInput.addEventListener("change", function () {
+          const file = this.files[0];
+          if (file) {
+            compressImageFile(file, 800, 800, 0.82, (dataUrl) => {
+              if (modalUrlInput) modalUrlInput.value = dataUrl;
+              if (previewImg) {
+                previewImg.src = dataUrl;
+                previewImg.classList.remove("hidden");
+              }
+              if (placeholderIcon) placeholderIcon.classList.add("hidden");
+            });
+          }
+        });
+      }
+
+      // Info Modal
+      const infoModal = document.getElementById("info-modal");
+      const openInfoBtn = document.getElementById("open-info-modal-btn");
+      if (openInfoBtn) {
+        openInfoBtn.addEventListener("click", () => {
+          if (infoModal) infoModal.classList.remove("hidden");
+        });
+      }
+      const closeInfoBtn = document.getElementById("close-info-modal-btn");
+      if (closeInfoBtn) {
+        closeInfoBtn.addEventListener("click", () => {
+          if (infoModal) infoModal.classList.add("hidden");
+        });
+      }
+      const dismissInfoBtn = document.getElementById("dismiss-info-modal-btn");
+      if (dismissInfoBtn) {
+        dismissInfoBtn.addEventListener("click", () => {
+          if (infoModal) infoModal.classList.add("hidden");
+        });
+      }
+      if (infoModal) {
+        infoModal.addEventListener("click", (e) => {
+          if (e.target === infoModal) infoModal.classList.add("hidden");
+        });
+      }
+    });
+  </script>
+</body>
+</html>
