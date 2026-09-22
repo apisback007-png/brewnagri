@@ -2,7 +2,7 @@
 <html lang="en" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Brew Nagri - Coffee • Food • Shakes (Tilkamanjhi, Bhagalpur)</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -49,9 +49,13 @@
     }
   </script>
   <style>
+    /* Smooth mobile scrolling & custom scrollbars */
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-thumb {
       background: #dfb79e;
@@ -59,9 +63,17 @@
     }
     .custom-scrollbar::-webkit-scrollbar {
       width: 4px;
+      height: 4px;
     }
     .custom-scrollbar::-webkit-scrollbar-thumb {
       background: #ce9474;
+    }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
     .badge-veg {
       border: 1.5px solid #22c55e;
@@ -90,19 +102,19 @@
     }
   </style>
 </head>
-<body class="bg-stone-100 dark:bg-stone-950 text-stone-800 dark:text-stone-100 font-sans antialiased selection:bg-coffee-200 selection:text-coffee-900 pb-28 transition-colors duration-200">
+<body class="bg-stone-100 dark:bg-stone-950 text-stone-800 dark:text-stone-100 font-sans antialiased selection:bg-coffee-200 selection:text-coffee-900 pb-32 sm:pb-28 transition-colors duration-200 touch-manipulation">
 
-  <!-- Top Navigation Bar -->
+  <!-- Top Sticky Navigation Bar -->
   <header class="sticky top-0 z-40 bg-white/95 dark:bg-stone-900/95 backdrop-blur-md border-b border-stone-200/80 dark:border-stone-800 transition-all duration-300 shadow-xs">
-    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between">
+    <div class="max-w-5xl mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
       
       <!-- Brand & Official Logo -->
-      <div class="flex items-center space-x-2.5 sm:space-x-3">
-        <div class="relative w-10 h-10 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-coffee-950 flex items-center justify-center shrink-0 border border-amber-300/40 shadow-sm">
+      <div class="flex items-center space-x-2 sm:space-x-3 shrink-0">
+        <div class="relative w-9 h-9 sm:w-11 sm:h-11 rounded-full overflow-hidden bg-coffee-950 flex items-center justify-center shrink-0 border border-amber-300/40 shadow-sm">
           <img 
             id="brand-header-logo"
             src="images/brew-nagri-logo.png" 
-            alt="Brew Nagri Official Logo" 
+            alt="Brew Nagri Logo" 
             class="w-full h-full object-cover"
             onerror="this.style.display='none'; document.getElementById('header-fallback-icon').classList.remove('hidden');"
           />
@@ -112,71 +124,65 @@
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="font-heading font-extrabold text-base sm:text-lg tracking-tight text-coffee-950 dark:text-amber-100">
+            <h1 class="font-heading font-extrabold text-sm sm:text-lg tracking-tight text-coffee-950 dark:text-amber-100">
               Brew Nagri
             </h1>
-            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+            <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[9px] sm:text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pure Veg
             </span>
           </div>
-          <p class="text-[11px] text-stone-500 dark:text-stone-400 font-medium hidden sm:block">
+          <p class="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 font-medium hidden sm:block">
             Coffee • Food • Shakes • Tilkamanjhi, Bhagalpur
           </p>
         </div>
       </div>
 
       <!-- Center 2-Tab Navigation Switcher (Customer Menu vs Owner Portal) -->
-      <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-1 rounded-full border border-stone-300 dark:border-stone-700">
-        <button id="tab-btn-customer" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1">
+      <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 sm:p-1 rounded-full border border-stone-300 dark:border-stone-700 shrink-0">
+        <button id="tab-btn-customer" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1 touch-manipulation">
           <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
           <span>Menu</span>
         </button>
-        <button id="tab-btn-owner" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1">
+        <button id="tab-btn-owner" class="px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1 touch-manipulation">
           <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
           <span>Owner</span>
         </button>
       </div>
 
       <!-- Quick Action Buttons -->
-      <div class="flex items-center gap-1.5 sm:gap-2">
+      <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
         <!-- Theme Toggle -->
-        <button id="theme-toggle-btn" aria-label="Toggle Dark/Light Mode" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition">
+        <button id="theme-toggle-btn" aria-label="Toggle Dark/Light Mode" class="p-1.5 sm:p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition touch-manipulation">
           <i id="theme-toggle-icon" data-lucide="moon" class="w-4 h-4 sm:w-4.5 sm:h-4.5"></i>
         </button>
 
         <!-- AI Barista Button -->
-        <button id="open-ai-barista-btn" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-bold text-xs shadow-xs transition active:scale-95">
+        <button id="open-ai-barista-btn" class="flex items-center gap-1 px-2 sm:px-3 py-1.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-stone-950 font-bold text-xs shadow-xs transition active:scale-95 touch-manipulation">
           <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
           <span class="hidden md:inline">AI Barista</span>
         </button>
 
-        <!-- Table QR Generator Button -->
-        <button id="open-qr-modal-btn" title="Generate Table QR Standee" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 dark:hover:bg-stone-700 text-coffee-900 dark:text-stone-200 font-semibold text-xs transition border border-stone-300 dark:border-stone-700">
-          <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
-          <span class="hidden sm:inline">Table QR</span>
-        </button>
-
         <!-- UPI Pay QR Quick Button -->
-        <button id="open-payment-modal-btn" title="Scan & Pay via UPI" class="flex items-center gap-1 px-2.5 sm:px-3 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-900 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800 font-bold text-xs transition">
+        <button id="open-payment-modal-btn" title="Scan & Pay via UPI" class="flex items-center gap-1 px-2 sm:px-2.5 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 text-indigo-900 dark:text-indigo-200 border border-indigo-200 dark:border-indigo-800 font-bold text-xs transition touch-manipulation">
           <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i>
           <span class="hidden sm:inline">Pay QR</span>
         </button>
 
+        <!-- Table QR Standee Button -->
+        <button id="open-qr-modal-btn" title="Table QR Standee" class="p-1.5 sm:px-2.5 sm:py-1.5 rounded-full bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-coffee-900 dark:text-stone-200 font-semibold text-xs transition border border-stone-300 dark:border-stone-700 touch-manipulation">
+          <i data-lucide="qr-code" class="w-4 h-4"></i>
+        </button>
+
         <!-- Feedback Button -->
-        <button id="open-feedback-modal-btn" title="Send Feedback" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-amber-600 dark:text-amber-400 transition">
+        <button id="open-feedback-modal-btn" title="Send Feedback" class="p-1.5 sm:p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-amber-600 dark:text-amber-400 transition touch-manipulation">
           <i data-lucide="star" class="w-4 h-4 sm:w-5 sm:h-5"></i>
         </button>
 
-        <!-- Info / About Button -->
-        <button id="open-info-modal-btn" aria-label="Cafe Info & Contact" class="p-2 rounded-full hover:bg-stone-100 dark:hover:bg-stone-800 text-stone-600 dark:text-stone-300 transition">
-          <i data-lucide="info" class="w-4 h-4 sm:w-5 sm:h-5"></i>
-        </button>
-
-        <!-- Tray Button -->
-        <button id="header-cart-btn" class="relative flex items-center gap-1.5 bg-coffee-800 hover:bg-coffee-900 text-amber-50 px-3 sm:px-4 py-1.5 sm:py-2 rounded-full font-medium shadow-md transition transform active:scale-95">
+        <!-- Tray Header Button -->
+        <button id="header-cart-btn" class="relative flex items-center gap-1 bg-coffee-800 hover:bg-coffee-900 text-amber-50 px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-full font-medium shadow-md transition transform active:scale-95 touch-manipulation">
           <i data-lucide="shopping-bag" class="w-4 h-4"></i>
-          <span class="text-xs sm:text-sm font-semibold hidden sm:inline">Tray</span>
-          <span id="cart-badge" class="bg-amber-400 text-coffee-950 text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center shadow-xs">0</span>
+          <span class="text-xs font-semibold hidden sm:inline">Tray</span>
+          <span id="cart-badge" class="bg-amber-400 text-coffee-950 text-[11px] font-extrabold w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center shadow-xs">0</span>
         </button>
       </div>
     </div>
@@ -184,29 +190,29 @@
 
   <!-- ==================== VIEW 1: CUSTOMER MENU ==================== -->
   <div id="customer-view">
-    <!-- Hero Section -->
-    <section class="relative overflow-hidden bg-gradient-to-b from-coffee-950 via-coffee-900 to-coffee-950 text-amber-50 py-8 sm:py-10 px-4 sm:px-6">
+    <!-- Hero / Welcome Section -->
+    <section class="relative overflow-hidden bg-gradient-to-b from-coffee-950 via-coffee-900 to-coffee-950 text-amber-50 py-6 sm:py-9 px-4 sm:px-6">
       <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#f7eee6_1px,transparent_1px)] [background-size:16px_16px] pointer-events-none"></div>
-      <div class="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div class="max-w-5xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-5">
         
         <div class="max-w-xl text-center md:text-left">
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3">
-            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/40 text-xs font-bold text-emerald-200">
-              <span class="w-2 h-2 rounded-full bg-emerald-400"></span> 100% Pure Veg Café
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-1.5 sm:gap-2 mb-2.5">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/20 backdrop-blur-sm border border-emerald-400/40 text-[11px] font-bold text-emerald-200">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span> 100% Pure Veg Café
             </span>
-            <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-xs font-medium text-amber-200">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-[11px] font-medium text-amber-200">
               <i data-lucide="map-pin" class="w-3 h-3 text-amber-400"></i> Hatia Rd, Tilkamanjhi, Bhagalpur
             </span>
           </div>
 
-          <h2 class="text-3xl sm:text-4xl font-heading font-extrabold tracking-tight text-amber-50">
+          <h2 class="text-2xl sm:text-4xl font-heading font-extrabold tracking-tight text-amber-50">
             COFFEE • FOOD • SHAKES
           </h2>
-          <p class="text-xs sm:text-sm text-coffee-200 mt-2 leading-relaxed">
-            Order freshly crafted roasts, crispy burgers, momos, and creamy shakes. Pay easily via PhonePe UPI QR or send your order directly to our counter via WhatsApp!
+          <p class="text-xs sm:text-sm text-coffee-200 mt-1.5 leading-relaxed">
+            Freshly prepared burgers, momos, hot noodles, and cold brews. Order on WhatsApp or pay instantly via PhonePe UPI QR!
           </p>
 
-          <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 mt-4 text-xs text-amber-100/90">
+          <div class="flex flex-wrap items-center justify-center md:justify-start gap-2 mt-3.5 text-xs text-amber-100/90">
             <a id="hero-phone-link" href="tel:+917050300287" class="flex items-center gap-1 hover:text-amber-300 font-semibold transition bg-white/5 px-2.5 py-1 rounded-lg border border-white/10">
               <i data-lucide="phone" class="w-3.5 h-3.5 text-amber-400"></i> <span id="hero-phone-display">+91 7050300287</span>
             </a>
@@ -219,41 +225,43 @@
           </div>
         </div>
 
-        <div class="w-full md:w-auto bg-white/10 backdrop-blur-md p-4 rounded-2xl border border-white/15 text-left max-w-sm">
-          <label for="quick-table-input" class="block text-xs font-semibold uppercase tracking-wider text-amber-200 mb-1">
-            Are you dining in or takeaway?
+        <!-- Dining Table Prompt -->
+        <div class="w-full md:w-auto bg-white/10 backdrop-blur-md p-3.5 sm:p-4 rounded-2xl border border-white/15 text-left max-w-sm">
+          <label for="quick-table-input" class="block text-[11px] font-semibold uppercase tracking-wider text-amber-200 mb-1">
+            Dining in or takeaway?
           </label>
           <div class="flex items-center gap-2">
             <div class="relative flex-1">
               <i data-lucide="utensils" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-coffee-300"></i>
-              <input type="text" id="quick-table-input" placeholder="e.g., Table 4 or Takeaway" class="w-full pl-9 pr-3 py-2 bg-coffee-950/60 border border-coffee-700/60 rounded-xl text-sm text-amber-50 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
+              <input type="text" id="quick-table-input" placeholder="e.g. Table 4 or Takeaway" class="w-full pl-9 pr-3 py-2 bg-coffee-950/60 border border-coffee-700/60 rounded-xl text-xs sm:text-sm text-amber-50 placeholder-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400">
             </div>
-            <button id="save-table-btn" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-xs rounded-xl transition shadow-xs">
+            <button id="save-table-btn" class="px-3.5 py-2 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-xs rounded-xl transition shadow-xs touch-manipulation">
               Set
             </button>
           </div>
-          <p id="table-status-msg" class="text-[11px] text-coffee-300 mt-1.5 italic">Tagged automatically in your WhatsApp order.</p>
+          <p id="table-status-msg" class="text-[10px] text-coffee-300 mt-1.5 italic">Added automatically to your WhatsApp order receipt.</p>
         </div>
 
       </div>
     </section>
 
-    <!-- Categories & Search Filter -->
-    <section class="sticky top-[57px] sm:top-[65px] z-30 bg-stone-100/95 dark:bg-stone-900/95 backdrop-blur-md pt-2.5 pb-2 border-b border-stone-200 dark:border-stone-800 px-3 sm:px-6">
-      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+    <!-- Categories & Search Filter Bar (Sticky on Phone) -->
+    <section class="sticky top-[53px] sm:top-[65px] z-30 bg-stone-100/95 dark:bg-stone-900/95 backdrop-blur-md pt-2 pb-2 border-b border-stone-200 dark:border-stone-800 px-3 sm:px-6">
+      <div class="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
         
-        <div class="w-full sm:w-auto overflow-x-auto custom-scrollbar flex items-center gap-1.5 py-0.5" id="category-tabs-container">
-          <!-- Injected via JavaScript -->
+        <!-- Mobile Horizontal Category Pills -->
+        <div class="w-full sm:w-auto overflow-x-auto no-scrollbar flex items-center gap-1.5 py-0.5 touch-pan-x" id="category-tabs-container">
+          <!-- Injected via renderCategories() -->
         </div>
 
         <div class="w-full sm:w-auto flex items-center gap-2">
           <div class="relative flex-1 sm:w-56">
             <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
-            <input type="text" id="menu-search-input" placeholder="Search coffee, bites..." class="w-full pl-9 pr-3 py-1.5 sm:py-2 text-xs sm:text-sm bg-white dark:bg-stone-800 rounded-full border border-stone-300 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-coffee-500 shadow-xs transition">
+            <input type="text" id="menu-search-input" placeholder="Search coffee, bites..." class="w-full pl-9 pr-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 rounded-full border border-stone-300 dark:border-stone-700 focus:outline-none focus:ring-2 focus:ring-coffee-500 shadow-xs transition">
           </div>
 
-          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-full text-xs font-bold whitespace-nowrap shadow-xs">
-            <span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+          <div class="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-300 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 rounded-full text-[11px] font-bold whitespace-nowrap shadow-xs">
+            <span class="w-1.5 h-1.5 rounded-full bg-emerald-600 animate-pulse"></span>
             <span>100% Pure Veg</span>
           </div>
         </div>
@@ -262,72 +270,77 @@
     </section>
 
     <!-- Menu Items Grid -->
-    <main class="max-w-5xl mx-auto px-4 sm:px-6 py-6">
-      <div id="filter-indicator" class="hidden mb-4 p-2.5 bg-coffee-100 dark:bg-stone-800 border border-coffee-200 dark:border-stone-700 rounded-xl text-xs text-coffee-800 dark:text-amber-200 flex items-center justify-between">
+    <main class="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+      <div id="filter-indicator" class="hidden mb-3 p-2.5 bg-coffee-100 dark:bg-stone-800 border border-coffee-200 dark:border-stone-700 rounded-xl text-xs text-coffee-800 dark:text-amber-200 flex items-center justify-between">
         <span id="filter-indicator-text">Showing results</span>
         <button id="clear-filter-btn" class="font-bold underline text-coffee-900 dark:text-amber-300 hover:text-coffee-700">Clear filters</button>
       </div>
 
-      <div id="no-items-state" class="hidden py-16 text-center">
-        <div class="w-16 h-16 bg-stone-200 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto text-stone-500 mb-3">
-          <i data-lucide="coffee" class="w-8 h-8"></i>
+      <div id="no-items-state" class="hidden py-14 text-center">
+        <div class="w-14 h-14 bg-stone-200 dark:bg-stone-800 rounded-full flex items-center justify-center mx-auto text-stone-500 mb-2.5">
+          <i data-lucide="coffee" class="w-7 h-7"></i>
         </div>
-        <h3 class="text-lg font-bold text-stone-700 dark:text-stone-300 font-heading">No items found</h3>
-        <p class="text-sm text-stone-500 mt-1">Try searching for coffee, maggie, momos, or burgers.</p>
+        <h3 class="text-base font-bold text-stone-700 dark:text-stone-300 font-heading">No items found</h3>
+        <p class="text-xs text-stone-500 mt-0.5">Try searching for coffee, maggi, momos, or burgers.</p>
       </div>
 
-      <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div id="menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
         <!-- Dynamic menu cards inserted here -->
       </div>
     </main>
   </div>
 
   <!-- ==================== VIEW 2: OWNER PORTAL ==================== -->
-  <div id="owner-view" class="hidden max-w-5xl mx-auto px-4 sm:px-6 py-6">
-    <!-- Portal Header & Controls Bar -->
-    <div class="bg-white dark:bg-stone-900 rounded-2xl p-5 border border-stone-200 dark:border-stone-800 shadow-xs mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+  <div id="owner-view" class="hidden max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-6">
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 sm:p-5 border border-stone-200 dark:border-stone-800 shadow-xs mb-5 flex flex-col md:flex-row md:items-center justify-between gap-3.5">
       <div>
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-coffee-900 text-amber-300 flex items-center justify-center">
             <i data-lucide="settings" class="w-4 h-4"></i>
           </div>
-          <h2 class="font-heading font-extrabold text-lg sm:text-xl text-coffee-950 dark:text-amber-100">
+          <h2 class="font-heading font-extrabold text-base sm:text-xl text-coffee-950 dark:text-amber-100">
             Brew Nagri Kitchen & Menu Portal
           </h2>
         </div>
         <p class="text-xs text-stone-500 dark:text-stone-400 mt-1">
-          Update prices, change WhatsApp order number, replace cafe logo, update payment QR, or toggle dish stock.
+          Add custom categories, update prices, change WhatsApp number, replace logo & payment QR code.
         </p>
       </div>
 
-      <div class="flex flex-wrap items-center gap-2">
+      <!-- Action Buttons in Owner Portal -->
+      <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+        <!-- Category Management Button -->
+        <button id="open-manage-categories-modal-btn" class="px-3 py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs touch-manipulation">
+          <i data-lucide="layers" class="w-3.5 h-3.5"></i>
+          <span>Categories</span>
+        </button>
         <!-- Change WhatsApp Order Number Button -->
-        <button id="open-change-wa-modal-btn" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+        <button id="open-change-wa-modal-btn" class="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs touch-manipulation">
           <i data-lucide="phone-call" class="w-3.5 h-3.5"></i>
-          <span>Change WhatsApp No.</span>
+          <span>WhatsApp No.</span>
         </button>
         <!-- Change Cafe Logo Button -->
-        <button id="open-change-logo-modal-btn" class="px-3.5 py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+        <button id="open-change-logo-modal-btn" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs touch-manipulation">
           <i data-lucide="image" class="w-3.5 h-3.5"></i>
-          <span>Change Logo</span>
+          <span>Logo</span>
         </button>
         <!-- Change Payment QR Button -->
-        <button id="open-change-qr-modal-btn" class="px-3.5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+        <button id="open-change-qr-modal-btn" class="px-3 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs touch-manipulation">
           <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
-          <span>Change Payment QR</span>
+          <span>Pay QR</span>
         </button>
         <!-- Add New Dish Button -->
-        <button id="open-add-item-modal-btn" class="px-3.5 py-2 bg-coffee-800 hover:bg-coffee-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs">
+        <button id="open-add-item-modal-btn" class="px-3 py-2 bg-coffee-800 hover:bg-coffee-900 text-white rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs touch-manipulation">
           <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
-          <span>Add New Item</span>
+          <span>Add Dish</span>
         </button>
         <!-- Backup JSON -->
-        <button id="owner-copy-json-btn" title="Backup or Export Menu JSON" class="px-3 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+        <button id="owner-copy-json-btn" title="Backup or Export Menu JSON" class="px-2.5 py-2 bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1 touch-manipulation">
           <i data-lucide="download" class="w-3.5 h-3.5"></i>
-          <span>Backup JSON</span>
+          <span class="hidden sm:inline">Backup</span>
         </button>
         <!-- Lock Owner Portal -->
-        <button id="owner-lock-btn" class="px-3 py-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-900 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+        <button id="owner-lock-btn" class="px-2.5 py-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 dark:text-red-300 border border-red-200 dark:border-red-900 rounded-xl text-xs font-bold transition flex items-center gap-1 touch-manipulation">
           <i data-lucide="lock" class="w-3.5 h-3.5"></i>
           <span>Lock</span>
         </button>
@@ -335,7 +348,7 @@
     </div>
 
     <!-- Owner Filter & Search -->
-    <div class="bg-stone-50 dark:bg-stone-900 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 mb-4 flex flex-col sm:flex-row items-center gap-2.5">
+    <div class="bg-stone-50 dark:bg-stone-900 p-2.5 sm:p-3 rounded-2xl border border-stone-200 dark:border-stone-800 mb-4 flex flex-col sm:flex-row items-center gap-2">
       <div class="relative flex-1 w-full">
         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
         <input type="text" id="owner-search-input" placeholder="Search dish to edit price or photo..." class="w-full pl-9 pr-3 py-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-coffee-600">
@@ -343,47 +356,41 @@
       <div class="w-full sm:w-auto">
         <select id="owner-category-filter" class="w-full sm:w-56 p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-medium focus:outline-none">
           <option value="all">All Categories</option>
-          <option value="burgers-sandwiches">Burgers & Sandwiches</option>
-          <option value="maggie-chaat">Maggi, Chaat & Sides</option>
-          <option value="momos">Momos</option>
-          <option value="cold-coffee">Cold Coffee</option>
-          <option value="refreshing">Cold Refreshing</option>
-          <option value="hot-beverages">Hot Brews</option>
-          <option value="shakes">Thickshakes</option>
+          <!-- Dynamic category options inserted here -->
         </select>
       </div>
     </div>
 
     <!-- Owner Dish Item List -->
-    <div id="owner-items-container" class="space-y-2.5">
+    <div id="owner-items-container" class="space-y-2">
       <!-- Injected via renderOwnerItems() -->
     </div>
   </div>
 
-  <!-- Floating Cart Bottom Bar -->
-  <div id="floating-cart-bar" class="fixed bottom-4 inset-x-4 max-w-xl mx-auto z-40 transform translate-y-32 transition-transform duration-300 ease-out">
-    <div class="bg-coffee-950 text-amber-50 rounded-2xl shadow-2xl p-3 sm:p-4 border border-coffee-800 flex items-center justify-between">
-      <div class="flex items-center space-x-3">
-        <div class="relative bg-amber-400 text-coffee-950 font-bold w-10 h-10 rounded-xl flex items-center justify-center shadow-xs">
-          <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-          <span id="float-badge-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center border-2 border-coffee-950 font-bold">0</span>
+  <!-- Floating Mobile Cart Bottom Bar -->
+  <div id="floating-cart-bar" class="fixed bottom-3 inset-x-3 sm:bottom-4 sm:inset-x-4 max-w-xl mx-auto z-40 transform translate-y-32 transition-transform duration-300 ease-out">
+    <div class="bg-coffee-950 text-amber-50 rounded-2xl shadow-2xl p-2.5 sm:p-3.5 border border-coffee-800 flex items-center justify-between">
+      <div class="flex items-center space-x-2.5">
+        <div class="relative bg-amber-400 text-coffee-950 font-bold w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center shadow-xs">
+          <i data-lucide="shopping-bag" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+          <span id="float-badge-count" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center border-2 border-coffee-950 font-bold">0</span>
         </div>
         <div>
-          <p class="text-xs text-coffee-300 font-medium">Your Current Order</p>
-          <p class="text-base font-bold text-white flex items-center gap-1.5">
+          <p class="text-[10px] sm:text-xs text-coffee-300 font-medium">Your Order</p>
+          <p class="text-sm sm:text-base font-bold text-white flex items-center gap-1">
             <span id="float-total-price">₹0</span>
-            <span class="text-xs text-stone-400 font-normal">(pure veg)</span>
+            <span class="text-[10px] text-stone-400 font-normal hidden sm:inline">(pure veg)</span>
           </p>
         </div>
       </div>
 
-      <div class="flex items-center gap-2">
-        <button id="trigger-pay-qr-btn" class="hidden sm:flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-xl font-bold text-xs transition">
+      <div class="flex items-center gap-1.5 sm:gap-2">
+        <button id="trigger-pay-qr-btn" class="flex items-center gap-1 bg-indigo-600 hover:bg-indigo-700 text-white px-2.5 sm:px-3 py-2 rounded-xl font-bold text-xs transition touch-manipulation">
           <i data-lucide="qr-code" class="w-3.5 h-3.5"></i>
           <span>Pay QR</span>
         </button>
-        <button id="view-cart-btn" class="flex items-center gap-1.5 bg-amber-400 hover:bg-amber-300 text-coffee-950 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs transition active:scale-95">
-          <span>View Order</span>
+        <button id="view-cart-btn" class="flex items-center gap-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 px-3.5 py-2 sm:py-2.5 rounded-xl font-bold text-xs sm:text-sm shadow-xs transition active:scale-95 touch-manipulation">
+          <span>View Tray</span>
           <i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </div>
@@ -396,8 +403,8 @@
 
     <div id="cart-panel" class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white dark:bg-stone-900 shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300 pointer-events-auto">
       
-      <div class="px-5 py-3.5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-800/50">
-        <div class="flex items-center gap-2.5">
+      <div class="px-4 py-3 sm:px-5 sm:py-3.5 border-b border-stone-200 dark:border-stone-800 flex items-center justify-between bg-stone-50 dark:bg-stone-800/50">
+        <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-coffee-800 text-amber-100 flex items-center justify-center">
             <i data-lucide="shopping-bag" class="w-4 h-4"></i>
           </div>
@@ -406,89 +413,146 @@
             <p class="text-xs text-stone-500 dark:text-stone-400" id="cart-items-subtitle">0 items selected</p>
           </div>
         </div>
-        <button id="close-cart-btn" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500 transition">
+        <button id="close-cart-btn" class="p-2 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500 transition touch-manipulation">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
-      <div class="flex-1 overflow-y-auto p-4 sm:p-5 space-y-3 custom-scrollbar" id="cart-items-container">
+      <div class="flex-1 overflow-y-auto p-3.5 sm:p-5 space-y-2.5 custom-scrollbar" id="cart-items-container">
         <!-- Injected via JavaScript -->
       </div>
 
-      <div class="border-t border-stone-200 dark:border-stone-800 p-4 sm:p-5 bg-stone-50 dark:bg-stone-900 space-y-3 shadow-inner">
+      <div class="border-t border-stone-200 dark:border-stone-800 p-3.5 sm:p-5 bg-stone-50 dark:bg-stone-900 space-y-2.5 shadow-inner">
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Table # / Takeaway</label>
-            <input type="text" id="order-table-input" placeholder="e.g., Table 3" class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+            <input type="text" id="order-table-input" placeholder="e.g. Table 3" class="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
           </div>
           <div>
             <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Your Name</label>
-            <input type="text" id="order-customer-name" placeholder="e.g., Rahul" class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+            <input type="text" id="order-customer-name" placeholder="e.g. Rahul" class="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
           </div>
         </div>
 
         <div>
           <label class="block text-[10px] font-bold uppercase tracking-wider text-stone-600 dark:text-stone-300 mb-0.5">Special Instructions</label>
-          <input type="text" id="order-notes-input" placeholder="e.g., Less sugar, extra crispy..." class="w-full px-3 py-1.5 text-xs sm:text-sm bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
+          <input type="text" id="order-notes-input" placeholder="e.g. Less sugar, extra spicy..." class="w-full px-2.5 py-1.5 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg focus:outline-none focus:ring-1 focus:ring-coffee-600">
         </div>
 
-        <div class="p-2.5 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 rounded-xl space-y-1.5">
+        <div class="p-2 bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900 rounded-xl space-y-1">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider flex items-center gap-1">
-              <i data-lucide="wallet" class="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400"></i> Payment Mode
+            <span class="text-[10px] font-bold text-indigo-950 dark:text-indigo-200 uppercase tracking-wider flex items-center gap-1">
+              <i data-lucide="wallet" class="w-3 h-3 text-indigo-600 dark:text-indigo-400"></i> Payment Mode
             </span>
-            <button type="button" id="drawer-view-qr-btn" class="text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:underline flex items-center gap-1">
+            <button type="button" id="drawer-view-qr-btn" class="text-[10px] font-bold text-indigo-700 dark:text-indigo-300 hover:underline flex items-center gap-1">
               <i data-lucide="qr-code" class="w-3 h-3"></i> View UPI QR
             </button>
           </div>
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <label class="flex items-center gap-2 p-2 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
+            <label class="flex items-center gap-1.5 p-1.5 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
               <input type="radio" name="payment-method" value="upi" checked class="text-indigo-600 focus:ring-indigo-500">
-              <span class="font-bold text-stone-800 dark:text-stone-200">PhonePe QR</span>
+              <span class="font-bold text-[11px] text-stone-800 dark:text-stone-200">PhonePe QR</span>
             </label>
-            <label class="flex items-center gap-2 p-2 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
+            <label class="flex items-center gap-1.5 p-1.5 bg-white dark:bg-stone-800 rounded-lg border border-indigo-200 dark:border-indigo-900 cursor-pointer">
               <input type="radio" name="payment-method" value="counter" class="text-indigo-600 focus:ring-indigo-500">
-              <span class="font-bold text-stone-800 dark:text-stone-200">At Counter</span>
+              <span class="font-bold text-[11px] text-stone-800 dark:text-stone-200">At Counter</span>
             </label>
           </div>
-          <div id="utr-input-box" class="pt-1">
-            <input type="text" id="upi-utr-input" placeholder="UPI Ref / UTR (optional if already paid)" class="w-full px-2.5 py-1 text-xs bg-white dark:bg-stone-800 border border-indigo-200 dark:border-indigo-900 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
+          <div id="utr-input-box" class="pt-0.5">
+            <input type="text" id="upi-utr-input" placeholder="UPI Ref / UTR (optional if already paid)" class="w-full px-2 py-1 text-[11px] bg-white dark:bg-stone-800 border border-indigo-200 dark:border-indigo-900 rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
           </div>
         </div>
 
-        <div class="p-2.5 bg-amber-50 dark:bg-stone-800 border border-amber-200/80 dark:border-stone-700 rounded-xl">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5 text-xs font-bold text-coffee-950 dark:text-amber-200">
-              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-600 dark:text-amber-400"></i>
-              <span>Smart Flavor Match</span>
-            </div>
-            <button id="get-cart-pairing-btn" type="button" class="text-[11px] text-coffee-800 dark:text-amber-300 font-bold underline cursor-pointer">Suggest Pair</button>
+        <div class="pt-1 border-t border-dashed border-stone-300 dark:border-stone-700 space-y-0.5 text-xs text-stone-600 dark:text-stone-400">
+          <div class="flex justify-between text-xs">
+            <span>Subtotal</span>
+            <span id="drawer-subtotal" class="font-semibold text-stone-800 dark:text-stone-200">₹0</span>
           </div>
-          <div id="cart-ai-result" class="text-xs text-stone-600 dark:text-stone-300 mt-1 hidden"></div>
-        </div>
-
-        <div class="pt-1 border-t border-dashed border-stone-300 dark:border-stone-700 space-y-1 text-xs text-stone-600 dark:text-stone-400">
-          <div class="flex justify-between">
-            <span>Items Subtotal</span>
-            <span id="drawer-subtotal" class="font-medium text-stone-800 dark:text-stone-200">₹0</span>
-          </div>
-          <div class="flex justify-between text-base font-extrabold text-coffee-950 dark:text-amber-100 pt-1 border-t border-stone-300 dark:border-stone-700">
+          <div class="flex justify-between text-sm sm:text-base font-extrabold text-coffee-950 dark:text-amber-100 pt-1 border-t border-stone-300 dark:border-stone-700">
             <span>Grand Total</span>
             <span id="drawer-grand-total">₹0</span>
           </div>
         </div>
 
-        <!-- WhatsApp Direct Send Order Button (Direct to Phone Number) -->
-        <button id="send-whatsapp-order-btn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition text-sm">
+        <button id="send-whatsapp-order-btn" class="w-full py-3 px-4 bg-emerald-600 hover:bg-emerald-700 active:scale-[0.98] text-white rounded-xl font-bold flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/30 transition text-xs sm:text-sm touch-manipulation">
           <i data-lucide="message-circle" class="w-4 h-4"></i>
           <span id="send-whatsapp-order-label">Send Order on WhatsApp (+91 7050300287)</span>
         </button>
 
-        <p class="text-center text-[10px] text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1">
+        <p class="text-center text-[9px] text-stone-500 dark:text-stone-400 flex items-center justify-center gap-1">
           <i data-lucide="shield-check" class="w-3 h-3 text-emerald-600"></i> 100% Pure Veg • Direct WhatsApp Order
         </p>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Owner Category Management Modal -->
+  <div id="manage-categories-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm">
+    <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
+      <div class="p-3.5 sm:p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-purple-950 text-purple-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-lg bg-purple-500 text-white flex items-center justify-center font-bold">
+            <i data-lucide="layers" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-purple-50">Manage Menu Categories</h3>
+            <p class="text-[10px] text-purple-300">Add or manage categories displayed across the app</p>
+          </div>
+        </div>
+        <button id="close-manage-categories-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <div class="p-4 space-y-4 overflow-y-auto custom-scrollbar text-xs">
+        <!-- Add New Category Form -->
+        <div class="p-3 bg-purple-50/70 dark:bg-purple-950/30 rounded-xl border border-purple-200 dark:border-purple-900/60 space-y-2.5">
+          <h4 class="font-bold text-purple-950 dark:text-purple-200 text-xs flex items-center gap-1">
+            <i data-lucide="plus-circle" class="w-3.5 h-3.5"></i>
+            <span>Add New Category</span>
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] font-bold text-stone-600 dark:text-stone-300 mb-0.5">Category Name *</label>
+              <input type="text" id="new-category-name" placeholder="e.g. Pizzas, Desserts, Mocktails" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-purple-600">
+            </div>
+            <div>
+              <label class="block text-[10px] font-bold text-stone-600 dark:text-stone-300 mb-0.5">Icon Style</label>
+              <select id="new-category-icon" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-xs focus:outline-none">
+                <option value="utensils">Utensils (General Food)</option>
+                <option value="sparkles">Sparkles (Specials)</option>
+                <option value="sandwich">Sandwich & Buns</option>
+                <option value="flame">Flame (Spicy/Fried)</option>
+                <option value="coffee">Hot Brews / Coffee</option>
+                <option value="snowflake">Snowflake (Chilled)</option>
+                <option value="glass-water">Cooler / Drink</option>
+                <option value="cup-soda">Shake / Beverage</option>
+                <option value="cake">Dessert / Bakery</option>
+                <option value="pizza">Pizza & Slices</option>
+              </select>
+            </div>
+          </div>
+          <button type="button" id="create-category-btn" class="w-full py-2 bg-purple-700 hover:bg-purple-800 text-white rounded-lg font-bold text-xs transition flex items-center justify-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>Create Category</span>
+          </button>
+        </div>
+
+        <!-- Existing Categories List -->
+        <div>
+          <label class="block text-[11px] font-bold text-stone-700 dark:text-stone-300 mb-1.5 uppercase tracking-wider">Active Categories</label>
+          <div id="categories-manage-list" class="space-y-1.5">
+            <!-- Injected via renderCategoriesManagementList() -->
+          </div>
+        </div>
+      </div>
+
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex justify-end">
+        <button id="close-categories-done-btn" class="px-4 py-1.5 bg-stone-800 hover:bg-stone-900 text-white rounded-xl text-xs font-bold transition">
+          Done
+        </button>
+      </div>
     </div>
   </div>
 
@@ -574,15 +638,15 @@
   </div>
 
   <!-- Owner Add / Edit Item Modal -->
-  <div id="add-item-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+  <div id="add-item-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm">
     <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
+      <div class="p-3.5 sm:p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
         <div class="flex items-center gap-2">
           <div class="w-7 h-7 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
             <i data-lucide="edit" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 id="add-item-modal-title" class="font-heading font-bold text-base">Add New Menu Item</h3>
+            <h3 id="add-item-modal-title" class="font-heading font-bold text-sm sm:text-base">Add New Menu Item</h3>
             <p id="add-item-modal-subtitle" class="text-[10px] text-coffee-300">Set recipe details, pricing in ₹, and dish photo</p>
           </div>
         </div>
@@ -594,31 +658,25 @@
       <div class="p-4 space-y-3 overflow-y-auto custom-scrollbar text-xs">
         <div>
           <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Dish Name *</label>
-          <input type="text" id="new-item-name" placeholder="e.g., Masala French Fries" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-coffee-600">
+          <input type="text" id="new-item-name" placeholder="e.g. Masala French Fries" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none focus:ring-1 focus:ring-coffee-600">
         </div>
 
         <div class="grid grid-cols-2 gap-2">
           <div>
             <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Category *</label>
             <select id="new-item-category" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
-              <option value="burgers-sandwiches">Burgers & Sandwiches</option>
-              <option value="maggie-chaat">Maggi, Chaat & Sides</option>
-              <option value="momos">Momos</option>
-              <option value="cold-coffee">Cold Coffee</option>
-              <option value="refreshing">Cold Refreshing</option>
-              <option value="hot-beverages">Hot Brews</option>
-              <option value="shakes">Thickshakes</option>
+              <!-- Dynamically populated from dynamicCategories -->
             </select>
           </div>
           <div>
             <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Price (in ₹) *</label>
-            <input type="number" id="new-item-price" min="1" placeholder="e.g., 99" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+            <input type="number" id="new-item-price" min="1" placeholder="e.g. 99" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
           </div>
         </div>
 
         <div>
           <label class="block font-bold text-stone-700 dark:text-stone-300 mb-1">Badge Tag (Optional)</label>
-          <input type="text" id="new-item-tag" placeholder="e.g., Bestseller, Chef Special, Must Try" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
+          <input type="text" id="new-item-tag" placeholder="e.g. Bestseller, Chef Special, Must Try" class="w-full p-2 bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs focus:outline-none">
         </div>
 
         <div>
@@ -629,12 +687,12 @@
         <div class="p-3 bg-stone-50 dark:bg-stone-800/60 rounded-xl border border-stone-200 dark:border-stone-700 space-y-2">
           <div class="flex items-center justify-between">
             <label class="block font-bold text-stone-700 dark:text-stone-300">Dish Photo</label>
-            <span class="text-[10px] text-stone-400">File upload or Image URL</span>
+            <span class="text-[10px] text-stone-400">Upload or URL</span>
           </div>
 
           <div class="space-y-2">
             <div>
-              <span class="text-[10px] font-semibold text-stone-500">Option 1: Upload from Phone / Computer</span>
+              <span class="text-[10px] font-semibold text-stone-500">Option 1: Upload from Phone / Device</span>
               <input type="file" id="new-item-file-input" accept="image/*" class="w-full mt-0.5 text-xs text-stone-500 file:mr-2 file:py-1 file:px-2.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-coffee-800 file:text-amber-100 hover:file:bg-coffee-900 cursor-pointer">
             </div>
 
@@ -779,9 +837,9 @@
   </div>
 
   <!-- UPI / PhonePe Payment Gateway Modal (Customer Scan & Pay) -->
-  <div id="payment-gateway-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+  <div id="payment-gateway-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm">
     <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden text-center flex flex-col">
-      <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white p-4 relative">
+      <div class="bg-gradient-to-r from-purple-700 via-indigo-700 to-purple-800 text-white p-3.5 sm:p-4 relative">
         <button id="close-payment-modal-btn" class="absolute top-3 right-3 p-1 rounded-full hover:bg-white/20 text-white transition">
           <i data-lucide="x" class="w-4 h-4"></i>
         </button>
@@ -797,15 +855,15 @@
         <p class="text-[11px] text-purple-200 mt-1">Tilkamanjhi, Bhagalpur</p>
       </div>
 
-      <div class="p-5 flex flex-col items-center">
+      <div class="p-4 sm:p-5 flex flex-col items-center">
         <p class="text-xs text-stone-500 dark:text-stone-400 font-medium">Scan with any UPI App (PhonePe, GPay, Paytm)</p>
         
-        <div class="mt-2 bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 px-4 py-1.5 rounded-xl">
+        <div class="mt-2 bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 px-4 py-1 rounded-xl">
           <span class="text-xs text-purple-900 dark:text-purple-300 font-medium">Payable Amount: </span>
           <span id="qr-modal-amount" class="text-base font-extrabold text-purple-950 dark:text-purple-200">₹0</span>
         </div>
 
-        <div class="mt-3 p-2 bg-white rounded-xl border-2 border-stone-200 shadow-inner w-56 h-56 flex items-center justify-center overflow-hidden">
+        <div class="mt-3 p-2 bg-white rounded-xl border-2 border-stone-200 shadow-inner w-52 h-52 sm:w-56 sm:h-56 flex items-center justify-center overflow-hidden">
           <img 
             id="payment-modal-qr-img"
             src="images/brew-nagri-upi-qr.png" 
@@ -815,38 +873,38 @@
           />
         </div>
 
-        <div class="mt-2 text-[11px] font-bold text-stone-600 dark:text-stone-400 flex items-center justify-center gap-1.5">
+        <div class="mt-2 text-[10px] sm:text-[11px] font-bold text-stone-600 dark:text-stone-400 flex items-center justify-center gap-1.5">
           <span>BHIM UPI</span> • <span>Terminal: 9-Q146271805</span>
         </div>
 
-        <p class="text-[11px] text-stone-400 mt-2">
+        <p class="text-[10px] sm:text-[11px] text-stone-400 mt-2">
           After completing payment, return to tray & tap <strong>Send Order on WhatsApp</strong>.
         </p>
       </div>
 
-      <div class="p-3.5 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
+      <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
         <button id="dismiss-payment-modal-btn" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300 rounded-xl text-xs font-bold transition">
           Close
         </button>
         <button id="confirm-payment-order-btn" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5">
           <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
-          <span>Order via WhatsApp</span>
+          <span>Order on WhatsApp</span>
         </button>
       </div>
     </div>
   </div>
 
   <!-- Table QR Standee Generator Modal -->
-  <div id="qr-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+  <div id="qr-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm">
     <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
+      <div class="p-3.5 sm:p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-950 text-amber-50">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
             <i data-lucide="qr-code" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-heading font-bold text-base text-amber-100">Table QR Standee Generator</h3>
-            <p class="text-[11px] text-coffee-300">Generate printable cards for each dining table</p>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-amber-100">Table QR Standee Generator</h3>
+            <p class="text-[10px] text-coffee-300">Generate printable cards for each dining table</p>
           </div>
         </div>
         <button id="close-qr-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 transition">
@@ -927,13 +985,13 @@
   <!-- Customer Feedback & Review Modal -->
   <div id="feedback-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
     <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col">
-      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-50">
+      <div class="p-3.5 sm:p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-50">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
+          <div class="w-7 h-7 rounded-lg bg-amber-400 text-coffee-950 flex items-center justify-center font-bold">
             <i data-lucide="heart" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-heading font-bold text-base text-amber-100">Café Feedback</h3>
+            <h3 class="font-heading font-bold text-sm sm:text-base text-amber-100">Café Feedback</h3>
             <p class="text-[10px] text-coffee-300">Share your experience directly with us</p>
           </div>
         </div>
@@ -988,89 +1046,29 @@
     </div>
   </div>
 
-  <!-- About & Contact Modal -->
-  <div id="info-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-sm">
-    <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
-      <div class="p-4 sm:p-5 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-coffee-50 dark:bg-stone-800/60">
-        <div class="flex items-center gap-3">
-          <div class="w-11 h-11 rounded-full overflow-hidden bg-coffee-950 border border-amber-300 shrink-0 flex items-center justify-center">
-            <img id="brand-info-logo" src="images/brew-nagri-logo.png" alt="Brew Nagri" class="w-full h-full object-cover" onerror="this.style.display='none'">
-          </div>
-          <div>
-            <h3 class="font-heading font-bold text-base sm:text-lg text-coffee-950 dark:text-amber-100">Brew Nagri</h3>
-            <p class="text-xs text-coffee-700 dark:text-amber-300 font-semibold">Coffee • Food • Shakes</p>
-          </div>
-        </div>
-        <button id="close-info-modal-btn" class="p-1.5 rounded-full hover:bg-stone-200 dark:hover:bg-stone-700 text-stone-500">
-          <i data-lucide="x" class="w-5 h-5"></i>
-        </button>
-      </div>
-
-      <div class="p-4 sm:p-5 space-y-3.5 text-xs sm:text-sm text-stone-600 dark:text-stone-300 leading-relaxed">
-        <p>
-          Welcome to <strong>Brew Nagri</strong>, your local spot in Bhagalpur for freshly ground roasts, burgers, crisp sandwiches, noodles, dumplings, and rich thickshakes.
-        </p>
-
-        <div class="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 border border-emerald-200 dark:border-emerald-800 text-emerald-900 dark:text-emerald-200 text-xs font-medium flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-emerald-600 shrink-0"></span>
-          <span><strong>100% Pure Vegetarian Kitchen</strong> — No eggs, no meat, pure dairy & fresh farm veggies.</span>
-        </div>
-
-        <div class="space-y-2 pt-1 border-t border-stone-200 dark:border-stone-800 text-xs text-stone-700 dark:text-stone-300">
-          <div class="flex items-start gap-2">
-            <i data-lucide="map-pin" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0 mt-0.5"></i>
-            <span><strong>Address:</strong> Hatia Rd, Tilkamanjhi, Bhagalpur, Bihar</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="phone" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0"></i>
-            <span><strong>Mobile:</strong> <a id="info-modal-phone-link" href="tel:+917050300287" class="font-bold text-coffee-950 dark:text-amber-200 hover:underline">+91 7050300287</a></span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="mail" class="w-4 h-4 text-coffee-800 dark:text-amber-400 shrink-0"></i>
-            <span><strong>Email:</strong> <a href="mailto:brewnagri@gmail.com" class="font-bold text-coffee-950 dark:text-amber-200 hover:underline">brewnagri@gmail.com</a></span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="message-circle" class="w-4 h-4 text-emerald-600 shrink-0"></i>
-            <span><strong>WhatsApp Orders:</strong> <a id="info-modal-wa-link" href="https://wa.me/917050300287" target="_blank" rel="noopener noreferrer" class="font-bold text-coffee-900 dark:text-emerald-400 hover:underline">+91 7050300287</a></span>
-          </div>
-          <div class="flex items-center gap-2">
-            <i data-lucide="clock" class="w-4 h-4 text-coffee-700 dark:text-stone-400 shrink-0"></i>
-            <span>Daily: 9:00 AM – 11:00 PM</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="p-3.5 bg-stone-50 dark:bg-stone-800 border-t border-stone-100 dark:border-stone-800 flex justify-end">
-        <button id="dismiss-info-modal-btn" class="px-4 py-1.5 bg-coffee-800 hover:bg-coffee-900 text-white rounded-lg text-xs font-semibold transition">
-          Got it
-        </button>
-      </div>
-    </div>
-  </div>
-
   <!-- Advanced Mood AI Barista Modal Dialog -->
-  <div id="ai-barista-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/70 backdrop-blur-sm">
+  <div id="ai-barista-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 sm:p-4 bg-stone-950/70 backdrop-blur-sm">
     <div class="bg-white dark:bg-stone-900 max-w-lg w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[85vh]">
-      <div class="p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-100">
-        <div class="flex items-center gap-2.5">
-          <div class="w-8 h-8 rounded-xl bg-amber-400 text-coffee-950 flex items-center justify-center font-bold shadow-xs">
+      <div class="p-3.5 sm:p-4 border-b border-stone-100 dark:border-stone-800 flex items-center justify-between bg-gradient-to-r from-coffee-950 to-coffee-900 text-amber-100">
+        <div class="flex items-center gap-2">
+          <div class="w-7 h-7 rounded-xl bg-amber-400 text-coffee-950 flex items-center justify-center font-bold shadow-xs">
             <i data-lucide="sparkles" class="w-4 h-4"></i>
           </div>
           <div>
-            <h3 class="font-heading font-bold text-sm sm:text-base text-amber-100 flex items-center gap-1.5">
+            <h3 class="font-heading font-bold text-xs sm:text-base text-amber-100 flex items-center gap-1">
               AI Mood Barista & Autobot
-              <span class="text-[9px] px-1.5 py-0.5 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 font-medium">Gemini</span>
+              <span class="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400/20 text-amber-200 border border-amber-400/30 font-medium">Gemini</span>
             </h3>
-            <p class="text-[11px] text-coffee-300">Intelligent pure veg mood matching & combo suggestions</p>
+            <p class="text-[10px] text-coffee-300">Intelligent pure veg mood matching & combo suggestions</p>
           </div>
         </div>
-        <button id="close-ai-modal-btn" class="p-1.5 rounded-full hover:bg-white/10 text-stone-300 hover:text-white transition cursor-pointer">
+        <button id="close-ai-modal-btn" class="p-1 rounded-full hover:bg-white/10 text-stone-300 hover:text-white transition cursor-pointer">
           <i data-lucide="x" class="w-5 h-5"></i>
         </button>
       </div>
 
       <!-- Interactive Mood Chips -->
-      <div class="px-4 py-2 bg-stone-50 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700 flex items-center gap-1.5 overflow-x-auto custom-scrollbar">
+      <div class="px-3 sm:px-4 py-2 bg-stone-50 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700 flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-pan-x">
         <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I am feeling exhausted and need an instant energy boost!">⚡ Need Energy</button>
         <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="It feels like a cozy, rainy afternoon. What hot snacks should I get?">🌧️ Rainy Comfort</button>
         <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I'm craving something cheesy, melty, and super satisfying!">🧀 Cheesy Craving</button>
@@ -1079,20 +1077,20 @@
         <button class="ai-prompt-chip whitespace-nowrap px-2.5 py-1 bg-white dark:bg-stone-700 border border-stone-200 dark:border-stone-600 rounded-full text-[11px] font-medium text-stone-700 dark:text-stone-200 hover:border-amber-500 transition cursor-pointer" data-prompt="I am on a budget under ₹100. Suggest the best combo!">💰 Under ₹100</button>
       </div>
 
-      <div id="ai-conversation-box" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar min-h-[220px]">
+      <div id="ai-conversation-box" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3 custom-scrollbar min-h-[220px]">
         <div class="flex items-start gap-2.5">
           <div class="w-7 h-7 rounded-lg bg-coffee-800 text-amber-200 flex items-center justify-center shrink-0 text-xs">
             <i data-lucide="coffee" class="w-4 h-4"></i>
           </div>
-          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3.5 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[85%] border border-stone-200 dark:border-stone-700">
+          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3.5 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[88%] border border-stone-200 dark:border-stone-700">
             👋 Namaste! I am your <strong>Brew Nagri Mood Autobot</strong>. Tell me your exact vibe, energy level, hunger cravings, or party size—and I will match you with our freshest 100% pure vegetarian recipes!
           </div>
         </div>
       </div>
 
       <div class="p-3 border-t border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-900 flex items-center gap-2">
-        <input type="text" id="ai-user-input" placeholder="Type your mood (e.g. 'feeling sleepy', 'need spicy food with coffee')..." class="flex-1 px-3.5 py-2 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-coffee-600 text-stone-900 dark:text-stone-100">
-        <button id="ai-send-btn" class="px-3 py-2 bg-coffee-800 hover:bg-coffee-900 text-amber-100 rounded-xl text-xs font-bold transition flex items-center gap-1.5 shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer">
+        <input type="text" id="ai-user-input" placeholder="Type your mood (e.g. 'feeling sleepy', 'need spicy food with coffee')..." class="flex-1 px-3 py-2 text-xs bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-coffee-600 text-stone-900 dark:text-stone-100">
+        <button id="ai-send-btn" class="px-3 py-2 bg-coffee-800 hover:bg-coffee-900 text-amber-100 rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-xs active:scale-95 disabled:opacity-50 cursor-pointer touch-manipulation">
           <span>Ask</span>
           <i data-lucide="send" class="w-3.5 h-3.5"></i>
         </button>
@@ -1156,18 +1154,6 @@
       if (heroPhone) heroPhone.textContent = formattedDisplay;
       if (heroPhoneLink) heroPhoneLink.href = `tel:+${cleaned}`;
 
-      const infoModalPhone = document.getElementById("info-modal-phone-link");
-      if (infoModalPhone) {
-        infoModalPhone.textContent = formattedDisplay;
-        infoModalPhone.href = `tel:+${cleaned}`;
-      }
-
-      const infoWaLink = document.getElementById("info-modal-wa-link");
-      if (infoWaLink) {
-        infoWaLink.textContent = formattedDisplay;
-        infoWaLink.href = `https://wa.me/${cleaned}`;
-      }
-
       const waInput = document.getElementById("new-wa-target-input");
       if (waInput) {
         waInput.value = cleaned.startsWith("91") ? cleaned.slice(2) : cleaned;
@@ -1190,7 +1176,6 @@
 
       const headerLogo = document.getElementById("brand-header-logo");
       const standeeLogo = document.getElementById("brand-standee-logo");
-      const infoLogo = document.getElementById("brand-info-logo");
       const previewImg = document.getElementById("logo-modal-preview-img");
 
       if (headerLogo) {
@@ -1200,10 +1185,6 @@
       if (standeeLogo) {
         standeeLogo.src = logoUrl;
         standeeLogo.style.display = "block";
-      }
-      if (infoLogo) {
-        infoLogo.src = logoUrl;
-        infoLogo.style.display = "block";
       }
       if (previewImg) {
         previewImg.src = logoUrl;
@@ -1222,16 +1203,157 @@
       if (previewImg) previewImg.src = qrUrl;
     }
 
-    const CATEGORIES = [
+    // Core Categories
+    const CORE_CATEGORIES = [
       { id: "all", label: "All Items", icon: "sparkles" },
       { id: "burgers-sandwiches", label: "Burgers & Sandwiches", icon: "sandwich" },
       { id: "maggie-chaat", label: "Maggi, Chaat & Sides", icon: "flame" },
-      { id: "momos", label: "Momos", icon: "utensils-crossed" },
+      { id: "momos", label: "Momos", icon: "utensils" },
       { id: "cold-coffee", label: "Cold Coffee", icon: "snowflake" },
       { id: "refreshing", label: "Cold Refreshing", icon: "glass-water" },
       { id: "hot-beverages", label: "Hot Brews", icon: "coffee" },
       { id: "shakes", label: "Thickshakes", icon: "cup-soda" }
     ];
+
+    let dynamicCategories = [...CORE_CATEGORIES];
+    try {
+      const savedCats = localStorage.getItem("brewnagri_custom_categories");
+      if (savedCats) {
+        dynamicCategories = JSON.parse(savedCats);
+      }
+    } catch (e) {
+      console.warn("Could not load stored categories", e);
+    }
+
+    function saveCategoriesToStorage() {
+      try {
+        localStorage.setItem("brewnagri_custom_categories", JSON.stringify(dynamicCategories));
+      } catch (e) {
+        console.warn("Could not save categories", e);
+      }
+    }
+
+    function syncCategoryDropdowns() {
+      const itemCategorySelect = document.getElementById("new-item-category");
+      const ownerCategoryFilter = document.getElementById("owner-category-filter");
+
+      const optionsHtml = dynamicCategories
+        .filter(c => c.id !== "all")
+        .map(c => `<option value="${c.id}">${c.label}</option>`)
+        .join("");
+
+      const filterHtml = `<option value="all">All Categories</option>` + optionsHtml;
+
+      if (itemCategorySelect) itemCategorySelect.innerHTML = optionsHtml;
+      if (ownerCategoryFilter) ownerCategoryFilter.innerHTML = filterHtml;
+    }
+
+    function renderCategoriesManagementList() {
+      const container = document.getElementById("categories-manage-list");
+      if (!container) return;
+
+      container.innerHTML = dynamicCategories.map(cat => {
+        const isCoreCategory = CORE_CATEGORIES.some(c => c.id === cat.id);
+        const count = MENU_ITEMS.filter(m => m.category === cat.id).length;
+
+        return `
+          <div class="flex items-center justify-between p-2 rounded-xl bg-stone-50 dark:bg-stone-800/80 border border-stone-200 dark:border-stone-700 text-xs">
+            <div class="flex items-center gap-2">
+              <span class="p-1 rounded-md bg-stone-200 dark:bg-stone-700 text-stone-700 dark:text-stone-300">
+                <i data-lucide="${cat.icon || 'utensils'}" class="w-3.5 h-3.5"></i>
+              </span>
+              <div>
+                <span class="font-bold text-coffee-950 dark:text-stone-100">${cat.label}</span>
+                <span class="text-[10px] text-stone-400 dark:text-stone-500 ml-1">(${count} items)</span>
+              </div>
+            </div>
+
+            <div>
+              ${isCoreCategory ? `
+                <span class="text-[9px] px-2 py-0.5 rounded-full bg-stone-200 dark:bg-stone-700 text-stone-500 font-bold">Standard</span>
+              ` : `
+                <button type="button" onclick="deleteCustomCategory('${cat.id}')" class="p-1.5 text-red-600 hover:bg-red-50 dark:hover:bg-red-950/40 rounded-lg transition" title="Delete category">
+                  <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                </button>
+              `}
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      if (window.lucide && typeof lucide.createIcons === "function") {
+        lucide.createIcons();
+      }
+    }
+
+    function addNewCategory() {
+      const nameInput = document.getElementById("new-category-name");
+      const iconInput = document.getElementById("new-category-icon");
+      if (!nameInput) return;
+
+      const label = nameInput.value.trim();
+      if (!label) {
+        showNotification("Please enter a category title.");
+        return;
+      }
+
+      const id = label.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
+      if (dynamicCategories.some(c => c.id === id)) {
+        showNotification("A category with this name already exists!");
+        return;
+      }
+
+      const icon = iconInput ? iconInput.value : "utensils";
+
+      dynamicCategories.push({ id, label, icon });
+      saveCategoriesToStorage();
+      nameInput.value = "";
+
+      renderCategoriesManagementList();
+      syncCategoryDropdowns();
+      renderCategories();
+      showNotification(`Category "${label}" added successfully!`);
+    }
+
+    function deleteCustomCategory(catId) {
+      const cat = dynamicCategories.find(c => c.id === catId);
+      if (!cat) return;
+
+      const itemsInCat = MENU_ITEMS.filter(m => m.category === catId);
+      if (itemsInCat.length > 0) {
+        showNotification(`Cannot remove: ${itemsInCat.length} dish(es) are currently under "${cat.label}". Reassign them first.`);
+        return;
+      }
+
+      dynamicCategories = dynamicCategories.filter(c => c.id !== catId);
+      saveCategoriesToStorage();
+
+      if (activeCategory === catId) {
+        activeCategory = "all";
+      }
+
+      renderCategoriesManagementList();
+      syncCategoryDropdowns();
+      renderCategories();
+      renderMenu();
+      showNotification(`Removed category "${cat.label}".`);
+    }
+
+    function openManageCategoriesModal() {
+      const modal = document.getElementById("manage-categories-modal");
+      if (modal) {
+        modal.classList.remove("hidden");
+        renderCategoriesManagementList();
+        if (window.lucide && typeof lucide.createIcons === "function") {
+          lucide.createIcons();
+        }
+      }
+    }
+
+    function closeManageCategoriesModal() {
+      const modal = document.getElementById("manage-categories-modal");
+      if (modal) modal.classList.add("hidden");
+    }
 
     const DEFAULT_MENU_ITEMS = [
       // --- Burgers & Sandwiches ---
@@ -1705,10 +1827,10 @@
       if (ownerView) ownerView.classList.add("hidden");
 
       if (tabBtnCustomer) {
-        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1";
+        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1 touch-manipulation";
       }
       if (tabBtnOwner) {
-        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1";
+        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1 touch-manipulation";
       }
       renderMenu();
       if (window.lucide && typeof lucide.createIcons === "function") {
@@ -1726,10 +1848,10 @@
       if (ownerView) ownerView.classList.remove("hidden");
 
       if (tabBtnOwner) {
-        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-coffee-950 text-amber-300 shadow-xs flex items-center gap-1";
+        tabBtnOwner.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition bg-coffee-950 text-amber-300 shadow-xs flex items-center gap-1 touch-manipulation";
       }
       if (tabBtnCustomer) {
-        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1";
+        tabBtnCustomer.className = "px-2.5 sm:px-3.5 py-1 rounded-full text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 dark:hover:text-white flex items-center gap-1 touch-manipulation";
       }
       renderOwnerItems();
       if (window.lucide && typeof lucide.createIcons === "function") {
@@ -1805,7 +1927,6 @@
       }
     }
 
-    // Owner WhatsApp Target Management
     function openChangeWaModal() {
       const modal = document.getElementById("change-wa-modal");
       const input = document.getElementById("new-wa-target-input");
@@ -1863,7 +1984,7 @@
       if (filtered.length === 0) {
         container.innerHTML = `
           <div class="p-8 text-center bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 text-stone-500">
-            No dishes matching your search. Click <strong>Add New Item</strong> above to create one!
+            No dishes matching your search. Click <strong>Add Dish</strong> above to create one!
           </div>
         `;
         return;
@@ -1873,65 +1994,65 @@
         const isSoldOut = item.soldOut === true;
 
         return `
-          <div class="p-3.5 bg-white dark:bg-stone-900 rounded-2xl border ${isSoldOut ? 'border-red-200 bg-red-50/20 opacity-80' : 'border-stone-200 dark:border-stone-800'} shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-3 min-w-0">
+          <div class="p-3 sm:p-3.5 bg-white dark:bg-stone-900 rounded-2xl border ${isSoldOut ? 'border-red-200 bg-red-50/20 opacity-80' : 'border-stone-200 dark:border-stone-800'} shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3 min-w-0 w-full sm:w-auto">
               <button 
                 type="button" 
                 onclick="openEditItemModal('${item.id}')" 
                 title="Click to change photo and details" 
-                class="relative w-14 h-14 rounded-xl bg-stone-100 dark:bg-stone-800 overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 group cursor-pointer">
+                class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-stone-100 dark:bg-stone-800 overflow-hidden shrink-0 border border-stone-200 dark:border-stone-700 group cursor-pointer touch-manipulation">
                 <img src="${item.image}" alt="${item.name}" class="w-full h-full object-cover group-hover:scale-110 transition duration-300" onerror="this.src='https://placehold.co/100x100/3e2723/ffffff?text=Food'">
                 <div class="absolute inset-0 bg-stone-950/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center text-white">
-                  <i data-lucide="camera" class="w-4 h-4"></i>
+                  <i data-lucide="camera" class="w-3.5 h-3.5 sm:w-4 sm:h-4"></i>
                 </div>
               </button>
 
-              <div class="min-w-0">
+              <div class="min-w-0 flex-1">
                 <div class="flex items-center gap-1.5 flex-wrap">
-                  <h4 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100 truncate">${item.name}</h4>
-                  <span class="text-[10px] px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold uppercase">${item.category}</span>
+                  <h4 class="font-heading font-bold text-xs sm:text-sm text-coffee-950 dark:text-amber-100 truncate">${item.name}</h4>
+                  <span class="text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300 font-semibold uppercase">${item.category}</span>
                   ${item.tag ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300 font-bold">${item.tag}</span>` : ''}
                   ${isSoldOut ? `<span class="text-[9px] px-1.5 py-0.5 rounded-md bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 font-black">SOLD OUT</span>` : ''}
                 </div>
-                <p class="text-[11px] text-stone-500 dark:text-stone-400 truncate max-w-sm mt-0.5">${item.description || 'No description'}</p>
+                <p class="text-[10px] sm:text-[11px] text-stone-500 dark:text-stone-400 truncate max-w-xs sm:max-w-sm mt-0.5">${item.description || 'No description'}</p>
               </div>
             </div>
 
-            <div class="flex items-center gap-2 self-end sm:self-center flex-wrap">
+            <div class="flex items-center gap-1.5 sm:gap-2 self-end sm:self-center flex-wrap">
               <div class="flex items-center bg-stone-100 dark:bg-stone-800 rounded-xl p-1 border border-stone-300 dark:border-stone-700">
-                <span class="text-xs font-bold text-stone-500 px-1.5">₹</span>
+                <span class="text-xs font-bold text-stone-500 px-1">₹</span>
                 <input 
                   type="number" 
                   min="1" 
                   value="${item.price}" 
                   id="price-input-${item.id}" 
-                  class="w-16 py-1 px-1 text-xs font-black text-coffee-950 dark:text-amber-100 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-center focus:outline-none focus:ring-1 focus:ring-coffee-600"
+                  class="w-14 sm:w-16 py-1 px-1 text-xs font-black text-coffee-950 dark:text-amber-100 bg-white dark:bg-stone-900 border border-stone-200 dark:border-stone-700 rounded-lg text-center focus:outline-none focus:ring-1 focus:ring-coffee-600"
                   onkeydown="if(event.key==='Enter') saveQuickPrice('${item.id}')"
                 >
-                <button onclick="saveQuickPrice('${item.id}')" class="ml-1 px-2 py-1 bg-coffee-800 hover:bg-coffee-900 text-amber-100 font-bold text-xs rounded-lg transition active:scale-95">
+                <button onclick="saveQuickPrice('${item.id}')" class="ml-1 px-2 py-1 bg-coffee-800 hover:bg-coffee-900 text-amber-100 font-bold text-xs rounded-lg transition active:scale-95 touch-manipulation">
                   Set
                 </button>
               </div>
 
               <button 
                 onclick="openEditItemModal('${item.id}')" 
-                title="Change Image & Edit Details"
-                class="px-2.5 py-1.5 bg-amber-50 dark:bg-stone-800 hover:bg-amber-100 text-coffee-900 dark:text-amber-200 border border-amber-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1">
+                title="Change Photo & Details"
+                class="px-2 py-1.5 bg-amber-50 dark:bg-stone-800 hover:bg-amber-100 text-coffee-900 dark:text-amber-200 border border-amber-300 dark:border-stone-700 rounded-xl text-xs font-bold transition flex items-center gap-1 touch-manipulation">
                 <i data-lucide="image" class="w-3.5 h-3.5 text-amber-700 dark:text-amber-400"></i>
-                <span class="hidden md:inline">Change Photo</span>
+                <span class="hidden md:inline">Photo</span>
               </button>
 
               <button 
                 onclick="toggleItemStock('${item.id}')" 
                 title="${isSoldOut ? 'Mark In Stock' : 'Mark Out of Stock'}"
-                class="p-2 rounded-xl text-xs font-bold transition border ${isSoldOut ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-50 text-emerald-700 border-emerald-200'}">
+                class="p-2 rounded-xl text-xs font-bold transition border ${isSoldOut ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-emerald-50 text-emerald-700 border-emerald-200'} touch-manipulation">
                 <i data-lucide="${isSoldOut ? 'eye-off' : 'eye'}" class="w-3.5 h-3.5"></i>
               </button>
 
               <button 
                 onclick="deleteMenuItem('${item.id}')" 
                 title="Delete item"
-                class="p-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 border border-red-200 dark:border-red-900 rounded-xl transition">
+                class="p-2 bg-red-50 dark:bg-red-950/50 hover:bg-red-100 text-red-600 border border-red-200 dark:border-red-900 rounded-xl transition touch-manipulation">
                 <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
               </button>
             </div>
@@ -2007,7 +2128,9 @@
       const previewImg = document.getElementById("new-item-preview-img");
       const placeholder = document.getElementById("preview-placeholder-icon");
 
-      if (title) title.textContent = `Edit Dish: ${item.name}`;
+      syncCategoryDropdowns();
+
+      if (title) title.textContent = `Edit: ${item.name}`;
       if (subtitle) subtitle.textContent = "Change dish photo, update price in ₹, or edit ingredients";
       if (saveBtnLabel) saveBtnLabel.textContent = "Update Dish";
 
@@ -2050,12 +2173,13 @@
       const previewImg = document.getElementById("new-item-preview-img");
       const placeholder = document.getElementById("preview-placeholder-icon");
 
+      syncCategoryDropdowns();
+
       if (title) title.textContent = "Add New Menu Item";
       if (subtitle) subtitle.textContent = "Set recipe details, pricing in ₹, and dish photo";
       if (saveBtnLabel) saveBtnLabel.textContent = "Save to Menu";
 
       if (nameInput) nameInput.value = "";
-      if (categoryInput) categoryInput.value = "burgers-sandwiches";
       if (priceInput) priceInput.value = "";
       if (tagInput) tagInput.value = "";
       if (descInput) descInput.value = "";
@@ -2346,7 +2470,7 @@
     function renderCategories() {
       const container = document.getElementById("category-tabs-container");
       if (!container) return;
-      container.innerHTML = CATEGORIES.map(cat => {
+      container.innerHTML = dynamicCategories.map(cat => {
         const isActive = cat.id === activeCategory;
         const activeClass = isActive 
           ? "bg-coffee-800 text-amber-100 dark:bg-amber-400 dark:text-stone-950 shadow-xs scale-100" 
@@ -2354,8 +2478,8 @@
         return `
           <button 
             onclick="setCategory('${cat.id}')"
-            class="px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 ${activeClass}">
-            <i data-lucide="${cat.icon}" class="w-3.5 h-3.5"></i>
+            class="px-3 sm:px-4 py-2 sm:py-2 rounded-full text-xs font-semibold whitespace-nowrap transition flex items-center gap-1.5 shrink-0 touch-manipulation active:scale-95 ${activeClass}">
+            <i data-lucide="${cat.icon || 'utensils'}" class="w-3.5 h-3.5"></i>
             <span>${cat.label}</span>
           </button>
         `;
@@ -2399,7 +2523,7 @@
         return `
           <div class="bg-white dark:bg-stone-900 rounded-2xl overflow-hidden border border-stone-200/80 dark:border-stone-800 shadow-xs hover:shadow-md transition duration-200 flex flex-col justify-between group ${isSoldOut ? 'opacity-60' : ''}">
             
-            <div class="relative h-44 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
+            <div class="relative h-44 sm:h-48 w-full overflow-hidden bg-stone-100 dark:bg-stone-800">
               <img 
                 src="${item.image}" 
                 alt="${item.name}" 
@@ -2408,14 +2532,14 @@
                 class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
               />
               
-              <div class="absolute top-3 left-3 bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm p-1 rounded-md shadow-xs flex items-center justify-center" title="100% Pure Vegetarian">
+              <div class="absolute top-2.5 left-2.5 bg-white/95 dark:bg-stone-900/90 backdrop-blur-sm p-1 rounded-md shadow-xs flex items-center justify-center" title="100% Pure Vegetarian">
                 <div class="w-4 h-4 rounded-xs flex items-center justify-center badge-veg">
                   <span class="w-2 h-2 rounded-full badge-veg-dot"></span>
                 </div>
               </div>
 
               ${item.tag ? `
-                <div class="absolute top-3 right-3 bg-coffee-950/80 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
+                <div class="absolute top-2.5 right-2.5 bg-coffee-950/80 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider shadow-xs">
                   ${item.tag}
                 </div>
               ` : ''}
@@ -2425,7 +2549,7 @@
               </div>
             </div>
 
-            <div class="p-4 flex-1 flex flex-col justify-between">
+            <div class="p-3.5 sm:p-4 flex-1 flex flex-col justify-between">
               <div>
                 <div class="flex items-center justify-between">
                   <h3 class="font-heading font-bold text-base text-coffee-950 dark:text-amber-100 leading-snug group-hover:text-coffee-700 dark:group-hover:text-amber-300 transition">
@@ -2438,27 +2562,27 @@
                 </p>
               </div>
 
-              <div class="mt-4 pt-3 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
+              <div class="mt-3.5 pt-2.5 border-t border-stone-100 dark:border-stone-800 flex items-center justify-between">
                 <span class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold flex items-center gap-1">
                   <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Pure Veg
                 </span>
 
                 ${isSoldOut ? `
-                  <span class="text-xs text-red-600 font-bold">Currently Unavailable</span>
+                  <span class="text-xs text-red-600 font-bold">Sold Out</span>
                 ` : qtyInCart > 0 ? `
-                  <div class="flex items-center bg-coffee-100 dark:bg-stone-800 border border-coffee-300 dark:border-stone-700 rounded-xl p-1 gap-2 shadow-xs">
-                    <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-7 h-7 rounded-lg bg-white dark:bg-stone-700 text-coffee-900 dark:text-stone-100 hover:bg-coffee-200 flex items-center justify-center font-bold text-sm shadow-xs transition active:scale-90">
+                  <div class="flex items-center bg-coffee-100 dark:bg-stone-800 border border-coffee-300 dark:border-stone-700 rounded-xl p-0.5 gap-2 shadow-xs">
+                    <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-8 h-8 rounded-lg bg-white dark:bg-stone-700 text-coffee-900 dark:text-stone-100 hover:bg-coffee-200 flex items-center justify-center font-bold text-base shadow-xs transition active:scale-90 touch-manipulation">
                       -
                     </button>
                     <span class="text-xs font-extrabold text-coffee-950 dark:text-amber-300 px-1">${qtyInCart}</span>
-                    <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-7 h-7 rounded-lg bg-coffee-800 dark:bg-amber-400 text-white dark:text-stone-950 hover:bg-coffee-900 flex items-center justify-center font-bold text-sm shadow-xs transition active:scale-90">
+                    <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-8 h-8 rounded-lg bg-coffee-800 dark:bg-amber-400 text-white dark:text-stone-950 hover:bg-coffee-900 flex items-center justify-center font-bold text-base shadow-xs transition active:scale-90 touch-manipulation">
                       +
                     </button>
                   </div>
                 ` : `
                   <button 
                     onclick="incrementItem('${item.id}')" 
-                    class="px-4 py-2 bg-coffee-50 dark:bg-stone-800 hover:bg-coffee-800 dark:hover:bg-amber-400 text-coffee-800 dark:text-stone-200 hover:text-white dark:hover:text-stone-950 border border-coffee-300 dark:border-stone-700 hover:border-transparent font-bold text-xs rounded-xl transition-all duration-200 flex items-center gap-1.5 active:scale-95 shadow-xs">
+                    class="px-4 py-2 min-h-[38px] bg-coffee-50 dark:bg-stone-800 hover:bg-coffee-800 dark:hover:bg-amber-400 text-coffee-800 dark:text-stone-200 hover:text-white dark:hover:text-stone-950 border border-coffee-300 dark:border-stone-700 hover:border-transparent font-bold text-xs rounded-xl transition-all duration-200 flex items-center gap-1.5 active:scale-95 shadow-xs touch-manipulation">
                     <i data-lucide="plus" class="w-3.5 h-3.5"></i>
                     <span>Add</span>
                   </button>
@@ -2589,16 +2713,16 @@
 
             <div class="flex items-center gap-1.5">
               <div class="flex items-center bg-white dark:bg-stone-700 border border-stone-300 dark:border-stone-600 rounded-lg p-0.5">
-                <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100">
+                <button onclick="decrementItem('${item.id}')" aria-label="Decrease quantity" class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-100 touch-manipulation">
                   -
                 </button>
                 <span class="text-xs font-bold px-1.5 text-stone-800 dark:text-stone-100">${qty}</span>
-                <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-5 h-5 rounded flex items-center justify-center text-xs font-bold text-coffee-900 dark:text-amber-300 hover:bg-coffee-100">
+                <button onclick="incrementItem('${item.id}')" aria-label="Increase quantity" class="w-6 h-6 rounded flex items-center justify-center text-xs font-bold text-coffee-900 dark:text-amber-300 hover:bg-coffee-100 touch-manipulation">
                   +
                 </button>
               </div>
-              <button onclick="removeItemCompletely('${item.id}')" class="text-stone-400 hover:text-red-600 p-1 transition" title="Remove item">
-                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <button onclick="removeItemCompletely('${item.id}')" class="text-stone-400 hover:text-red-600 p-1.5 transition touch-manipulation" title="Remove item">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
               </button>
             </div>
           </div>
@@ -2681,8 +2805,8 @@
 
       const toast = document.createElement("div");
       toast.id = "brew-toast";
-      toast.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl transition-all duration-300 border border-stone-700 flex items-center gap-2";
-      toast.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-amber-400"></i> <span>${msg}</span>`;
+      toast.className = "fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-stone-900 text-white px-4 py-2.5 rounded-full text-xs font-semibold shadow-2xl transition-all duration-300 border border-stone-700 flex items-center gap-2 max-w-[90vw] text-center";
+      toast.innerHTML = `<i data-lucide="alert-circle" class="w-4 h-4 text-amber-400 shrink-0"></i> <span>${msg}</span>`;
       document.body.appendChild(toast);
       if (window.lucide && typeof lucide.createIcons === "function") {
         lucide.createIcons();
@@ -2704,7 +2828,7 @@
         banner.classList.remove("hidden");
         let desc = [];
         if (activeCategory !== "all") {
-          const cat = CATEGORIES.find(c => c.id === activeCategory);
+          const cat = dynamicCategories.find(c => c.id === activeCategory);
           desc.push(`Category: ${cat ? cat.label : activeCategory}`);
         }
         if (searchQuery) desc.push(`"${searchQuery}"`);
@@ -2824,12 +2948,6 @@
           ids: ["bm-1", "hb-5"]
         };
       }
-      if (q.includes("coffee") || q.includes("brew")) {
-        return {
-          text: "For true coffee lovers, our artisan Melbourne Coffee paired with a Veg Burger is an unbeatable café favorite.",
-          ids: ["hb-1", "bg-1"]
-        };
-      }
       return {
         text: "Here is our chef's signature pick freshly prepared in our 100% pure veg kitchen today:",
         ids: ["bg-2", "cc-1"]
@@ -2881,7 +2999,7 @@
       const userBubble = document.createElement("div");
       userBubble.className = "flex items-start justify-end gap-2.5";
       userBubble.innerHTML = `
-        <div class="bg-coffee-800 text-amber-50 rounded-2xl rounded-tr-none p-3.5 text-xs leading-relaxed max-w-[85%] shadow-xs font-medium">
+        <div class="bg-coffee-800 text-amber-50 rounded-2xl rounded-tr-none p-3 text-xs leading-relaxed max-w-[85%] shadow-xs font-medium">
           ${userMessage}
         </div>
       `;
@@ -2896,7 +3014,7 @@
           <i data-lucide="bot" class="w-4 h-4 animate-spin"></i>
         </div>
         <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3 text-stone-600 dark:text-stone-300 text-xs flex items-center gap-2 border border-stone-200 dark:border-stone-700">
-          <span>Barista Autobot is matching your mood with the kitchen recipes...</span>
+          <span>Barista Autobot is matching your mood with recipes...</span>
         </div>
       `;
       conversationBox.appendChild(loadingBubble);
@@ -2916,8 +3034,8 @@ ${getMenuGroundingContext()}
 
 AUTOBOT MOOD-MATCHING RULES:
 1. Act as a warm, lively café concierge who intuitively interprets moods, emotions, cravings, and energy levels.
-2. Keep the answer upbeat and brief (2-3 concise conversational sentences explaining WHY this matches their mood).
-3. At the end of your response, ALWAYS append the machine tag format: [RECOMMEND:id1,id2] with 1 or 2 exact menu item IDs.`;
+2. Keep the answer upbeat and brief (2-3 concise sentences explaining WHY this matches their mood).
+3. At the end of your response, output: [RECOMMEND:id1,id2] with 1 or 2 exact menu item IDs.`;
 
       try {
         let cleanText = "";
@@ -2953,7 +3071,7 @@ AUTOBOT MOOD-MATCHING RULES:
                   <p class="font-bold text-coffee-950 dark:text-amber-100 text-xs truncate">${item.name}</p>
                   <p class="text-[11px] text-stone-500 dark:text-stone-300">${CAFE_CONFIG.currencySymbol}${item.price}</p>
                 </div>
-                <button onclick="incrementItem('${item.id}'); showNotification('Added ${item.name} to tray!');" class="px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-[11px] rounded-lg transition active:scale-95 flex items-center gap-1 shrink-0">
+                <button onclick="incrementItem('${item.id}'); showNotification('Added ${item.name} to tray!');" class="px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold text-[11px] rounded-lg transition active:scale-95 flex items-center gap-1 shrink-0 touch-manipulation">
                   <i data-lucide="plus" class="w-3 h-3"></i>
                   <span>Add</span>
                 </button>
@@ -2966,7 +3084,7 @@ AUTOBOT MOOD-MATCHING RULES:
           <div class="w-7 h-7 rounded-lg bg-coffee-800 text-amber-200 flex items-center justify-center shrink-0 text-xs">
             <i data-lucide="coffee" class="w-4 h-4"></i>
           </div>
-          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3.5 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[85%] border border-stone-200 dark:border-stone-700">
+          <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3 text-stone-800 dark:text-stone-200 text-xs leading-relaxed max-w-[85%] border border-stone-200 dark:border-stone-700">
             <p>${cleanText.replace(/\n/g, '<br>')}</p>
             ${itemsHtml}
           </div>
@@ -2984,7 +3102,7 @@ AUTOBOT MOOD-MATCHING RULES:
             <i data-lucide="coffee" class="w-4 h-4"></i>
           </div>
           <div class="bg-stone-100 dark:bg-stone-800 rounded-2xl rounded-tl-none p-3 text-xs border border-stone-200 dark:border-stone-700">
-            Enjoy our classic <strong>Melbourne Coffee</strong> (₹70) paired with <strong>Veg Burger</strong> (₹89)!
+            Enjoy our signature <strong>Melbourne Coffee</strong> (₹70) paired with <strong>Veg Burger</strong> (₹89)!
           </div>
         `;
         conversationBox.appendChild(errBubble);
@@ -3001,104 +3119,13 @@ AUTOBOT MOOD-MATCHING RULES:
       }
     }
 
-    async function handleCartPairing() {
-      const resultBox = document.getElementById("cart-ai-result");
-      if (!resultBox) return;
-      const currentCartKeys = Object.keys(cart);
-
-      if (currentCartKeys.length === 0) {
-        resultBox.classList.remove("hidden");
-        resultBox.innerHTML = `<span class="text-stone-500 italic">Add at least one item to your tray first, and I will recommend its best pure veg match!</span>`;
-        return;
-      }
-
-      resultBox.classList.remove("hidden");
-      resultBox.innerHTML = `
-        <div class="flex items-center gap-2 text-stone-600 dark:text-stone-300">
-          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-500 animate-spin"></i>
-          <span>Chef is analyzing your tray flavors...</span>
-        </div>
-      `;
-      if (window.lucide && typeof lucide.createIcons === "function") {
-        lucide.createIcons();
-      }
-
-      const cartItemsSummary = currentCartKeys.map(id => {
-        const item = MENU_ITEMS.find(m => m.id === id);
-        return item ? `${item.name} (${item.category})` : '';
-      }).filter(Boolean).join(", ");
-
-      const systemPrompt = `You are a sommelier at Brew Nagri Cafe (100% pure veg).
-Given the customer's current tray: "${cartItemsSummary}".
-Recommend exactly ONE complementary item from our menu that is not already in their tray.
-Menu options:
-${getMenuGroundingContext()}
-
-Format response as:
-Explanation (1 concise sentence why this pairs great).
-[RECOMMEND:itemId]`;
-
-      try {
-        let cleanText = "";
-        let matchId = null;
-
-        try {
-          const response = await callGeminiAPI(`What should I pair with: ${cartItemsSummary}?`, systemPrompt);
-          const match = response.match(/\[RECOMMEND:([^\]]+)\]/);
-          if (match) {
-            cleanText = response.replace(match[0], "").trim();
-            matchId = match[1].trim();
-          } else {
-            cleanText = response.trim();
-          }
-        } catch (apiErr) {
-          const hasDrink = currentCartKeys.some(id => {
-            const it = MENU_ITEMS.find(m => m.id === id);
-            return it && (it.category === "cold-coffee" || it.category === "hot-beverages" || it.category === "shakes" || it.category === "refreshing");
-          });
-
-          if (hasDrink) {
-            const candidate = MENU_ITEMS.find(m => (m.category === "maggie-chaat" || m.category === "momos") && !currentCartKeys.includes(m.id)) || MENU_ITEMS[0];
-            matchId = candidate.id;
-            cleanText = `A savory bite like ${candidate.name} pairs delightfully with your drinks!`;
-          } else {
-            const candidate = MENU_ITEMS.find(m => (m.category === "cold-coffee" || m.category === "hot-beverages") && !currentCartKeys.includes(m.id)) || MENU_ITEMS[0];
-            matchId = candidate.id;
-            cleanText = `Cool down or warm up with our signature ${candidate.name} alongside your bites!`;
-          }
-        }
-
-        const suggestedItem = MENU_ITEMS.find(m => m.id === matchId);
-        if (suggestedItem) {
-          resultBox.innerHTML = `
-            <p class="text-stone-700 dark:text-stone-300 font-medium">${cleanText}</p>
-            <div class="mt-2 pt-2 border-t border-amber-200/60 flex items-center justify-between">
-              <div>
-                <span class="font-bold text-coffee-950 dark:text-amber-100">${suggestedItem.name}</span>
-                <span class="text-stone-500 ml-1">(${CAFE_CONFIG.currencySymbol}${suggestedItem.price})</span>
-              </div>
-              <button onclick="incrementItem('${suggestedItem.id}'); showNotification('Added ${suggestedItem.name} to tray!');" class="px-2.5 py-1 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-bold rounded-lg text-xs transition active:scale-95 flex items-center gap-1">
-                <i data-lucide="plus" class="w-3 h-3"></i>
-                <span>Add Pair</span>
-              </button>
-            </div>
-          `;
-        } else {
-          resultBox.innerHTML = `<p class="text-stone-700 dark:text-stone-300">${cleanText}</p>`;
-        }
-        if (window.lucide && typeof lucide.createIcons === "function") {
-          lucide.createIcons();
-        }
-      } catch (e) {
-        resultBox.innerHTML = `<span class="text-stone-500">Could not generate pairing recommendation right now.</span>`;
-      }
-    }
-
     document.addEventListener("DOMContentLoaded", () => {
       initTheme();
       updateLogoEverywhere(currentLogo);
       updatePaymentQrEverywhere(currentPaymentQr);
       updateWhatsAppNumberEverywhere(currentWaPhone);
+      syncCategoryDropdowns();
+
       if (window.lucide && typeof lucide.createIcons === "function") {
         lucide.createIcons();
       }
@@ -3169,6 +3196,19 @@ Explanation (1 concise sentence why this pairs great).
           waPreviewLink.textContent = `https://wa.me/${cleanPhoneNumber(val)}`;
         });
       }
+
+      // Category Management modal bindings
+      const openManageCatsBtn = document.getElementById("open-manage-categories-modal-btn");
+      if (openManageCatsBtn) openManageCatsBtn.addEventListener("click", openManageCategoriesModal);
+
+      const closeManageCatsBtn = document.getElementById("close-manage-categories-modal-btn");
+      if (closeManageCatsBtn) closeManageCatsBtn.addEventListener("click", closeManageCategoriesModal);
+
+      const closeCatsDoneBtn = document.getElementById("close-categories-done-btn");
+      if (closeCatsDoneBtn) closeCatsDoneBtn.addEventListener("click", closeManageCategoriesModal);
+
+      const createCatBtn = document.getElementById("create-category-btn");
+      if (createCatBtn) createCatBtn.addEventListener("click", addNewCategory);
 
       // Payment Gateway Modal
       const paymentModal = document.getElementById("payment-gateway-modal");
@@ -3333,11 +3373,6 @@ Explanation (1 concise sentence why this pairs great).
         });
       });
 
-      const getPairingBtn = document.getElementById("get-cart-pairing-btn");
-      if (getPairingBtn) {
-        getPairingBtn.addEventListener("click", handleCartPairing);
-      }
-
       // Customer Search Filter
       const searchInput = document.getElementById("menu-search-input");
       if (searchInput) {
@@ -3389,7 +3424,7 @@ Explanation (1 concise sentence why this pairs great).
       const sendWaBtn = document.getElementById("send-whatsapp-order-btn");
       if (sendWaBtn) sendWaBtn.addEventListener("click", handleWhatsAppOrder);
 
-      // --- OWNER PORTAL & PIN AUTHENTICATION (Passcode: 5595) ---
+      // Owner Portal Switcher & PIN Auth (5595)
       const tabBtnCustomer = document.getElementById("tab-btn-customer");
       if (tabBtnCustomer) tabBtnCustomer.addEventListener("click", () => switchAppTab("customer"));
 
@@ -3610,32 +3645,6 @@ Explanation (1 concise sentence why this pairs great).
               if (placeholderIcon) placeholderIcon.classList.add("hidden");
             });
           }
-        });
-      }
-
-      // Info Modal
-      const infoModal = document.getElementById("info-modal");
-      const openInfoBtn = document.getElementById("open-info-modal-btn");
-      if (openInfoBtn) {
-        openInfoBtn.addEventListener("click", () => {
-          if (infoModal) infoModal.classList.remove("hidden");
-        });
-      }
-      const closeInfoBtn = document.getElementById("close-info-modal-btn");
-      if (closeInfoBtn) {
-        closeInfoBtn.addEventListener("click", () => {
-          if (infoModal) infoModal.classList.add("hidden");
-        });
-      }
-      const dismissInfoBtn = document.getElementById("dismiss-info-modal-btn");
-      if (dismissInfoBtn) {
-        dismissInfoBtn.addEventListener("click", () => {
-          if (infoModal) infoModal.classList.add("hidden");
-        });
-      }
-      if (infoModal) {
-        infoModal.addEventListener("click", (e) => {
-          if (e.target === infoModal) infoModal.classList.add("hidden");
         });
       }
     });
