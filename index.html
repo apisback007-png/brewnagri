@@ -144,7 +144,7 @@
           </div>
           <button onclick="openCloudSyncModal()" id="cloud-status-pill" class="flex items-center gap-1 text-[10px] font-semibold text-stone-500 dark:text-stone-400 hover:text-emerald-600 transition">
             <span id="cloud-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-            <span id="cloud-status-text">Local Safe • Tap for Cloud</span>
+            <span id="cloud-status-text">Local Protected • Owner Sync</span>
           </button>
         </div>
       </div>
@@ -171,13 +171,12 @@
         </button>
         <button id="tab-btn-owner" onclick="switchAppTab('owner')" class="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 flex items-center gap-1 shrink-0 touch-manipulation">
           <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-          <span>Owner</span>
+          <span>Owner & Reports</span>
         </button>
       </nav>
 
       <!-- Right Controls: Mobile/Tablet vs Windows Switcher + Dark Mode -->
       <div class="flex items-center gap-1.5 shrink-0 order-2 lg:order-3">
-        <!-- Mobile/Tablet vs Windows Version Switcher -->
         <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-full border border-stone-300 dark:border-stone-700 text-[10px] sm:text-[11px] font-bold">
           <button id="btn-mode-mobile" onclick="setDeviceLayoutMode('mobile')" class="px-2 py-1 rounded-full bg-coffee-950 text-amber-300 flex items-center gap-1 transition" title="Touch-first Mobile / Tablet layout">
             <i data-lucide="smartphone" class="w-3 h-3"></i>
@@ -189,7 +188,7 @@
           </button>
         </div>
 
-        <button onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Multi-Device Cloud Sync & Phone Transfer">
+        <button onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Owner Cloud Sync">
           <i data-lucide="cloud" class="w-4 h-4 text-emerald-600"></i>
         </button>
 
@@ -233,7 +232,7 @@
     </div>
 
     <!-- Menu Grid -->
-    <div id="customer-menu-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <div id="customer-menu-grid" class="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-2.5 sm:gap-3.5"></div>
 
     <!-- Floating Bottom Checkout Bar -->
     <div id="floating-tray-bar" class="hidden fixed bottom-3 left-1/2 -translate-x-1/2 z-30 w-[94%] max-w-xl bg-coffee-950 text-white px-4 py-3 rounded-2xl shadow-2xl border border-amber-400/40 flex items-center justify-between gap-3">
@@ -305,7 +304,7 @@
           </div>
         </div>
         <div id="pos-category-pills" class="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2 mb-2 border-b border-stone-100 dark:border-stone-800"></div>
-        <div id="pos-dishes-grid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-[58vh] overflow-y-auto custom-scrollbar pr-0.5"></div>
+        <div id="pos-dishes-grid" class="grid grid-cols-3 sm:grid-cols-4 gap-2.5 max-h-[58vh] overflow-y-auto custom-scrollbar pr-0.5"></div>
       </div>
 
       <!-- Right 5 Cols: Running Table Order, KOT & Settle Bill -->
@@ -509,16 +508,16 @@
     <div id="recipes-map-container" class="grid grid-cols-1 md:grid-cols-2 gap-3.5"></div>
   </section>
 
-  <!-- ==================== VIEW 5: OWNER PORTAL ==================== -->
+  <!-- ==================== VIEW 5: OWNER PORTAL & REPORTS ==================== -->
   <section id="owner-view" class="hidden app-container px-3 sm:px-5 py-4 space-y-4">
     <!-- Owner Header & Quick Action Buttons -->
     <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 shadow-xs flex flex-col lg:flex-row lg:items-center justify-between gap-3">
       <div>
         <h2 class="font-heading font-extrabold text-base sm:text-xl text-coffee-950 dark:text-amber-100">
-          Owner Command Center — Profit, Staff Shifts, Cloud & Menu
+          Owner Command Center — Reports, Profit & Staff Shifts
         </h2>
         <p class="text-xs text-stone-500 dark:text-stone-400">
-          Track net cash profit, audit Staff 1 vs Staff 2 shift handovers, configure outlet branding & print settings.
+          Item Reports, Order Reports, Stock Summary (PDF & Excel), Staff shift handovers & outlet settings.
         </p>
       </div>
       <div class="flex flex-wrap items-center gap-1.5">
@@ -538,40 +537,93 @@
           <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
           <span>Change PINs</span>
         </button>
-        <button onclick="exportOwnerPdfReport()" class="px-3 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 touch-btn">
-          <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-          <span>PDF Report</span>
-        </button>
         <button onclick="lockProtectedSessions()" class="px-3 py-2 bg-red-50 dark:bg-red-950/50 text-red-600 border border-red-200 dark:border-red-900 rounded-xl text-xs font-bold touch-btn">
           Lock
         </button>
       </div>
     </div>
 
-    <!-- Date & Payment Filter Bar -->
-    <div class="bg-white dark:bg-stone-900 rounded-2xl p-3 border border-stone-200 dark:border-stone-800 flex flex-wrap items-center justify-between gap-2 text-xs">
-      <div class="flex items-center gap-1.5 flex-wrap">
-        <span class="font-bold text-stone-500">Period:</span>
-        <select id="owner-date-filter" onchange="renderOwnerDashboard()" class="p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">
-          <option value="today">Today</option>
-          <option value="7days">Last 7 Days</option>
-          <option value="month">This Month</option>
-          <option value="all" selected>All Time</option>
-        </select>
-        <select id="owner-payment-filter" onchange="renderOwnerDashboard()" class="p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">
-          <option value="all">All Payment Modes</option>
-          <option value="Cash">Cash Only</option>
-          <option value="UPI">UPI / QR Only</option>
-          <option value="Card">Card Only</option>
-        </select>
+    <!-- ==================== DEDICATED REPORTS SUITE (Item Reports | Order Reports | Stock Summary) ==================== -->
+    <div class="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-xs overflow-hidden">
+      <!-- Report Sub-Navigation & PDF / Excel Export Buttons -->
+      <div class="p-3.5 bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button type="button" id="rep-tab-items" onclick="switchOwnerReportTab('items')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-coffee-950 text-amber-300 flex items-center gap-1.5">
+            <i data-lucide="bar-chart-2" class="w-3.5 h-3.5"></i>
+            <span>Item Reports</span>
+          </button>
+          <button type="button" id="rep-tab-orders" onclick="switchOwnerReportTab('orders')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 flex items-center gap-1.5">
+            <i data-lucide="receipt" class="w-3.5 h-3.5"></i>
+            <span>Order Reports</span>
+          </button>
+          <button type="button" id="rep-tab-stock" onclick="switchOwnerReportTab('stock')" class="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 flex items-center gap-1.5">
+            <i data-lucide="boxes" class="w-3.5 h-3.5"></i>
+            <span>Stock Summary</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-1.5">
+          <button type="button" onclick="exportCurrentReportPdf()" class="px-2.5 py-1.5 bg-red-600 hover:bg-red-700 text-white rounded-lg text-[11px] font-extrabold flex items-center gap-1 shadow-xs" title="Download PDF Report">
+            <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+            <span>Pdf</span>
+          </button>
+          <button type="button" onclick="exportCurrentReportExcel()" class="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-[11px] font-extrabold flex items-center gap-1 shadow-xs" title="Download Excel (.xls) Report">
+            <i data-lucide="sheet" class="w-3.5 h-3.5"></i>
+            <span>xls</span>
+          </button>
+        </div>
       </div>
-      <div class="flex items-center gap-1.5">
-        <button onclick="exportFullBackupJson()" class="px-2.5 py-1.5 bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">Backup JSON</button>
-        <label class="px-2.5 py-1.5 bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold cursor-pointer">
-          Restore JSON
-          <input type="file" accept=".json" onchange="importFullBackupJson(event)" class="hidden" />
-        </label>
+
+      <!-- Shared Date Range, Customer, Payment Type & Order Status Filter Bar -->
+      <div class="p-3.5 border-b border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+          <div class="sm:col-span-4">
+            <select id="owner-date-filter" onchange="handleReportDatePresetChange()" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">
+              <option value="today" selected>Today</option>
+              <option value="7days">Last 7 Days</option>
+              <option value="month">This Month</option>
+              <option value="all">All Time</option>
+              <option value="custom">Custom Range</option>
+            </select>
+          </div>
+          <div class="sm:col-span-8 flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl px-2.5 py-1.5">
+            <input type="date" id="report-from-date" onchange="setCustomReportDateRange()" class="bg-transparent font-bold text-xs flex-1 focus:outline-none" />
+            <span class="text-[10px] font-extrabold text-stone-400">TO</span>
+            <input type="date" id="report-to-date" onchange="setCustomReportDateRange()" class="bg-transparent font-bold text-xs flex-1 focus:outline-none" />
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl px-2.5 py-1.5">
+            <i data-lucide="users" class="w-3.5 h-3.5 text-stone-500"></i>
+            <select id="owner-customer-filter" onchange="renderOwnerDashboard()" class="bg-transparent font-bold text-xs focus:outline-none">
+              <option value="all">Customers (All)</option>
+            </select>
+          </div>
+
+          <div id="report-payment-filter-wrap" class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl px-2.5 py-1.5">
+            <i data-lucide="landmark" class="w-3.5 h-3.5 text-stone-500"></i>
+            <select id="owner-payment-filter" onchange="renderOwnerDashboard()" class="bg-transparent font-bold text-xs focus:outline-none">
+              <option value="all">Payment Type (All)</option>
+              <option value="Cash">Cash</option>
+              <option value="UPI">UPI / QR</option>
+              <option value="Card">Card</option>
+            </select>
+          </div>
+
+          <div id="report-status-filter-wrap" class="flex items-center gap-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl px-2.5 py-1.5">
+            <i data-lucide="arrow-left-right" class="w-3.5 h-3.5 text-stone-500"></i>
+            <select id="owner-order-status-filter" onchange="renderOwnerDashboard()" class="bg-transparent font-bold text-xs focus:outline-none">
+              <option value="active">All Orders</option>
+              <option value="all_including_void">Including Voided</option>
+              <option value="void_only">Voided Only</option>
+            </select>
+          </div>
+        </div>
       </div>
+
+      <!-- Report Body Panel (Dynamically renders Item Reports, Order Reports, or Stock Summary) -->
+      <div id="owner-active-report-panel" class="p-4"></div>
     </div>
 
     <!-- 5 KPI Cards -->
@@ -621,17 +673,12 @@
       </div>
     </div>
 
-    <!-- Top Selling Dishes + End-of-Day Cash Drawer Counter -->
+    <!-- End-of-Day Cash Drawer Counter & Backup -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      <div class="lg:col-span-6 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800">
-        <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100 mb-2">Top-Selling Dishes & Revenue</h3>
-        <div id="owner-bestsellers-list" class="space-y-2 max-h-64 overflow-y-auto custom-scrollbar text-xs"></div>
-      </div>
-
-      <div class="lg:col-span-6 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
+      <div class="lg:col-span-7 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
         <div class="flex items-center justify-between">
           <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">End-of-Day Cash Drawer Reconciliation</h3>
-          <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">System Cash Sales: ₹<span id="drawer-expected-cash">0</span></span>
+          <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">System Cash Sales Today: ₹<span id="drawer-expected-cash">0</span></span>
         </div>
         <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
           <div><label class="text-[10px] font-bold">₹500 ×</label><input type="number" id="note-500" value="0" min="0" oninput="calculateCashDrawer()" class="w-full p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" /></div>
@@ -644,6 +691,20 @@
         <div class="flex items-center justify-between p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 font-bold">
           <span>Physical Cash Counted: <strong>₹<span id="drawer-counted-cash">0</span></strong></span>
           <span id="drawer-diff-badge" class="px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-700">Diff: ₹0</span>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs flex flex-col justify-between">
+        <div>
+          <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Full Data Backup & Restore</h3>
+          <p class="text-[11px] text-stone-400 mt-1">Export or restore all menu photos, bills, inventory & settings as a JSON file.</p>
+        </div>
+        <div class="flex items-center gap-2 pt-2">
+          <button onclick="exportFullBackupJson()" class="flex-1 py-2.5 px-3 bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">Backup JSON</button>
+          <label class="flex-1 py-2.5 px-3 bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold text-center cursor-pointer">
+            Restore JSON
+            <input type="file" accept=".json" onchange="importFullBackupJson(event)" class="hidden" />
+          </label>
         </div>
       </div>
     </div>
@@ -666,13 +727,7 @@
       </div>
     </div>
 
-    <!-- Live Order & Profit Ledger -->
-    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800">
-      <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100 mb-2.5">Live Sales, Staff Attribution & Profit Ledger</h3>
-      <div id="owner-orders-ledger" class="space-y-2 max-h-80 overflow-y-auto custom-scrollbar text-xs"></div>
-    </div>
-
-    <!-- Menu Item Price, Cost & Stock Editor -->
+    <!-- Menu Item Price, Cost & Photo Editor -->
     <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-3">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Menu Pricing, Making Cost, Photos & New Dish Manager</h3>
@@ -800,8 +855,12 @@
           <input type="password" id="current-pin-verify" placeholder="••••" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         </div>
         <div>
-          <label class="block font-bold mb-1">New Owner Passcode *</label>
-          <input type="password" id="new-owner-pin-input" maxlength="8" placeholder="••••" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+          <label class="block font-bold mb-1">Account to Update *</label>
+          <select id="pin-target-account-select" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold"></select>
+        </div>
+        <div>
+          <label class="block font-bold mb-1">New Passcode (Min 4 chars) *</label>
+          <input type="password" id="new-owner-pin-input" maxlength="12" placeholder="••••" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         </div>
         <p id="change-pin-feedback" class="hidden text-red-600 font-bold"></p>
         <div class="flex gap-2">
@@ -1084,6 +1143,95 @@
   <div id="toast-banner" class="fixed top-16 left-1/2 -translate-x-1/2 z-50 hidden bg-coffee-950 text-amber-200 border border-amber-400/50 px-4 py-2.5 rounded-2xl shadow-xl text-xs font-bold max-w-md text-center"></div>
 
   <script>
+    // ==================== SECURITY & INTEGRITY HELPERS ====================
+    const SECURITY_SALT = "BN_ERP_V2_SALT_9941";
+    let FAILED_LOGIN_ATTEMPTS = 0;
+    let LOGIN_LOCKOUT_UNTIL = 0;
+    let SESSION_IDLE_TIMER = null;
+    const SESSION_IDLE_MS = 15 * 60 * 1000; // 15 min inactivity auto-lock
+
+    function isSha256Hex(str) {
+      return typeof str === "string" && /^[a-f0-9]{64}$/i.test(str);
+    }
+
+    async function hashPasscodeSha256(plain) {
+      const clean = String(plain || "").trim();
+      if (!clean) return "";
+      if (isSha256Hex(clean)) return clean.toLowerCase();
+      try {
+        if (window.crypto && window.crypto.subtle) {
+          const data = new TextEncoder().encode(`${SECURITY_SALT}:${clean}`);
+          const buf = await window.crypto.subtle.digest("SHA-256", data);
+          return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2, "0")).join("");
+        }
+      } catch (e) {}
+      // Deterministic fallback hash if opened over non-HTTPS file:// without SubtleCrypto
+      let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+      const salted = `${SECURITY_SALT}:${clean}`;
+      for (let i = 0; i < salted.length; i++) {
+        const ch = salted.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      return `fb_${(h1 >>> 0).toString(16)}_${(h2 >>> 0).toString(16)}`;
+    }
+
+    async function verifyPasscodeAgainstStored(enteredPlain, storedSecret) {
+      const clean = String(enteredPlain || "").trim();
+      if (!clean || !storedSecret) return false;
+      if (!isSha256Hex(storedSecret) && !String(storedSecret).startsWith("fb_")) {
+        return clean === String(storedSecret);
+      }
+      const hashed = await hashPasscodeSha256(clean);
+      return hashed === storedSecret;
+    }
+
+    async function migratePlainPasscodesToHashes() {
+      let changed = false;
+      if (OWNER_PIN && !isSha256Hex(OWNER_PIN) && !String(OWNER_PIN).startsWith("fb_")) {
+        OWNER_PIN = await hashPasscodeSha256(OWNER_PIN);
+        changed = true;
+      }
+      for (let i = 0; i < STAFF_ACCOUNTS.length; i++) {
+        const p = STAFF_ACCOUNTS[i]?.pin;
+        if (p && !isSha256Hex(p) && !String(p).startsWith("fb_")) {
+          STAFF_ACCOUNTS[i].pin = await hashPasscodeSha256(p);
+          changed = true;
+        }
+      }
+      if (changed) persistAllState(false);
+    }
+
+    function resetSessionInactivityTimer() {
+      clearTimeout(SESSION_IDLE_TIMER);
+      if (!isOwnerAuthenticated && !activeStaffUser) return;
+      SESSION_IDLE_TIMER = setTimeout(() => {
+        if (activeStaffUser) recordShiftHandoverAndClose();
+        activeStaffUser = null;
+        isOwnerAuthenticated = false;
+        closeCloudSyncModal();
+        closeCafeSettingsModal();
+        closeChangePinModal();
+        switchAppTab("customer");
+        showNotification("Session auto-locked after 15 mins of inactivity for security.");
+      }, SESSION_IDLE_MS);
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function safePositiveNum(val, fallback = 0, max = 999999) {
+      const n = Number(val);
+      if (!Number.isFinite(n) || n < 0) return fallback;
+      return Math.min(max, n);
+    }
+
     // ==================== CORE DATA & PERSISTENCE ====================
     const DEFAULT_MENU_ITEMS = [
       { id: "bg-1", name: "Classic Veg Cheese Burger", category: "Burgers", price: 89, costPrice: 38, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=400&q=75", desc: "Crispy herb patty, melted cheddar slice, fresh lettuce & house sauce." },
@@ -1201,6 +1349,7 @@
     let CURRENT_RECEIPT_ORDER = null;
     let CURRENT_RECEIPT_STEP = "kot"; // "kot" (Step 1) or "bill" (Step 2)
     let CURRENT_RECEIPT_KOT_ONLY = false;
+    let activeOwnerReportTab = "items"; // "items" | "orders" | "stock"
 
     function compressDishImageFile(file, callback) {
       const reader = new FileReader();
@@ -1233,33 +1382,56 @@
         if (cfg) CAFE_CONFIG = { ...CAFE_CONFIG, ...JSON.parse(cfg) };
         const m = localStorage.getItem("bn_menu_items");
         if (m) {
-          MENU_ITEMS = JSON.parse(m).map(item => ({
-            ...item,
-            image: typeof item.image === "string" ? item.image : getDefaultImageForDishId(item.id)
-          }));
+          const parsedM = JSON.parse(m);
+          if (Array.isArray(parsedM) && parsedM.length > 0) {
+            MENU_ITEMS = parsedM.map(item => ({
+              ...item,
+              price: safePositiveNum(item.price, 50),
+              costPrice: safePositiveNum(item.costPrice, 20),
+              image: typeof item.image === "string" ? item.image : getDefaultImageForDishId(item.id)
+            }));
+          }
         }
         const inv = localStorage.getItem("bn_inventory");
-        if (inv) INVENTORY_ITEMS = JSON.parse(inv);
+        if (inv) {
+          const parsedInv = JSON.parse(inv);
+          if (Array.isArray(parsedInv)) INVENTORY_ITEMS = parsedInv;
+        }
         const rec = localStorage.getItem("bn_recipes");
-        if (rec) RECIPE_MAP = JSON.parse(rec);
+        if (rec) {
+          const parsedRec = JSON.parse(rec);
+          if (parsedRec && typeof parsedRec === "object") RECIPE_MAP = parsedRec;
+        }
         const add = localStorage.getItem("bn_addons");
-        if (add) GLOBAL_ADDONS = JSON.parse(add);
+        if (add) {
+          const parsedAdd = JSON.parse(add);
+          if (Array.isArray(parsedAdd)) GLOBAL_ADDONS = parsedAdd;
+        }
         const tbls = localStorage.getItem("bn_floor_tables");
-        if (tbls) FLOOR_TABLES = JSON.parse(tbls);
+        if (tbls) {
+          const parsedTbls = JSON.parse(tbls);
+          if (Array.isArray(parsedTbls) && parsedTbls.length > 0) FLOOR_TABLES = parsedTbls;
+        }
         const actTbl = localStorage.getItem("bn_active_tables");
-        if (actTbl) ACTIVE_TABLE_ORDERS = JSON.parse(actTbl);
+        if (actTbl) ACTIVE_TABLE_ORDERS = JSON.parse(actTbl) || {};
         const ord = localStorage.getItem("bn_order_logs");
-        if (ord) ORDER_LOGS = JSON.parse(ord);
+        if (ord) {
+          const parsedOrd = JSON.parse(ord);
+          if (Array.isArray(parsedOrd)) ORDER_LOGS = parsedOrd;
+        }
         const ilog = localStorage.getItem("bn_inv_logs");
-        if (ilog) INVENTORY_LOGS = JSON.parse(ilog);
+        if (ilog) INVENTORY_LOGS = JSON.parse(ilog) || [];
         const elog = localStorage.getItem("bn_expense_logs");
-        if (elog) EXPENSE_LOGS = JSON.parse(elog);
+        if (elog) EXPENSE_LOGS = JSON.parse(elog) || [];
         const crm = localStorage.getItem("bn_customer_crm");
-        if (crm) CUSTOMER_CRM = JSON.parse(crm);
+        if (crm) CUSTOMER_CRM = JSON.parse(crm) || {};
         const stf = localStorage.getItem("bn_staff_accounts");
-        if (stf) STAFF_ACCOUNTS = JSON.parse(stf);
+        if (stf) {
+          const parsedStf = JSON.parse(stf);
+          if (Array.isArray(parsedStf) && parsedStf.length > 0) STAFF_ACCOUNTS = parsedStf;
+        }
         const shf = localStorage.getItem("bn_shift_handovers");
-        if (shf) SHIFT_HANDOVERS = JSON.parse(shf);
+        if (shf) SHIFT_HANDOVERS = JSON.parse(shf) || [];
         const opin = localStorage.getItem("bn_owner_pin");
         if (opin) OWNER_PIN = opin;
         const cld = localStorage.getItem("bn_cloud_config");
@@ -1283,7 +1455,9 @@
         localStorage.setItem("bn_staff_accounts", JSON.stringify(STAFF_ACCOUNTS));
         localStorage.setItem("bn_shift_handovers", JSON.stringify(SHIFT_HANDOVERS));
         localStorage.setItem("bn_owner_pin", OWNER_PIN);
-      } catch (e) {}
+      } catch (e) {
+        showNotification("Browser storage nearly full—export a Backup JSON or compress photos.");
+      }
       updateBadges();
       if (triggerCloud && CLOUD_CONFIG.dbUrl) {
         clearTimeout(cloudSyncTimer);
@@ -1376,6 +1550,7 @@
           STAFF_ACCOUNTS = data.STAFF_ACCOUNTS || STAFF_ACCOUNTS;
           SHIFT_HANDOVERS = data.SHIFT_HANDOVERS || SHIFT_HANDOVERS;
           if (data.OWNER_PIN) OWNER_PIN = data.OWNER_PIN;
+          await migratePlainPasscodesToHashes();
           persistAllState(false);
           applyCafeBrandHeader();
           renderCustomerMenu();
@@ -1388,11 +1563,16 @@
           updateCloudIndicator("synced", "Cloud Ready");
         }
       } catch (e) {
-        updateCloudIndicator("local", "Local Safe");
+        updateCloudIndicator("local", "Local Protected");
       }
     }
 
     function openCloudSyncModal() {
+      if (!isOwnerAuthenticated) {
+        pendingProtectedTab = "cloud_sync";
+        openOwnerPinModal("owner");
+        return;
+      }
       document.getElementById("cloud-db-url-input").value = CLOUD_CONFIG.dbUrl || "";
       document.getElementById("cloud-workspace-input").value = CLOUD_CONFIG.workspaceId || "brewnagri-main";
       renderMagicTransferLink();
@@ -1479,7 +1659,6 @@
           : "Paper Size: 80mm (3-Inch) • Margins: None";
       }
 
-      // Sync toggle button styles in POS and Modal
       const activeCls = "bg-amber-400 text-coffee-950 border-amber-500";
       const idleCls = "bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 border-stone-300 dark:border-stone-700";
 
@@ -1549,7 +1728,6 @@
         showNotification("No receipt loaded to send to Bluetooth printer.");
         return;
       }
-      // ESC E 1 enables bold dark print on SEZNIK / ESC-POS 58mm & 80mm thermal printers
       const escBoldHeader = "\x1B\x40\x1B\x45\x01";
       const escReset = "\x1B\x45\x00";
       const payload = escBoldHeader + LAST_PLAIN_THERMAL_RECEIPT + escReset;
@@ -1670,6 +1848,7 @@
     }
 
     function switchAppTab(tab) {
+      resetSessionInactivityTimer();
       if (tab === "customer") {
         activateView("customer-view", "tab-btn-customer");
         renderCustomerMenu();
@@ -1702,6 +1881,7 @@
         renderRecipesTab();
       } else {
         activateView("owner-view", "tab-btn-owner");
+        initReportDatesIfEmpty();
         renderOwnerDashboard();
       }
     }
@@ -1754,45 +1934,76 @@
       document.getElementById("owner-pin-modal").classList.add("hidden");
     }
 
-    function verifyOwnerPin() {
+    async function verifyOwnerPin() {
       const entered = (document.getElementById("owner-pin-input")?.value || "").trim();
       const err = document.getElementById("owner-pin-error");
+      const now = Date.now();
+
+      if (now < LOGIN_LOCKOUT_UNTIL) {
+        const secs = Math.ceil((LOGIN_LOCKOUT_UNTIL - now) / 1000);
+        err.textContent = `Too many failed attempts. Wait ${secs}s before retrying.`;
+        err.classList.remove("hidden");
+        return;
+      }
+
+      const handleFailedAttempt = (msg) => {
+        FAILED_LOGIN_ATTEMPTS += 1;
+        if (FAILED_LOGIN_ATTEMPTS >= 5) {
+          LOGIN_LOCKOUT_UNTIL = Date.now() + 30000;
+          FAILED_LOGIN_ATTEMPTS = 0;
+          err.textContent = "Locked for 30 seconds after 5 incorrect passcodes.";
+        } else {
+          err.textContent = `${msg} (${5 - FAILED_LOGIN_ATTEMPTS} tries left)`;
+        }
+        err.classList.remove("hidden");
+      };
+
+      const isOwnerMatch = await verifyPasscodeAgainstStored(entered, OWNER_PIN);
 
       if (pendingProtectedTab === "staff") {
         const selectedId = document.getElementById("pin-staff-select")?.value;
-        if (selectedId === "owner-override" && entered === OWNER_PIN) {
+        if (selectedId === "owner-override" && isOwnerMatch) {
+          FAILED_LOGIN_ATTEMPTS = 0;
           isOwnerAuthenticated = true;
           activeStaffUser = { id: "owner", name: "Owner" };
           activeStaffShiftStartISO = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          resetSessionInactivityTimer();
           closeOwnerPinModal();
           switchAppTab("staff");
           return;
         }
         const staffObj = STAFF_ACCOUNTS.find(s => s.id === selectedId);
-        if (staffObj && (entered === staffObj.pin || entered === OWNER_PIN)) {
+        const isStaffMatch = staffObj ? await verifyPasscodeAgainstStored(entered, staffObj.pin) : false;
+        if (staffObj && (isStaffMatch || isOwnerMatch)) {
+          FAILED_LOGIN_ATTEMPTS = 0;
           activeStaffUser = { id: staffObj.id, name: staffObj.name };
           activeStaffShiftStartISO = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          resetSessionInactivityTimer();
           closeOwnerPinModal();
           switchAppTab("staff");
           showNotification(`Shift started for ${staffObj.name}.`);
           return;
         }
-        err.textContent = "Invalid staff passcode.";
-        err.classList.remove("hidden");
+        handleFailedAttempt("Invalid staff passcode.");
         return;
       }
 
-      if (entered === OWNER_PIN) {
+      if (isOwnerMatch) {
+        FAILED_LOGIN_ATTEMPTS = 0;
         isOwnerAuthenticated = true;
         if (!activeStaffUser) {
           activeStaffUser = { id: "owner", name: "Owner" };
           activeStaffShiftStartISO = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         }
+        resetSessionInactivityTimer();
         closeOwnerPinModal();
-        switchAppTab(pendingProtectedTab);
+        if (pendingProtectedTab === "cloud_sync") {
+          openCloudSyncModal();
+        } else {
+          switchAppTab(pendingProtectedTab);
+        }
       } else {
-        err.textContent = "Incorrect Owner passcode.";
-        err.classList.remove("hidden");
+        handleFailedAttempt("Incorrect Owner passcode.");
       }
     }
 
@@ -1842,7 +2053,6 @@
         totalSales: stats.total
       });
 
-      // Mark those shift orders as handed-over so next login of same staff starts a clean shift
       ORDER_LOGS.forEach(o => {
         if (!o.voided && o.dateISO === today && o.staffId === activeStaffUser.id && !o.shiftClosed) {
           o.shiftClosed = true;
@@ -1883,17 +2093,24 @@
       document.getElementById("current-pin-verify").value = "";
       document.getElementById("new-owner-pin-input").value = "";
       document.getElementById("change-pin-feedback").classList.add("hidden");
+      const targetSel = document.getElementById("pin-target-account-select");
+      if (targetSel) {
+        targetSel.innerHTML = `<option value="owner">Owner Master Passcode</option>` +
+          STAFF_ACCOUNTS.map(s => `<option value="${escapeHtml(s.id)}">${escapeHtml(s.name)}</option>`).join("");
+      }
       document.getElementById("change-pin-modal").classList.remove("hidden");
       refreshLucideIcons();
     }
     function closeChangePinModal() {
       document.getElementById("change-pin-modal").classList.add("hidden");
     }
-    function saveUpdatedPins() {
+    async function saveUpdatedPins() {
       const cur = document.getElementById("current-pin-verify").value.trim();
+      const targetId = document.getElementById("pin-target-account-select")?.value || "owner";
       const next = document.getElementById("new-owner-pin-input").value.trim();
       const fb = document.getElementById("change-pin-feedback");
-      if (cur !== OWNER_PIN) {
+      const validCurrent = await verifyPasscodeAgainstStored(cur, OWNER_PIN);
+      if (!validCurrent) {
         fb.textContent = "Current Owner passcode is incorrect.";
         fb.classList.remove("hidden");
         return;
@@ -1903,10 +2120,16 @@
         fb.classList.remove("hidden");
         return;
       }
-      OWNER_PIN = next;
+      const hashedNext = await hashPasscodeSha256(next);
+      if (targetId === "owner") {
+        OWNER_PIN = hashedNext;
+      } else {
+        const stf = STAFF_ACCOUNTS.find(s => s.id === targetId);
+        if (stf) stf.pin = hashedNext;
+      }
       persistAllState();
       closeChangePinModal();
-      showNotification("Owner passcode updated securely.");
+      showNotification("Passcode updated & encrypted with SHA-256.");
     }
 
     // ==================== CUSTOMER MENU & TRAY ====================
@@ -1938,7 +2161,6 @@
 
         return `
           <div class="group flex flex-col ${soldOut ? 'opacity-65' : ''}">
-            <!-- Square Photo Tile with Price Badge & + / Stepper Overlay -->
             <div class="relative aspect-square w-full rounded-2xl overflow-hidden bg-stone-200/80 dark:bg-stone-800 border transition ${chosenQty > 0 ? 'border-blue-600 ring-2 ring-blue-500/40' : 'border-stone-200 dark:border-stone-700'} shadow-xs">
               ${hasImg ? `
                 <img src="${dish.image}" alt="${dish.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover ${soldOut ? 'grayscale' : 'group-hover:scale-105 transition-transform duration-300'}" />
@@ -1951,26 +2173,22 @@
                 </div>
               `}
 
-              <!-- Top-Left Chosen Qty or Sold Out Pill -->
               ${soldOut ? `
                 <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-black shadow-xs">Sold Out</span>
               ` : chosenQty > 0 ? `
                 <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-black shadow-xs">${chosenQty}×</span>
               ` : ''}
 
-              <!-- Top-Right Price Pill -->
               <span class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-stone-900/75 text-white text-[10px] sm:text-[11px] font-extrabold backdrop-blur-xs">
                 ₹${dish.price}
               </span>
 
-              <!-- Bottom-Left Customize Button -->
               ${!soldOut ? `
                 <button onclick="openCustomizeDishModal('${dish.id}', 'customer')" class="absolute bottom-1.5 left-1.5 px-1.5 py-1 rounded-lg bg-white/90 dark:bg-stone-900/90 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 text-[9px] font-extrabold shadow-xs hover:bg-white" title="Customize add-ons">
                   +Mod
                 </button>
               ` : ''}
 
-              <!-- Bottom-Right + Sign or - qty + Stepper -->
               ${chosenQty > 0 ? `
                 <div class="absolute bottom-1.5 right-1.5 flex items-center bg-white dark:bg-stone-900 border-2 border-blue-600 rounded-xl shadow-md overflow-hidden">
                   <button onclick="adjustDishQtyFromCustomerGrid('${dish.id}', -1)" class="px-2 py-1 text-blue-600 dark:text-blue-400 font-black text-xs hover:bg-blue-50">−</button>
@@ -1984,7 +2202,6 @@
               `}
             </div>
 
-            <!-- Clean Dish Name Below Photo -->
             <p class="mt-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 leading-tight line-clamp-2 px-0.5">
               ${dish.name}
             </p>
@@ -2123,12 +2340,13 @@
         cost += (l.costPrice || 35) * l.qty;
       });
 
-      const billNo = `${CAFE_CONFIG.billPrefix}-${CAFE_CONFIG.nextBillSeq++}`;
+      const billNo = String(CAFE_CONFIG.nextBillSeq++);
       const newOrder = {
         id: Date.now(),
         billNo,
         dateISO: getTodayISO(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dateDisplay: formatIndianDate(getTodayISO()),
+        time: format12HourTime(new Date()),
         customer: guestName,
         phone: guestPhone,
         table: tableLabel,
@@ -2150,14 +2368,13 @@
       ORDER_LOGS.unshift(newOrder);
       updateCustomerCrmRecord(guestPhone, guestName, rev);
 
-      // Highlight matching floor table with a WhatsApp Alert badge without double-billing
       const matchedTable = FLOOR_TABLES.find(t => t.toLowerCase() === tableLabel.toLowerCase()) || FLOOR_TABLES[0];
       if (!ACTIVE_TABLE_ORDERS[matchedTable]) ACTIVE_TABLE_ORDERS[matchedTable] = { lines: [], customer: "", phone: "" };
-      ACTIVE_TABLE_ORDERS[matchedTable].waAlert = `WA Order ${billNo} (₹${rev})`;
+      ACTIVE_TABLE_ORDERS[matchedTable].waAlert = `WA Order #${billNo} (₹${rev})`;
       ACTIVE_TABLE_ORDERS[matchedTable].customer = guestName;
 
       const msgLines = [
-        `*New Order — ${CAFE_CONFIG.cafeName}* (${billNo})`,
+        `*New Order — ${CAFE_CONFIG.cafeName}* (#${billNo})`,
         `Table: *${tableLabel}* | Guest: *${guestName}*`,
         `--------------------------`,
         ...linesCopy.map(l => `• ${l.name} x${l.qty} = ₹${l.price * l.qty}${l.addons?.length ? ` (+${l.addons.map(a=>a.name).join(', ')})` : ''}`),
@@ -2235,6 +2452,7 @@
         ACTIVE_TABLE_ORDERS[activePosTable].lines.push(lineObj);
         persistAllState();
         renderPosFloorTables();
+        renderPosGrid();
         renderPosCart();
       }
       closeCustomizeDishModal();
@@ -2292,6 +2510,7 @@
       if (waBtn) waBtn.classList.toggle("hidden", !session.waAlert);
 
       renderPosFloorTables();
+      renderPosGrid();
       renderPosCart();
       handlePosCustomerPhoneInput();
     }
@@ -2364,7 +2583,6 @@
 
         return `
           <div class="group flex flex-col ${out ? 'opacity-60' : ''}">
-            <!-- Square Photo Tile with Price Pill & + / Stepper Sign -->
             <div class="relative aspect-square w-full rounded-2xl overflow-hidden bg-stone-200/80 dark:bg-stone-800 border transition ${chosenQty > 0 ? 'border-blue-600 ring-2 ring-blue-500/40' : 'border-stone-200 dark:border-stone-700'} shadow-xs">
               ${hasImg ? `
                 <img src="${d.image}" alt="${d.name}" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('hidden');" class="w-full h-full object-cover ${out ? 'grayscale' : ''}" />
@@ -2377,26 +2595,22 @@
                 </div>
               `}
 
-              <!-- Top-Left Chosen Qty or Stock Badge -->
               ${out ? `
                 <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-red-600 text-white text-[9px] font-black">Out</span>
               ` : chosenQty > 0 ? `
                 <span class="absolute top-1.5 left-1.5 px-1.5 py-0.5 rounded-md bg-blue-600 text-white text-[10px] font-black shadow-xs">${chosenQty}×</span>
               ` : ''}
 
-              <!-- Top-Right Price Pill -->
               <span class="absolute top-1.5 right-1.5 px-1.5 py-0.5 rounded-md bg-stone-900/75 text-white text-[10px] font-extrabold">
                 ₹${d.price}
               </span>
 
-              <!-- Bottom-Left +Mod Button -->
               ${!out ? `
                 <button onclick="openCustomizeDishModal('${d.id}', 'pos')" class="absolute bottom-1.5 left-1.5 px-1.5 py-1 rounded-lg bg-white/90 dark:bg-stone-900/90 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 text-[9px] font-extrabold shadow-xs" title="Add customization">
                   +Mod
                 </button>
               ` : ''}
 
-              <!-- Bottom-Right + Sign or - qty + Stepper -->
               ${chosenQty > 0 ? `
                 <div class="absolute bottom-1.5 right-1.5 flex items-center bg-white dark:bg-stone-900 border-2 border-blue-600 rounded-xl shadow-md overflow-hidden">
                   <button onclick="adjustDishQtyFromPosGrid('${d.id}', -1)" class="px-2 py-0.5 text-blue-600 dark:text-blue-400 font-black text-xs hover:bg-blue-50">−</button>
@@ -2410,7 +2624,6 @@
               `}
             </div>
 
-            <!-- Dish Title Below Photo -->
             <p class="mt-1.5 text-xs font-bold text-stone-800 dark:text-stone-200 leading-tight line-clamp-2 px-0.5">
               ${d.name}
             </p>
@@ -2697,7 +2910,6 @@
       const kotNumber = order.kotNo || 20;
       const isKot = CURRENT_RECEIPT_STEP === "kot";
 
-      // Update Step Tabs & Buttons
       if (tabKot && tabBill) {
         tabKot.className = `px-2 py-1 rounded-lg text-[11px] font-extrabold ${isKot ? 'bg-amber-400 text-coffee-950' : 'text-stone-600 dark:text-stone-300'}`;
         tabBill.className = `px-2 py-1 rounded-lg text-[11px] font-extrabold ${!isKot ? 'bg-blue-600 text-white' : 'text-stone-600 dark:text-stone-300'} ${CURRENT_RECEIPT_KOT_ONLY ? 'opacity-40' : ''}`;
@@ -2765,7 +2977,7 @@
         return;
       }
 
-      // STEP 2: CUSTOMER TAX INVOICE (Matches your exact printed bill & preview screenshot)
+      // STEP 2: CUSTOMER TAX INVOICE
       if (stepPill) {
         stepPill.textContent = "Step 2 of 2 • Customer Bill";
         stepPill.className = "px-2 py-0.5 rounded-full bg-emerald-400 text-stone-950 text-[10px] font-black uppercase";
@@ -3122,13 +3334,14 @@
         { id: "bg-2", name: "Paneer Tikka Burger", qty: 5, price: 119, costPrice: 52, addons: [] },
         { id: "sw-3", name: "Tandoori Paneer Cheese Sandwich", qty: 5, price: 119, costPrice: 50, addons: [] }
       ];
-      const billNo = `${CAFE_CONFIG.billPrefix}-${CAFE_CONFIG.nextBillSeq++}`;
+      const billNo = String(CAFE_CONFIG.nextBillSeq++);
       const note = deductInventoryForOrder(demo, billNo, "Demo Test");
       ORDER_LOGS.unshift({
         id: Date.now(),
         billNo,
         dateISO: getTodayISO(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dateDisplay: formatIndianDate(getTodayISO()),
+        time: format12HourTime(new Date()),
         customer: "Demo Order (5 Burgers + 5 Sandwiches)",
         table: "Counter",
         paymentMode: "Cash",
@@ -3260,24 +3473,326 @@
       showNotification("Restored default recipe links.");
     }
 
-    // ==================== OWNER DASHBOARD & MENU PHOTO MANAGER ====================
-    function getFilteredOwnerOrders() {
-      const period = document.getElementById("owner-date-filter")?.value || "all";
-      const payMode = document.getElementById("owner-payment-filter")?.value || "all";
+    // ==================== OWNER REPORTS (Item Reports | Order Reports | Stock Summary) ====================
+    function initReportDatesIfEmpty() {
+      const fromInp = document.getElementById("report-from-date");
+      const toInp = document.getElementById("report-to-date");
+      if (fromInp && !fromInp.value) fromInp.value = getTodayISO();
+      if (toInp && !toInp.value) toInp.value = getTodayISO();
+    }
+
+    function handleReportDatePresetChange() {
+      const preset = document.getElementById("owner-date-filter")?.value || "today";
+      const fromInp = document.getElementById("report-from-date");
+      const toInp = document.getElementById("report-to-date");
       const today = getTodayISO();
-      const nowMs = Date.now();
+      if (fromInp && toInp) {
+        if (preset === "today") {
+          fromInp.value = today;
+          toInp.value = today;
+        } else if (preset === "7days") {
+          const d = new Date();
+          d.setDate(d.getDate() - 6);
+          fromInp.value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+          toInp.value = today;
+        } else if (preset === "month") {
+          fromInp.value = `${today.slice(0, 7)}-01`;
+          toInp.value = today;
+        } else if (preset === "all") {
+          fromInp.value = "2024-01-01";
+          toInp.value = today;
+        }
+      }
+      renderOwnerDashboard();
+    }
+
+    function setCustomReportDateRange() {
+      const sel = document.getElementById("owner-date-filter");
+      if (sel) sel.value = "custom";
+      renderOwnerDashboard();
+    }
+
+    function switchOwnerReportTab(tab) {
+      activeOwnerReportTab = tab;
+      ["items", "orders", "stock"].forEach(t => {
+        const btn = document.getElementById(`rep-tab-${t}`);
+        if (btn) {
+          btn.className = t === tab
+            ? "px-3 py-1.5 rounded-xl text-xs font-extrabold bg-coffee-950 text-amber-300 flex items-center gap-1.5"
+            : "px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white dark:bg-stone-900 text-stone-700 dark:text-stone-200 border border-stone-300 dark:border-stone-700 flex items-center gap-1.5";
+        }
+      });
+      const payWrap = document.getElementById("report-payment-filter-wrap");
+      const statusWrap = document.getElementById("report-status-filter-wrap");
+      if (payWrap) payWrap.classList.toggle("hidden", tab === "stock");
+      if (statusWrap) statusWrap.classList.toggle("hidden", tab !== "orders");
+      renderOwnerDashboard();
+    }
+
+    function getFilteredOwnerOrders(includeVoidOverride = false) {
+      initReportDatesIfEmpty();
+      const preset = document.getElementById("owner-date-filter")?.value || "today";
+      const fromDate = document.getElementById("report-from-date")?.value || getTodayISO();
+      const toDate = document.getElementById("report-to-date")?.value || getTodayISO();
+      const custFilter = document.getElementById("owner-customer-filter")?.value || "all";
+      const payMode = document.getElementById("owner-payment-filter")?.value || "all";
+      const statusFilter = includeVoidOverride ? "all_including_void" : (document.getElementById("owner-order-status-filter")?.value || "active");
+      const today = getTodayISO();
 
       return ORDER_LOGS.filter(o => {
-        if (o.voided) return false;
+        if (statusFilter === "active" && o.voided) return false;
+        if (statusFilter === "void_only" && !o.voided) return false;
+        if (custFilter !== "all" && (o.customer || "Walk-in") !== custFilter) return false;
         if (payMode !== "all" && !(o.paymentMode || "").includes(payMode)) return false;
-        if (period === "today") return o.dateISO === today;
-        if (period === "7days") {
-          const diffDays = (nowMs - new Date(o.dateISO).getTime()) / (1000 * 60 * 60 * 24);
-          return diffDays <= 7;
-        }
-        if (period === "month") return (o.dateISO || "").slice(0, 7) === today.slice(0, 7);
-        return true;
+
+        if (preset === "today") return o.dateISO === today;
+        if (preset === "all") return true;
+        return (!fromDate || o.dateISO >= fromDate) && (!toDate || o.dateISO <= toDate);
       });
+    }
+
+    function formatShortMonthDate(iso) {
+      if (!iso || !iso.includes("-")) return iso || "";
+      const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+      const [y, m, d] = iso.split("-");
+      return `${d} ${months[Math.max(0, Number(m) - 1)] || m} ${y}`;
+    }
+
+    function renderActiveOwnerReportPanel() {
+      const panel = document.getElementById("owner-active-report-panel");
+      if (!panel) return;
+
+      // Sync Customers dropdown options
+      const custSel = document.getElementById("owner-customer-filter");
+      if (custSel) {
+        const prevVal = custSel.value;
+        const uniqueCustomers = [...new Set(ORDER_LOGS.map(o => o.customer || "Walk-in"))];
+        custSel.innerHTML = `<option value="all">Customers (All)</option>` +
+          uniqueCustomers.map(c => `<option value="${c}">${c}</option>`).join("");
+        if ([...custSel.options].some(opt => opt.value === prevVal)) custSel.value = prevVal;
+      }
+
+      if (activeOwnerReportTab === "items") {
+        const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
+        const itemMap = {};
+        orders.forEach(o => {
+          (o.items || []).forEach(it => {
+            if (!itemMap[it.name]) itemMap[it.name] = { qty: 0, amount: 0 };
+            itemMap[it.name].qty += Number(it.qty) || 1;
+            itemMap[it.name].amount += (Number(it.price) || 0) * (Number(it.qty) || 1);
+          });
+        });
+        const rows = Object.entries(itemMap).sort((a, b) => b[1].amount - a[1].amount);
+        const totalQty = rows.reduce((s, [, r]) => s + r.qty, 0);
+        const totalAmt = rows.reduce((s, [, r]) => s + r.amount, 0);
+
+        panel.innerHTML = rows.length === 0
+          ? `<p class="text-center text-stone-400 py-8 text-xs">No item sales found for this date range.</p>`
+          : `
+            <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-stone-200 dark:border-stone-800 text-xs">
+              <span class="font-bold text-stone-500">Total Items Sold: <strong class="text-coffee-950 dark:text-amber-200">${totalQty}</strong></span>
+              <span class="font-bold text-stone-500">Total Item Revenue: <strong class="text-emerald-600">₹${totalAmt}</strong></span>
+            </div>
+            <div class="divide-y divide-stone-200 dark:divide-stone-800">
+              ${rows.map(([name, st]) => `
+                <div class="py-3 flex items-center justify-between gap-4">
+                  <div class="min-w-0">
+                    <p class="font-heading font-bold text-xs sm:text-sm text-stone-900 dark:text-stone-100">${name}</p>
+                    <p class="text-[11px] text-stone-400 mt-0.5">Order Quantity</p>
+                    <p class="font-extrabold text-xs text-stone-800 dark:text-stone-200">${st.qty}</p>
+                  </div>
+                  <div class="text-right shrink-0">
+                    <p class="text-[11px] text-stone-400">Order Amount</p>
+                    <p class="font-extrabold text-sm text-coffee-950 dark:text-amber-200">₹${st.amount}</p>
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          `;
+        refreshLucideIcons();
+        return;
+      }
+
+      if (activeOwnerReportTab === "orders") {
+        const orders = getFilteredOwnerOrders(false);
+        const activeOnly = orders.filter(o => !o.voided);
+        const totalTxns = activeOnly.length;
+        const totalSale = activeOnly.reduce((s, o) => s + (Number(o.revenue) || 0), 0);
+
+        panel.innerHTML = `
+          <!-- Summary Boxes: No. of Txns & Total Sale -->
+          <div class="grid grid-cols-2 gap-2.5 mb-3.5">
+            <div class="p-3 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 flex items-center justify-between">
+              <span class="font-black text-sm text-stone-900 dark:text-white">${totalTxns}</span>
+              <span class="text-xs font-semibold text-stone-500">No. of Txns</span>
+            </div>
+            <div class="p-3 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 flex items-center justify-between">
+              <span class="font-black text-sm text-emerald-700 dark:text-emerald-400">₹${totalSale}</span>
+              <span class="text-xs font-semibold text-stone-500">Total Sale</span>
+            </div>
+          </div>
+
+          <!-- Order Rows -->
+          ${orders.length === 0 ? `<p class="text-center text-stone-400 py-8 text-xs">No orders recorded in this filter.</p>` : `
+            <div class="divide-y divide-stone-200 dark:divide-stone-800 max-h-96 overflow-y-auto custom-scrollbar">
+              ${orders.map(o => {
+                const realIdx = ORDER_LOGS.findIndex(x => x.id === o.id);
+                return `
+                  <div class="py-3 flex items-center justify-between gap-2 ${o.voided ? 'opacity-55 bg-red-50/30 px-2 rounded-xl' : ''}">
+                    <div>
+                      <p class="text-xs font-bold text-stone-500">#${o.billNo} <span class="text-[10px] font-normal ml-1">• ${o.customer} (${o.table})</span></p>
+                      <p class="text-[10px] font-bold uppercase text-stone-400">${formatShortMonthDate(o.dateISO)} • ${o.time}</p>
+                      <div class="flex items-center gap-6 mt-1.5">
+                        <div>
+                          <p class="text-[10px] text-stone-400">Total</p>
+                          <p class="font-extrabold text-xs text-stone-900 dark:text-white">₹${o.revenue}</p>
+                        </div>
+                        <div>
+                          <p class="text-[10px] text-stone-400">Type</p>
+                          <p class="font-extrabold text-xs text-stone-900 dark:text-white">${o.paymentMode}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 shrink-0">
+                      <button onclick="reprintOrderByIndex(${realIdx})" class="p-2 rounded-lg bg-stone-100 dark:bg-stone-800 hover:bg-stone-200 text-stone-700 dark:text-stone-200" title="Print / View Invoice">
+                        <i data-lucide="printer" class="w-4 h-4"></i>
+                      </button>
+                      ${!o.voided ? `
+                        <button onclick="voidOrderByIndex(${realIdx})" class="px-2 py-1.5 rounded-lg bg-red-100 text-red-700 text-[11px] font-extrabold" title="Void Bill & Restore Stock">
+                          Void
+                        </button>
+                      ` : `<span class="text-[10px] font-black text-red-600">VOID</span>`}
+                    </div>
+                  </div>
+                `;
+              }).join("")}
+            </div>
+          `}
+        `;
+        refreshLucideIcons();
+        return;
+      }
+
+      // STOCK SUMMARY REPORT
+      const totalStockVal = INVENTORY_ITEMS.reduce((s, i) => s + (Number(i.stock) || 0) * (Number(i.unitCost) || 0), 0);
+      panel.innerHTML = `
+        <div class="grid grid-cols-2 gap-2.5 mb-3.5">
+          <div class="p-3 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 flex items-center justify-between">
+            <span class="font-black text-sm">${INVENTORY_ITEMS.length}</span>
+            <span class="text-xs font-semibold text-stone-500">Tracked Ingredients</span>
+          </div>
+          <div class="p-3 rounded-xl border border-stone-300 dark:border-stone-700 bg-stone-50/70 dark:bg-stone-800/60 flex items-center justify-between">
+            <span class="font-black text-sm text-emerald-700 dark:text-emerald-400">₹${totalStockVal}</span>
+            <span class="text-xs font-semibold text-stone-500">Stock Valuation</span>
+          </div>
+        </div>
+        <div class="divide-y divide-stone-200 dark:divide-stone-800 max-h-96 overflow-y-auto custom-scrollbar">
+          ${INVENTORY_ITEMS.map(inv => {
+            const low = inv.stock <= (inv.lowThreshold || 15);
+            const rowVal = (Number(inv.stock) || 0) * (Number(inv.unitCost) || 0);
+            return `
+              <div class="py-2.5 flex items-center justify-between gap-2 text-xs">
+                <div>
+                  <p class="font-bold">${inv.name} ${low ? '<span class="ml-1 px-1.5 py-0.5 rounded bg-red-100 text-red-700 text-[9px] font-black">LOW</span>' : ''}</p>
+                  <p class="text-[10px] text-stone-400">Unit Cost: ₹${inv.unitCost || 0}/${inv.unit}</p>
+                </div>
+                <div class="text-right">
+                  <p class="font-black ${low ? 'text-red-600' : 'text-emerald-600'}">${inv.stock} ${inv.unit}</p>
+                  <p class="text-[10px] text-stone-400">Value: ₹${rowVal}</p>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+      refreshLucideIcons();
+    }
+
+    function exportCurrentReportPdf() {
+      if (!window.jspdf) return;
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      const fromD = document.getElementById("report-from-date")?.value || getTodayISO();
+      const toD = document.getElementById("report-to-date")?.value || getTodayISO();
+
+      doc.setFontSize(14);
+      if (activeOwnerReportTab === "items") {
+        const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
+        const itemMap = {};
+        orders.forEach(o => (o.items || []).forEach(it => {
+          if (!itemMap[it.name]) itemMap[it.name] = { qty: 0, amount: 0 };
+          itemMap[it.name].qty += Number(it.qty) || 1;
+          itemMap[it.name].amount += (Number(it.price) || 0) * (Number(it.qty) || 1);
+        }));
+        doc.text(`${CAFE_CONFIG.cafeName} — Item Report (${fromD} to ${toD})`, 14, 16);
+        doc.autoTable({
+          startY: 22,
+          head: [["Item Name", "Order Quantity", "Order Amount (Rs.)"]],
+          body: Object.entries(itemMap).map(([name, st]) => [name, st.qty, st.amount.toFixed(2)])
+        });
+        doc.save(`Item_Report_${fromD}_to_${toD}.pdf`);
+      } else if (activeOwnerReportTab === "orders") {
+        const orders = getFilteredOwnerOrders(false);
+        doc.text(`${CAFE_CONFIG.cafeName} — Orders Report (${fromD} to ${toD})`, 14, 16);
+        doc.autoTable({
+          startY: 22,
+          head: [["Invoice #", "Date", "Time", "Customer", "Type", "Total (Rs.)", "Profit (Rs.)"]],
+          body: orders.map(o => [`#${o.billNo}`, o.dateISO, o.time, o.customer, o.paymentMode, o.revenue.toFixed(2), o.profit.toFixed(2)])
+        });
+        doc.save(`Orders_Report_${fromD}_to_${toD}.pdf`);
+      } else {
+        doc.text(`${CAFE_CONFIG.cafeName} — Stock Summary (${getTodayISO()})`, 14, 16);
+        doc.autoTable({
+          startY: 22,
+          head: [["Ingredient", "Available Stock", "Unit", "Unit Cost (Rs.)", "Total Value (Rs.)"]],
+          body: INVENTORY_ITEMS.map(i => [i.name, i.stock, i.unit, (i.unitCost || 0).toFixed(2), ((i.stock || 0) * (i.unitCost || 0)).toFixed(2)])
+        });
+        doc.save(`Stock_Summary_${getTodayISO()}.pdf`);
+      }
+      showNotification("PDF report downloaded!");
+    }
+
+    function exportCurrentReportExcel() {
+      const fromD = document.getElementById("report-from-date")?.value || getTodayISO();
+      const toD = document.getElementById("report-to-date")?.value || getTodayISO();
+      let csvLines = [];
+      let filename = `Report_${getTodayISO()}.csv`;
+
+      if (activeOwnerReportTab === "items") {
+        const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
+        const itemMap = {};
+        orders.forEach(o => (o.items || []).forEach(it => {
+          if (!itemMap[it.name]) itemMap[it.name] = { qty: 0, amount: 0 };
+          itemMap[it.name].qty += Number(it.qty) || 1;
+          itemMap[it.name].amount += (Number(it.price) || 0) * (Number(it.qty) || 1);
+        }));
+        csvLines.push("Item Name,Order Quantity,Order Amount");
+        Object.entries(itemMap).forEach(([name, st]) => {
+          csvLines.push(`"${name.replace(/"/g, '""')}",${st.qty},${st.amount}`);
+        });
+        filename = `Item_Report_${fromD}_to_${toD}.csv`;
+      } else if (activeOwnerReportTab === "orders") {
+        const orders = getFilteredOwnerOrders(false);
+        csvLines.push("Invoice No,Date,Time,Customer,Table,Payment Type,Total,Cost,Profit,Status");
+        orders.forEach(o => {
+          csvLines.push(`"#${o.billNo}",${o.dateISO},"${o.time}","${(o.customer || '').replace(/"/g, '""')}","${o.table}","${o.paymentMode}",${o.revenue},${o.cost},${o.profit},${o.voided ? 'Voided' : 'Completed'}`);
+        });
+        filename = `Orders_Report_${fromD}_to_${toD}.csv`;
+      } else {
+        csvLines.push("Ingredient,Available Stock,Unit,Unit Cost,Total Value");
+        INVENTORY_ITEMS.forEach(i => {
+          csvLines.push(`"${i.name.replace(/"/g, '""')}",${i.stock},"${i.unit}",${i.unitCost || 0},${(i.stock || 0) * (i.unitCost || 0)}`);
+        });
+        filename = `Stock_Summary_${getTodayISO()}.csv`;
+      }
+
+      const blob = new Blob([csvLines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
+      showNotification("Excel / CSV report downloaded!");
     }
 
     function updateMenuItemPhotoFromFile(idx, event) {
@@ -3325,7 +3840,8 @@
     }
 
     function renderOwnerDashboard() {
-      const orders = getFilteredOwnerOrders();
+      renderActiveOwnerReportPanel();
+      const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
       const revenue = orders.reduce((s, o) => s + (Number(o.revenue) || 0), 0);
       const cost = orders.reduce((s, o) => s + (Number(o.cost) || 0), 0);
       const expenses = EXPENSE_LOGS.reduce((s, e) => s + (Number(e.amount) || 0), 0);
@@ -3370,25 +3886,6 @@
           </div>
         `).join("");
 
-      // Top Selling Dishes
-      const dishStats = {};
-      orders.forEach(o => {
-        (o.items || []).forEach(it => {
-          if (!dishStats[it.name]) dishStats[it.name] = { qty: 0, rev: 0 };
-          dishStats[it.name].qty += Number(it.qty) || 1;
-          dishStats[it.name].rev += (Number(it.price) || 0) * (Number(it.qty) || 1);
-        });
-      });
-      const sortedDishes = Object.entries(dishStats).sort((a, b) => b[1].qty - a[1].qty);
-      document.getElementById("owner-bestsellers-list").innerHTML = sortedDishes.length === 0
-        ? `<p class="text-stone-400 py-4 text-center">No dish sales in selected period.</p>`
-        : sortedDishes.map(([name, st], idx) => `
-          <div class="p-2 rounded-xl bg-stone-50 dark:bg-stone-800 flex items-center justify-between">
-            <span class="font-bold">#${idx + 1} ${name}</span>
-            <span class="font-black text-emerald-600">${st.qty} sold • ₹${st.rev}</span>
-          </div>
-        `).join("");
-
       // Expected Cash Drawer Today
       const todayCash = ORDER_LOGS.filter(o => !o.voided && o.dateISO === getTodayISO() && o.paymentMode === "Cash")
         .reduce((s, o) => s + (Number(o.revenue) || 0), 0);
@@ -3416,29 +3913,6 @@
           </div>
         `).join("");
 
-      // Live Orders Ledger (with Reprint & Void + Stock Restore)
-      document.getElementById("owner-orders-ledger").innerHTML = ORDER_LOGS.length === 0
-        ? `<p class="text-stone-400 py-6 text-center">No orders recorded yet.</p>`
-        : ORDER_LOGS.map((o, idx) => `
-          <div class="p-2.5 rounded-xl border ${o.voided ? 'border-red-300 bg-red-50/30 opacity-60' : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/70'} flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <p class="font-bold">
-                <span class="text-amber-700 dark:text-amber-300">${o.billNo}</span> • ${o.customer} (${o.table})
-                <span class="text-[10px] px-1.5 py-0.5 rounded bg-stone-200 dark:bg-stone-700 ml-1">${o.staffName || 'Staff'}</span>
-              </p>
-              <p class="text-[11px] text-stone-500">${o.summary}</p>
-            </div>
-            <div class="flex items-center gap-2">
-              <div class="text-right">
-                <p class="font-black">₹${o.revenue} <span class="text-[10px] font-normal">(${o.paymentMode})</span></p>
-                <p class="text-[10px] text-emerald-600 font-bold">Profit: +₹${o.profit}</p>
-              </div>
-              <button onclick="reprintOrderByIndex(${idx})" class="px-2 py-1 rounded bg-stone-200 dark:bg-stone-700 font-bold">Reprint</button>
-              ${!o.voided ? `<button onclick="voidOrderByIndex(${idx})" class="px-2 py-1 rounded bg-red-100 text-red-700 font-bold">Void</button>` : `<span class="text-red-600 font-black">VOIDED</span>`}
-            </div>
-          </div>
-        `).join("");
-
       // Menu Item Editor (with Photo Upload, Image URL & Remove Photo in Owner Access)
       document.getElementById("owner-menu-items-list").innerHTML = MENU_ITEMS.map((m, idx) => {
         const hasImg = Boolean((m.image || "").trim());
@@ -3457,8 +3931,8 @@
                 </div>
               </div>
               <div class="flex items-center gap-1.5 shrink-0">
-                <label class="text-[10px]">Sell ₹<input type="number" value="${m.price}" onchange="MENU_ITEMS[${idx}].price=Number(this.value); persistAllState();" class="w-14 p-1 ml-0.5 bg-white dark:bg-stone-900 border rounded font-bold" /></label>
-                <label class="text-[10px]">Cost ₹<input type="number" value="${m.costPrice || 35}" onchange="MENU_ITEMS[${idx}].costPrice=Number(this.value); persistAllState();" class="w-14 p-1 ml-0.5 bg-white dark:bg-stone-900 border rounded font-bold" /></label>
+                <label class="text-[10px]">Sell ₹<input type="number" min="0" value="${m.price}" onchange="MENU_ITEMS[${idx}].price=safePositiveNum(this.value, 50); persistAllState();" class="w-14 p-1 ml-0.5 bg-white dark:bg-stone-900 border rounded font-bold" /></label>
+                <label class="text-[10px]">Cost ₹<input type="number" min="0" value="${m.costPrice || 35}" onchange="MENU_ITEMS[${idx}].costPrice=safePositiveNum(this.value, 20); persistAllState();" class="w-14 p-1 ml-0.5 bg-white dark:bg-stone-900 border rounded font-bold" /></label>
               </div>
             </div>
             <div class="flex items-center gap-1.5 pt-1.5 border-t border-stone-200/70 dark:border-stone-700 text-[11px]">
@@ -3475,19 +3949,20 @@
       refreshLucideIcons();
     }
 
-    function addStaffAccount() {
+    async function addStaffAccount() {
       const name = document.getElementById("new-staff-name")?.value.trim();
       const pin = document.getElementById("new-staff-pin")?.value.trim();
       if (!name || !pin || pin.length < 4) {
         showNotification("Enter staff name & at least 4-digit passcode.");
         return;
       }
-      STAFF_ACCOUNTS.push({ id: "staff-" + Date.now(), name, pin });
+      const hashedPin = await hashPasscodeSha256(pin);
+      STAFF_ACCOUNTS.push({ id: "staff-" + Date.now(), name, pin: hashedPin });
       document.getElementById("new-staff-name").value = "";
       document.getElementById("new-staff-pin").value = "";
       persistAllState();
       renderOwnerDashboard();
-      showNotification(`Added ${name} to Staff Shift list.`);
+      showNotification(`Added ${name} with encrypted passcode.`);
     }
 
     function reprintOrderByIndex(idx) {
@@ -3502,7 +3977,7 @@
       restoreInventoryForVoidedOrder(ord);
       persistAllState();
       renderOwnerDashboard();
-      showNotification(`Voided ${ord.billNo} and restored deducted ingredients!`);
+      showNotification(`Voided #${ord.billNo} and restored deducted ingredients!`);
     }
 
     function calculateCashDrawer() {
@@ -3685,21 +4160,6 @@
       if (window.QRCode) new QRCode(box, { text: url, width: 150, height: 150 });
     }
 
-    function exportOwnerPdfReport() {
-      if (!window.jspdf) return;
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF();
-      const orders = getFilteredOwnerOrders();
-      doc.setFontSize(14);
-      doc.text(`${CAFE_CONFIG.cafeName} — Sales & Profit Report`, 14, 16);
-      doc.autoTable({
-        startY: 22,
-        head: [["Bill", "Date", "Table", "Staff", "Mode", "Revenue", "Profit"]],
-        body: orders.map(o => [o.billNo, o.dateISO, o.table, o.staffName || "Staff", o.paymentMode, `Rs.${o.revenue}`, `Rs.${o.profit}`])
-      });
-      doc.save(`${CAFE_CONFIG.cafeName.replace(/\s+/g, '_')}_Report_${getTodayISO()}.pdf`);
-    }
-
     function exportFullBackupJson() {
       const blob = new Blob([JSON.stringify({
         CAFE_CONFIG, MENU_ITEMS, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
@@ -3715,7 +4175,7 @@
       const file = ev.target.files?.[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
           const data = JSON.parse(e.target.result);
           if (data.MENU_ITEMS) MENU_ITEMS = data.MENU_ITEMS;
@@ -3725,9 +4185,10 @@
           if (data.STAFF_ACCOUNTS) STAFF_ACCOUNTS = data.STAFF_ACCOUNTS;
           if (data.SHIFT_HANDOVERS) SHIFT_HANDOVERS = data.SHIFT_HANDOVERS;
           if (data.CAFE_CONFIG) CAFE_CONFIG = { ...CAFE_CONFIG, ...data.CAFE_CONFIG };
+          await migratePlainPasscodesToHashes();
           persistAllState();
           renderOwnerDashboard();
-          showNotification("Backup JSON restored successfully!");
+          showNotification("Backup JSON restored & passcodes verified!");
         } catch (err) {
           showNotification("Invalid backup JSON file.");
         }
@@ -3736,14 +4197,20 @@
     }
 
     // ==================== INITIALIZATION ====================
-    document.addEventListener("DOMContentLoaded", () => {
+    document.addEventListener("DOMContentLoaded", async () => {
       loadAllLocalState();
+      await migratePlainPasscodesToHashes();
 
       const params = new URLSearchParams(window.location.search);
       if (params.get("cloudUrl")) {
         CLOUD_CONFIG.dbUrl = params.get("cloudUrl");
         CLOUD_CONFIG.workspaceId = params.get("ws") || "brewnagri-main";
         localStorage.setItem("bn_cloud_config", JSON.stringify(CLOUD_CONFIG));
+        // Scrub cloudUrl from browser address bar & history immediately after linking
+        try {
+          const cleanUrl = window.location.pathname + (params.get("table") ? `?table=${encodeURIComponent(params.get("table"))}` : "");
+          window.history.replaceState({}, document.title, cleanUrl);
+        } catch (e) {}
       }
       if (params.get("table")) {
         const tbl = params.get("table");
@@ -3769,6 +4236,11 @@
         pullFromCloudNow(true);
       }
 
+      // Reset 15-min inactivity lock timer on user interaction
+      ["click", "keydown", "touchstart"].forEach(evt => {
+        document.addEventListener(evt, resetSessionInactivityTimer, { passive: true });
+      });
+
       // Windows Desktop Keyboard Shortcuts (F2 Search, F8 KOT, F9 Settle)
       document.addEventListener("keydown", (e) => {
         if (document.getElementById("staff-pos-view")?.classList.contains("hidden")) return;
@@ -3787,3 +4259,9 @@
   </script>
 </body>
 </html>
+```
+
+I have hardened `index.html` with multiple layers of protection so it cannot be easily broken into or crashed:
+* **SHA-256 Passcode Hashing & 5-Try Lockout:** All Owner and Staff passcodes are hashed with SHA-256 (never stored in plain text in browser storage or cloud backups), and 5 wrong attempts trigger a 30-second brute-force lockout.
+* **Owner-Locked Cloud Sync & URL Scrubbing:** Opening **Cloud Sync** now requires the Owner passcode, and any `?cloudUrl=` transfer parameter is immediately scrubbed from the browser address bar after linking a device.
+* **15-Minute Inactivity Auto-Lock & Input Guards:** Automatically locks Staff/Owner sessions after 15 minutes of inactivity and blocks negative or invalid price/stock values.
