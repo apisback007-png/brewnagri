@@ -108,9 +108,16 @@
         margin: 0 !important;
         padding: 3mm 2.5mm !important;
         color: #000000 !important;
-        font-family: 'Courier New', Courier, monospace !important;
+        font-family: Arial, Helvetica, sans-serif !important;
+        font-weight: 600 !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
         font-size: 11px !important;
         line-height: 1.35 !important;
+      }
+      #printable-receipt-area * {
+        color: #000000 !important;
+        border-color: #000000 !important;
       }
     }
   </style>
@@ -391,11 +398,11 @@
           <div class="grid grid-cols-2 gap-2 pt-1">
             <button onclick="saveAndPrintKot()" class="py-2.5 px-3 bg-amber-500 hover:bg-amber-600 text-stone-950 font-extrabold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 touch-btn">
               <i data-lucide="chef-hat" class="w-4 h-4"></i>
-              <span>Save & Print KOT (F8)</span>
+              <span>Save & Hold KOT (F8)</span>
             </button>
-            <button onclick="settlePosBill()" class="py-2.5 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 touch-btn">
-              <i data-lucide="check-circle" class="w-4 h-4"></i>
-              <span>Settle Bill (F9)</span>
+            <button onclick="settlePosBill()" class="py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-xl text-xs shadow-xs flex items-center justify-center gap-1.5 touch-btn">
+              <i data-lucide="printer" class="w-4 h-4"></i>
+              <span>Save & Bill (KOT → Bill)</span>
             </button>
           </div>
         </div>
@@ -925,50 +932,56 @@
         </div>
       </div>
       <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
-        <button onclick="closeCafeSettingsModal()" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 rounded-xl text-xs font-bold">Cancel</button>
-        <button onclick="saveCafeSettings()" class="flex-1 py-2 bg-coffee-950 text-amber-300 rounded-xl text-xs font-extrabold">Save Settings</button>
+        <button type="button" onclick="closeCafeSettingsModal()" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 rounded-xl font-bold text-xs">Cancel</button>
+        <button type="button" onclick="saveCafeSettings()" class="flex-1 py-2 bg-coffee-950 text-amber-300 rounded-xl font-extrabold text-xs">Save Settings</button>
       </div>
     </div>
   </div>
 
-  <!-- 7. Thermal Receipt & KOT Preview Modal (Supports 2" & 3" + SEZNIK Android Bluetooth RawBT) -->
+  <!-- 7. Two-Step Thermal KOT & Tax Invoice Preview Modal (Step 1: KOT -> Step 2: Customer Bill) -->
   <div id="receipt-preview-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/75 backdrop-blur-xs">
     <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[92vh]">
       <div class="p-3.5 bg-coffee-950 text-white flex items-center justify-between no-print">
         <div>
-          <h3 id="receipt-modal-title" class="font-heading font-bold text-sm">Tax Invoice / Receipt</h3>
-          <p id="receipt-paper-hint" class="text-[10px] text-amber-300">Paper Size: 80mm (3-Inch) • Margins: None</p>
+          <div class="flex items-center gap-2">
+            <span id="receipt-step-pill" class="px-2 py-0.5 rounded-full bg-amber-400 text-coffee-950 text-[10px] font-black uppercase">Step 1 of 2 • KOT</span>
+            <h3 id="receipt-modal-title" class="font-heading font-bold text-sm">Kitchen Order Ticket</h3>
+          </div>
+          <p id="receipt-paper-hint" class="text-[10px] text-amber-300 mt-0.5">Paper Size: 58mm (2-Inch) • Margins: None</p>
         </div>
         <button onclick="closeReceiptModal()" class="p-1 rounded-full hover:bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
 
-      <!-- 2-Inch vs 3-Inch Roll Width Toggle -->
+      <!-- 2-Inch vs 3-Inch Roll Width + Step Switcher -->
       <div class="px-3.5 py-2 bg-stone-100 dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700 flex items-center justify-between text-xs no-print">
-        <span class="font-bold text-stone-600 dark:text-stone-300">Thermal Roll Width:</span>
-        <div class="flex items-center gap-1.5">
-          <button type="button" id="modal-roll-80-btn" onclick="setThermalRollWidth('80mm', true)" class="px-2.5 py-1 rounded-lg font-extrabold border">3-Inch (80mm)</button>
-          <button type="button" id="modal-roll-58-btn" onclick="setThermalRollWidth('58mm', true)" class="px-2.5 py-1 rounded-lg font-extrabold border">2-Inch (58mm)</button>
+        <div class="flex items-center gap-1">
+          <button type="button" id="step-tab-kot" onclick="switchReceiptModalStep('kot')" class="px-2 py-1 rounded-lg text-[11px] font-extrabold bg-amber-400 text-coffee-950">1. KOT</button>
+          <button type="button" id="step-tab-bill" onclick="switchReceiptModalStep('bill')" class="px-2 py-1 rounded-lg text-[11px] font-extrabold text-stone-600 dark:text-stone-300">2. Tax Invoice</button>
+        </div>
+        <div class="flex items-center gap-1">
+          <button type="button" id="modal-roll-58-btn" onclick="setThermalRollWidth('58mm', true)" class="px-2 py-1 rounded-lg text-[10px] font-extrabold border">2" (58mm)</button>
+          <button type="button" id="modal-roll-80-btn" onclick="setThermalRollWidth('80mm', true)" class="px-2 py-1 rounded-lg text-[10px] font-extrabold border">3" (80mm)</button>
         </div>
       </div>
 
       <!-- Printable Thermal Receipt Area -->
       <div class="p-4 overflow-y-auto custom-scrollbar flex-1 flex justify-center bg-stone-200 dark:bg-stone-950">
-        <div id="printable-receipt-area" class="bg-white text-black p-3 shadow-md font-mono text-[11px] leading-snug w-[80mm]"></div>
+        <div id="printable-receipt-area" class="bg-white text-black p-3.5 shadow-md font-sans font-semibold text-[11px] leading-snug w-[58mm]"></div>
       </div>
 
-      <!-- Print Action Buttons -->
+      <!-- Two-Step Print Action Buttons -->
       <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 space-y-2 no-print">
         <div class="grid grid-cols-2 gap-2">
-          <button onclick="closeReceiptModal()" class="py-2 bg-stone-200 dark:bg-stone-700 rounded-xl text-xs font-bold">Close</button>
-          <button id="modal-print-btn" onclick="triggerThermalPrint()" class="py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5">
+          <button onclick="closeReceiptModal()" class="py-2.5 bg-white dark:bg-stone-700 border border-stone-300 dark:border-stone-600 rounded-xl text-xs font-bold">Close</button>
+          <button id="modal-primary-print-btn" onclick="handleTwoStepThermalPrintAction()" class="py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5 shadow-xs">
             <i data-lucide="printer" class="w-4 h-4"></i>
-            <span>Print 3" Receipt</span>
+            <span id="modal-primary-print-label">Print KOT & Next Bill →</span>
           </button>
         </div>
         <div class="grid grid-cols-3 gap-1.5">
-          <button onclick="printViaAndroidRawBT()" class="col-span-2 py-2 px-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-[11px] font-extrabold flex items-center justify-center gap-1.5">
+          <button onclick="handleTwoStepBluetoothPrint()" class="col-span-2 py-2 px-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-[11px] font-extrabold flex items-center justify-center gap-1.5">
             <i data-lucide="bluetooth" class="w-3.5 h-3.5"></i>
-            <span>Bluetooth Print (SEZNIK / RawBT)</span>
+            <span id="modal-bt-print-label">SEZNIK BT Print (KOT → Bill)</span>
           </button>
           <button onclick="copyPlainThermalText()" class="py-2 px-2 bg-stone-700 hover:bg-stone-600 text-white rounded-xl text-[11px] font-bold">
             Copy Text
@@ -1149,9 +1162,10 @@
       customFooter: "Your support means a lot - Thank you for being a valuable customer.",
       defaultGstRate: "0",
       printUpiQrOnBill: true,
-      printerWidth: "80mm",
+      printerWidth: "58mm",
       billPrefix: "BN",
-      nextBillSeq: 101
+      nextBillSeq: 10482,
+      nextKotSeq: 20
     };
 
     let MENU_ITEMS = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
@@ -1184,9 +1198,11 @@
     let isSubmittingOrder = false;
     let LAST_PLAIN_THERMAL_RECEIPT = "";
     let pendingNewDishImageDataUrl = "";
+    let CURRENT_RECEIPT_ORDER = null;
+    let CURRENT_RECEIPT_STEP = "kot"; // "kot" (Step 1) or "bill" (Step 2)
+    let CURRENT_RECEIPT_KOT_ONLY = false;
 
     function compressDishImageFile(file, callback) {
-      if (!file) return;
       const reader = new FileReader();
       reader.onload = (e) => {
         const img = new Image();
@@ -1463,11 +1479,6 @@
           : "Paper Size: 80mm (3-Inch) • Margins: None";
       }
 
-      const modalPrintBtn = document.getElementById("modal-print-btn");
-      if (modalPrintBtn) {
-        modalPrintBtn.querySelector("span").textContent = cleanW === "58mm" ? 'Print 2" Receipt' : 'Print 3" Receipt';
-      }
-
       // Sync toggle button styles in POS and Modal
       const activeCls = "bg-amber-400 text-coffee-950 border-amber-500";
       const idleCls = "bg-white dark:bg-stone-900 text-stone-600 dark:text-stone-300 border-stone-300 dark:border-stone-700";
@@ -1487,6 +1498,9 @@
       if (savePref) {
         CAFE_CONFIG.printerWidth = cleanW;
         persistAllState();
+      }
+      if (CURRENT_RECEIPT_ORDER && !document.getElementById("receipt-preview-modal")?.classList.contains("hidden")) {
+        renderCurrentReceiptStep();
       }
     }
 
@@ -1535,9 +1549,13 @@
         showNotification("No receipt loaded to send to Bluetooth printer.");
         return;
       }
-      const b64 = btoa(unescape(encodeURIComponent(LAST_PLAIN_THERMAL_RECEIPT)));
+      // ESC E 1 enables bold dark print on SEZNIK / ESC-POS 58mm & 80mm thermal printers
+      const escBoldHeader = "\x1B\x40\x1B\x45\x01";
+      const escReset = "\x1B\x45\x00";
+      const payload = escBoldHeader + LAST_PLAIN_THERMAL_RECEIPT + escReset;
+      const b64 = btoa(unescape(encodeURIComponent(payload)));
       window.location.href = `rawbt:base64,${b64}`;
-      showNotification("Sent receipt to SEZNIK / RawBT Bluetooth Print Service!");
+      showNotification("Sent bold receipt to SEZNIK / RawBT Bluetooth Print Service!");
     }
 
     function copyPlainThermalText() {
@@ -2527,16 +2545,20 @@
       });
 
       const itemsToPrint = newKotLines.length > 0 ? newKotLines : session.lines;
+      const kotNum = CAFE_CONFIG.nextKotSeq || 20;
+      CAFE_CONFIG.nextKotSeq = kotNum + 1;
       persistAllState();
       renderPosFloorTables();
 
       const kotOrder = {
-        billNo: `KOT-${Date.now().toString().slice(-4)}`,
+        billNo: String(CAFE_CONFIG.nextBillSeq || 10482),
+        kotNo: kotNum,
         dateISO: getTodayISO(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dateDisplay: formatIndianDate(getTodayISO()),
+        time: format12HourTime(new Date()),
         customer: session.customer || "Table Guest",
         table: activePosTable,
-        paymentMode: "KITCHEN ORDER",
+        paymentMode: "Hold / KOT",
         staffName: activeStaffUser?.name || "Staff",
         items: itemsToPrint,
         subtotal: 0,
@@ -2545,21 +2567,34 @@
         gstAmount: 0,
         revenue: 0
       };
-      openReceiptPreviewModal(kotOrder);
-      showNotification(`Saved tab & generated Kitchen Order Ticket for ${activePosTable}!`);
+      openReceiptPreviewModal(kotOrder, { startStep: "kot", kotOnly: true });
+      showNotification(`Saved tab & opened KOT - ${kotNum} for ${activePosTable}!`);
+    }
+
+    function formatIndianDate(iso) {
+      if (!iso || !iso.includes("-")) return iso || "";
+      const [y, m, d] = iso.split("-");
+      return `${d}/${m}/${y}`;
+    }
+
+    function format12HourTime(dateObj) {
+      let h = dateObj.getHours();
+      const min = String(dateObj.getMinutes()).padStart(2, "0");
+      const ampm = h >= 12 ? "pm" : "am";
+      h = h % 12;
+      if (h === 0) h = 12;
+      return `${String(h).padStart(2, "0")}:${min} ${ampm}`;
     }
 
     function updateCustomerCrmRecord(phone, name, amount) {
-      const clean = (phone || "").replace(/[^0-9]/g, "");
-      if (clean.length < 6) return;
-      if (!CUSTOMER_CRM[clean]) {
-        CUSTOMER_CRM[clean] = { name: name || "Guest", visits: 0, totalSpent: 0 };
+      const cleanPhone = (phone || "").trim();
+      if (!cleanPhone) return;
+      if (!CUSTOMER_CRM[cleanPhone]) {
+        CUSTOMER_CRM[cleanPhone] = { name: name || "Guest", visits: 0, totalSpent: 0 };
       }
-      if (name && name !== "Walk-In" && name !== "Guest") {
-        CUSTOMER_CRM[clean].name = name;
-      }
-      CUSTOMER_CRM[clean].visits += 1;
-      CUSTOMER_CRM[clean].totalSpent += Number(amount) || 0;
+      if (name && name !== "Walk-in") CUSTOMER_CRM[cleanPhone].name = name;
+      CUSTOMER_CRM[cleanPhone].visits += 1;
+      CUSTOMER_CRM[cleanPhone].totalSpent += Number(amount) || 0;
     }
 
     function settlePosBill() {
@@ -2567,14 +2602,13 @@
       ensureActiveTableSession();
       const session = ACTIVE_TABLE_ORDERS[activePosTable];
       if (!session || session.lines.length === 0) {
-        showNotification("No items in this table tab to settle!");
+        showNotification("Add items to the table first before settling!");
         return;
       }
-
       isSubmittingOrder = true;
-      setTimeout(() => { isSubmittingOrder = false; }, 1200);
+      setTimeout(() => { isSubmittingOrder = false; }, 1000);
 
-      const customer = document.getElementById("pos-customer-name")?.value.trim() || "Walk-In";
+      const customer = document.getElementById("pos-customer-name")?.value.trim() || "Walk-in";
       const phone = document.getElementById("pos-customer-phone")?.value.trim() || "";
       const paymentMode = document.getElementById("pos-payment-mode")?.value || "Cash";
       const subtotal = session.lines.reduce((s, l) => s + l.price * l.qty, 0);
@@ -2585,12 +2619,19 @@
       const grandTotal = taxable + gstAmount;
       const cost = session.lines.reduce((s, l) => s + (l.costPrice || 35) * l.qty, 0);
 
-      const billNo = `${CAFE_CONFIG.billPrefix}-${CAFE_CONFIG.nextBillSeq++}`;
+      const invoiceNum = String(CAFE_CONFIG.nextBillSeq || 10482);
+      CAFE_CONFIG.nextBillSeq = (Number(CAFE_CONFIG.nextBillSeq) || 10482) + 1;
+      const kotNum = Number(CAFE_CONFIG.nextKotSeq) || 20;
+      CAFE_CONFIG.nextKotSeq = kotNum + 1;
+      const nowObj = new Date();
+
       const newOrder = {
         id: Date.now(),
-        billNo,
+        billNo: invoiceNum,
+        kotNo: kotNum,
         dateISO: getTodayISO(),
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        dateDisplay: formatIndianDate(getTodayISO()),
+        time: format12HourTime(nowObj),
         customer,
         phone,
         table: activePosTable,
@@ -2608,7 +2649,7 @@
         summary: session.lines.map(l => `${l.name} x${l.qty}`).join(", ")
       };
 
-      const stockNote = deductInventoryForOrder(newOrder.items, billNo, `${customer} (${activePosTable})`);
+      const stockNote = deductInventoryForOrder(newOrder.items, invoiceNum, `${customer} (${activePosTable})`);
       ORDER_LOGS.unshift(newOrder);
       updateCustomerCrmRecord(phone, customer, grandTotal);
 
@@ -2617,17 +2658,123 @@
       selectPosFloorTable(activePosTable);
       refreshStaffShiftBar();
       renderPosGrid();
-      showNotification(`Settled ${billNo} (₹${grandTotal})${stockNote ? ` | ${stockNote}` : ''}`);
-      openReceiptPreviewModal(newOrder);
+      showNotification(`Saved #${invoiceNum} (₹${grandTotal})${stockNote ? ` | ${stockNote}` : ''}`);
+      openReceiptPreviewModal(newOrder, { startStep: "kot", kotOnly: false });
     }
 
-    function openReceiptPreviewModal(order) {
+    function openReceiptPreviewModal(order, opts = {}) {
+      CURRENT_RECEIPT_ORDER = order;
+      CURRENT_RECEIPT_KOT_ONLY = Boolean(opts.kotOnly);
+      CURRENT_RECEIPT_STEP = opts.startStep || "kot";
+      setThermalRollWidth(CAFE_CONFIG.printerWidth || "58mm", false);
+      renderCurrentReceiptStep();
+      document.getElementById("receipt-preview-modal").classList.remove("hidden");
+      refreshLucideIcons();
+    }
+
+    function switchReceiptModalStep(step) {
+      if (CURRENT_RECEIPT_KOT_ONLY && step === "bill") {
+        showNotification("This is a Save & Hold KOT slip. Click Save & Bill when ready for final Tax Invoice.");
+        return;
+      }
+      CURRENT_RECEIPT_STEP = step;
+      renderCurrentReceiptStep();
+    }
+
+    function renderCurrentReceiptStep() {
+      const order = CURRENT_RECEIPT_ORDER;
+      if (!order) return;
+
       const receiptBox = document.getElementById("printable-receipt-area");
-      document.getElementById("receipt-modal-title").textContent = `Tax Invoice / Receipt — ${order.billNo}`;
-      setThermalRollWidth(CAFE_CONFIG.printerWidth || "80mm", false);
+      const stepPill = document.getElementById("receipt-step-pill");
+      const modalTitle = document.getElementById("receipt-modal-title");
+      const tabKot = document.getElementById("step-tab-kot");
+      const tabBill = document.getElementById("step-tab-bill");
+      const primaryLbl = document.getElementById("modal-primary-print-label");
+      const btLbl = document.getElementById("modal-bt-print-label");
+
+      const dateStr = order.dateDisplay || formatIndianDate(order.dateISO);
+      const kotNumber = order.kotNo || 20;
+      const isKot = CURRENT_RECEIPT_STEP === "kot";
+
+      // Update Step Tabs & Buttons
+      if (tabKot && tabBill) {
+        tabKot.className = `px-2 py-1 rounded-lg text-[11px] font-extrabold ${isKot ? 'bg-amber-400 text-coffee-950' : 'text-stone-600 dark:text-stone-300'}`;
+        tabBill.className = `px-2 py-1 rounded-lg text-[11px] font-extrabold ${!isKot ? 'bg-blue-600 text-white' : 'text-stone-600 dark:text-stone-300'} ${CURRENT_RECEIPT_KOT_ONLY ? 'opacity-40' : ''}`;
+      }
+
+      if (isKot) {
+        if (stepPill) {
+          stepPill.textContent = CURRENT_RECEIPT_KOT_ONLY ? "Hold KOT Slip" : "Step 1 of 2 • KOT";
+          stepPill.className = "px-2 py-0.5 rounded-full bg-amber-400 text-coffee-950 text-[10px] font-black uppercase";
+        }
+        if (modalTitle) modalTitle.textContent = `KOT - ${kotNumber} (Invoice #${order.billNo})`;
+        if (primaryLbl) primaryLbl.textContent = CURRENT_RECEIPT_KOT_ONLY ? "Print KOT & Close" : "Print KOT & Next Bill →";
+        if (btLbl) btLbl.textContent = CURRENT_RECEIPT_KOT_ONLY ? "SEZNIK Print KOT" : "SEZNIK Print KOT → Bill";
+
+        const cols = (CAFE_CONFIG.printerWidth || "58mm") === "58mm" ? 32 : 42;
+        const dash = "-".repeat(cols);
+        const center = (s) => {
+          const t = String(s || "").slice(0, cols);
+          return " ".repeat(Math.max(0, Math.floor((cols - t.length) / 2))) + t;
+        };
+        const pair = (l, r) => {
+          const rs = String(r || "");
+          const ls = String(l || "").slice(0, Math.max(4, cols - rs.length - 1));
+          return ls + " ".repeat(Math.max(1, cols - ls.length - rs.length)) + rs;
+        };
+
+        const kotLines = [
+          center(`${dateStr} ${order.time}`),
+          center(`Invoice No: ${order.billNo}`),
+          center(`KOT - ${kotNumber}`),
+          dash,
+          pair("Item", "QTY")
+        ];
+        (order.items || []).forEach(it => {
+          kotLines.push(pair(it.name, String(it.qty)));
+          if (it.addons?.length) kotLines.push(`  + ${it.addons.map(a => a.name).join(", ")}`);
+          if (it.note) kotLines.push(`  Note: ${it.note}`);
+        });
+        kotLines.push("\n\n");
+        LAST_PLAIN_THERMAL_RECEIPT = kotLines.join("\n");
+
+        receiptBox.innerHTML = `
+          <div class="text-center pb-1.5 font-bold text-black">
+            <p class="text-[11px]">${dateStr} ${order.time}</p>
+            <p class="text-[11px]">Invoice No: ${order.billNo}</p>
+            <p class="font-black text-xs mt-0.5 tracking-wide">KOT - ${kotNumber}</p>
+          </div>
+          <div class="border-t-2 border-dashed border-black pt-1.5 pb-3 space-y-1.5 text-black">
+            <div class="flex justify-between font-black text-[11px]">
+              <span>Item</span>
+              <span>QTY</span>
+            </div>
+            ${(order.items || []).map(it => `
+              <div>
+                <div class="flex justify-between font-bold text-[11px]">
+                  <span>${it.name}</span>
+                  <span class="font-black">${it.qty}</span>
+                </div>
+                ${it.addons?.length ? `<p class="text-[10px] font-bold">+ ${it.addons.map(a => a.name).join(", ")}</p>` : ''}
+                ${it.note ? `<p class="text-[10px] font-bold italic">Note: ${it.note}</p>` : ''}
+              </div>
+            `).join("")}
+          </div>
+        `;
+        return;
+      }
+
+      // STEP 2: CUSTOMER TAX INVOICE (Matches your exact printed bill & preview screenshot)
+      if (stepPill) {
+        stepPill.textContent = "Step 2 of 2 • Customer Bill";
+        stepPill.className = "px-2 py-0.5 rounded-full bg-emerald-400 text-stone-950 text-[10px] font-black uppercase";
+      }
+      if (modalTitle) modalTitle.textContent = `Tax Invoice — #${order.billNo}`;
+      if (primaryLbl) primaryLbl.textContent = "Print & Close";
+      if (btLbl) btLbl.textContent = "SEZNIK Print Bill & Close";
 
       const halfGst = (Number(order.gstAmount) || 0) / 2;
-
       const cleanName = (CAFE_CONFIG.cafeName || "").trim();
       const cleanAddress = (CAFE_CONFIG.address || "").trim();
       const cleanPhone = (CAFE_CONFIG.contactPhone || "").trim();
@@ -2639,18 +2786,18 @@
       const showUpiQr = Boolean(cleanUpi && CAFE_CONFIG.printUpiQrOnBill !== false && Number(order.revenue) > 0);
 
       const totalRows = [
-        { left: "Subtotal", right: `Rs.${order.subtotal || order.revenue}` }
+        { left: "Subtotal :", right: Number(order.subtotal || order.revenue).toFixed(2) }
       ];
-      if (order.discount > 0) totalRows.push({ left: "Discount", right: `-Rs.${order.discount}` });
+      if (order.discount > 0) totalRows.push({ left: "Discount :", right: `-${Number(order.discount).toFixed(2)}` });
       if (order.gstRate > 0) {
-        totalRows.push({ left: "CGST (2.5%)", right: `Rs.${halfGst.toFixed(2)}` });
-        totalRows.push({ left: "SGST (2.5%)", right: `Rs.${halfGst.toFixed(2)}` });
+        totalRows.push({ left: "CGST 2.5%:", right: halfGst.toFixed(2) });
+        totalRows.push({ left: "SGST 2.5%:", right: halfGst.toFixed(2) });
       }
-      totalRows.push({ left: "GRAND TOTAL", right: `Rs.${order.revenue}` });
+      totalRows.push({ left: "Total    :", right: Number(order.revenue).toFixed(2) });
 
       const plainSubLines = [
         cleanAddress,
-        cleanPhone ? `Ph: ${cleanPhone}` : "",
+        cleanPhone ? `Phone: ${cleanPhone}` : "",
         cleanGstin ? `GSTIN: ${cleanGstin}` : "",
         cleanFssai ? `FSSAI: ${cleanFssai}` : ""
       ].filter(Boolean);
@@ -2659,85 +2806,153 @@
         headerTitle: cleanName || "TAX INVOICE",
         subLines: plainSubLines,
         metaLines: [
-          `Bill: ${order.billNo} | ${order.dateISO} ${order.time}`,
-          `Guest: ${order.customer} (${order.table})`,
-          `Mode: ${order.paymentMode}${order.staffName ? ` | By: ${order.staffName}` : ''}`
+          `Tax Invoice`,
+          `${order.paymentMode} | Date: ${dateStr} ${order.time}`,
+          `Invoice no: ${order.billNo} (${order.table})`
         ],
         itemRows: (order.items || []).map(it => ({
           left: `${it.name} x${it.qty}`,
-          right: `Rs.${it.price * it.qty}`,
+          right: `${Number(it.price).toFixed(2)}  ${Number(it.price * it.qty).toFixed(2)}`,
           sub: it.addons?.length ? `+ ${it.addons.map(a => a.name).join(", ")}` : ""
         })),
         totalRows,
-        footer: [cleanUpi ? `UPI ID: ${cleanUpi}` : "", cleanFooter].filter(Boolean).join("\n")
+        footer: [
+          cleanFooter ? `Terms & Conditions\n${cleanFooter}` : "",
+          cleanUpi ? `UPI ID: ${cleanUpi}` : ""
+        ].filter(Boolean).join("\n")
       });
 
       const hasHeaderContent = hasLogo || cleanName || cleanAddress || cleanPhone || cleanGstin || cleanFssai;
 
       receiptBox.innerHTML = `
         ${hasHeaderContent ? `
-          <div class="text-center border-b border-dashed border-stone-400 pb-2">
-            ${hasLogo ? `<img src="${CAFE_CONFIG.logoDataUrl}" alt="Outlet Logo" class="max-h-14 mx-auto mb-1 object-contain grayscale contrast-125" />` : ''}
-            ${cleanName ? `<p class="font-bold text-sm uppercase">${cleanName}</p>` : ''}
-            ${cleanAddress ? `<p class="text-[10px]">${cleanAddress}</p>` : ''}
-            ${cleanPhone ? `<p class="text-[10px]">Ph: ${cleanPhone}</p>` : ''}
-            ${cleanGstin ? `<p class="text-[10px]">GSTIN: ${cleanGstin}</p>` : ''}
-            ${cleanFssai ? `<p class="text-[10px]">FSSAI: ${cleanFssai}</p>` : ''}
+          <div class="text-center pb-2 text-black">
+            ${hasLogo ? `<img src="${CAFE_CONFIG.logoDataUrl}" alt="Outlet Logo" class="w-16 h-16 rounded-full mx-auto mb-1.5 object-cover grayscale contrast-150 border-2 border-black" />` : ''}
+            ${cleanName ? `<p class="font-black text-sm uppercase tracking-wide">${cleanName}</p>` : ''}
+            ${cleanAddress ? `<p class="text-[10px] font-bold mt-0.5 leading-tight">${cleanAddress}</p>` : ''}
+            ${cleanPhone ? `<p class="text-[10px] font-bold">Phone: ${cleanPhone}</p>` : ''}
+            ${cleanGstin ? `<p class="text-[10px] font-bold">GSTIN: ${cleanGstin}</p>` : ''}
+            ${cleanFssai ? `<p class="text-[10px] font-bold">FSSAI: ${cleanFssai}</p>` : ''}
           </div>
         ` : ''}
-        <div class="flex justify-between py-1.5 border-b border-dashed border-stone-400 text-[10px]">
-          <div>
-            <p>Bill: <strong>${order.billNo}</strong></p>
-            <p>Guest: ${order.customer}</p>
-          </div>
-          <div class="text-right">
-            <p>${order.dateISO} ${order.time}</p>
-            <p><strong>${order.table}</strong> (${order.paymentMode})</p>
-            ${order.staffName ? `<p class="text-[9px]">By: ${order.staffName}</p>` : ''}
+
+        <div class="border-t-2 border-dashed border-black pt-1.5 pb-1 text-center font-black text-[11px] text-black">
+          Tax Invoice
+        </div>
+
+        <div class="flex justify-between items-start py-1 text-[10px] font-bold text-black">
+          <div class="font-black">${order.paymentMode}</div>
+          <div class="text-right leading-tight">
+            <p>Date: ${dateStr}</p>
+            <p>Time: ${order.time}</p>
+            <p>Invoice no:</p>
+            <p class="font-black">${order.billNo}</p>
           </div>
         </div>
-        <div class="py-1.5 border-b border-dashed border-stone-400 space-y-1">
-          ${(order.items || []).map(it => `
-            <div>
-              <div class="flex justify-between">
-                <span>${it.name} x${it.qty}</span>
-                <span>₹${it.price * it.qty}</span>
+
+        <div class="border-t-2 border-dashed border-black py-1.5 text-black">
+          <div class="grid grid-cols-12 font-black text-[10px] pb-1 border-b-2 border-dashed border-black">
+            <div class="col-span-6">Item Name<br/>Qty</div>
+            <div class="col-span-3 text-right">Price</div>
+            <div class="col-span-3 text-right">Amount</div>
+          </div>
+          <div class="pt-1.5 space-y-1.5 text-[11px] font-bold">
+            ${(order.items || []).map(it => `
+              <div class="grid grid-cols-12 items-start">
+                <div class="col-span-6 pr-1 leading-tight">
+                  <p class="font-bold">${it.name}</p>
+                  <p class="font-bold">x${it.qty}</p>
+                  ${it.addons?.length ? `<p class="text-[9px] font-bold">+ ${it.addons.map(a => a.name).join(", ")}</p>` : ''}
+                </div>
+                <div class="col-span-3 text-right font-bold">${Number(it.price).toFixed(2)}</div>
+                <div class="col-span-3 text-right font-bold">${Number(it.price * it.qty).toFixed(2)}</div>
               </div>
-              ${it.addons?.length ? `<p class="text-[9px] text-stone-600">  + ${it.addons.map(a => a.name).join(", ")}</p>` : ''}
-            </div>
-          `).join("")}
-        </div>
-        <div class="py-1.5 space-y-0.5 text-[10px]">
-          <div class="flex justify-between"><span>Subtotal</span><span>₹${order.subtotal || order.revenue}</span></div>
-          ${order.discount > 0 ? `<div class="flex justify-between"><span>Discount</span><span>-₹${order.discount}</span></div>` : ''}
-          ${order.gstRate > 0 ? `
-            <div class="flex justify-between"><span>CGST (2.5%)</span><span>₹${halfGst.toFixed(2)}</span></div>
-            <div class="flex justify-between"><span>SGST (2.5%)</span><span>₹${halfGst.toFixed(2)}</span></div>
-          ` : ''}
-          <div class="flex justify-between font-bold text-xs pt-1 border-t border-black">
-            <span>GRAND TOTAL</span>
-            <span>₹${order.revenue}</span>
+            `).join("")}
           </div>
         </div>
+
+        <div class="border-t-2 border-dashed border-black py-1.5 space-y-0.5 text-[11px] font-bold text-black">
+          <div class="flex justify-between">
+            <span>Subtotal</span>
+            <span>:</span>
+            <span>${Number(order.subtotal || order.revenue).toFixed(2)}</span>
+          </div>
+          ${order.discount > 0 ? `
+            <div class="flex justify-between">
+              <span>Discount</span>
+              <span>:</span>
+              <span>-${Number(order.discount).toFixed(2)}</span>
+            </div>
+          ` : ''}
+          ${order.gstRate > 0 ? `
+            <div class="flex justify-between">
+              <span>CGST (2.5%)</span>
+              <span>:</span>
+              <span>${halfGst.toFixed(2)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>SGST (2.5%)</span>
+              <span>:</span>
+              <span>${halfGst.toFixed(2)}</span>
+            </div>
+          ` : ''}
+          <div class="flex justify-between font-black text-xs pt-0.5">
+            <span>Total</span>
+            <span>:</span>
+            <span>${Number(order.revenue).toFixed(2)}</span>
+          </div>
+        </div>
+
         ${showUpiQr ? `
-          <div class="pt-2 pb-1 border-t border-dashed border-stone-400 text-center">
+          <div class="pt-2 pb-1 border-t-2 border-dashed border-black text-center text-black">
             <div id="receipt-upi-qr-slot" class="inline-block bg-white p-1"></div>
-            <p class="text-[9px] font-bold">Scan to Pay ₹${order.revenue} (${cleanUpi})</p>
+            <p class="text-[9px] font-black">Scan to Pay ₹${order.revenue} (${cleanUpi})</p>
           </div>
         ` : ''}
-        ${cleanFooter ? `<p class="text-center text-[10px] pt-2 border-t border-dashed border-stone-400">${cleanFooter}</p>` : ''}
+
+        ${cleanFooter ? `
+          <div class="border-t-2 border-dashed border-black pt-1.5 text-center text-[10px] leading-tight text-black">
+            <p class="font-black">Terms & Conditions</p>
+            <p class="mt-0.5 font-bold">${cleanFooter}</p>
+          </div>
+        ` : ''}
       `;
 
       if (showUpiQr && window.QRCode) {
         const qrSlot = document.getElementById("receipt-upi-qr-slot");
         if (qrSlot) {
           const upiUri = `upi://pay?pa=${encodeURIComponent(cleanUpi)}&pn=${encodeURIComponent(cleanName || "Brew Nagri")}&am=${order.revenue}&cu=INR`;
-          new QRCode(qrSlot, { text: upiUri, width: 78, height: 78 });
+          new QRCode(qrSlot, { text: upiUri, width: 76, height: 76 });
         }
       }
+    }
 
-      document.getElementById("receipt-preview-modal").classList.remove("hidden");
-      refreshLucideIcons();
+    function handleTwoStepThermalPrintAction() {
+      setThermalRollWidth(CAFE_CONFIG.printerWidth || "58mm", false);
+      window.print();
+      if (CURRENT_RECEIPT_STEP === "kot" && !CURRENT_RECEIPT_KOT_ONLY) {
+        setTimeout(() => {
+          CURRENT_RECEIPT_STEP = "bill";
+          renderCurrentReceiptStep();
+          refreshLucideIcons();
+        }, 350);
+      } else {
+        setTimeout(() => closeReceiptModal(), 350);
+      }
+    }
+
+    function handleTwoStepBluetoothPrint() {
+      printViaAndroidRawBT();
+      if (CURRENT_RECEIPT_STEP === "kot" && !CURRENT_RECEIPT_KOT_ONLY) {
+        setTimeout(() => {
+          CURRENT_RECEIPT_STEP = "bill";
+          renderCurrentReceiptStep();
+          refreshLucideIcons();
+          showNotification("KOT sent to SEZNIK! Now tap again to print Customer Tax Invoice.");
+        }, 450);
+      } else {
+        setTimeout(() => closeReceiptModal(), 450);
+      }
     }
 
     function closeReceiptModal() {
@@ -3277,7 +3492,7 @@
 
     function reprintOrderByIndex(idx) {
       const ord = ORDER_LOGS[idx];
-      if (ord) openReceiptPreviewModal(ord);
+      if (ord) openReceiptPreviewModal(ord, { startStep: "bill", kotOnly: false });
     }
 
     function voidOrderByIndex(idx) {
