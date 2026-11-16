@@ -37,9 +37,9 @@
               500: '#a77b68',
               600: '#8a5a44',
               700: '#6f4532',
-              800: '#553425',
-              900: '#3e251a',
-              950: '#271710',
+              800: '#5a3626',
+              900: '#46281c',
+              950: '#2d1810',
             }
           }
         }
@@ -48,61 +48,93 @@
   </script>
 
   <style>
-    body {
-      font-family: 'Inter', sans-serif;
-    }
-    h1, h2, h3, h4, .font-heading {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
-    .custom-scrollbar::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-      background: rgba(120, 113, 108, 0.35);
-      border-radius: 9999px;
-    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; height: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(120, 113, 108, 0.35); border-radius: 9999px; }
 
-    /* Mobile/Tablet vs Windows Desktop Workspace Modes */
     body.mode-mobile #app-shell {
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.08);
-      min-height: 100vh;
+      max-width: 540px;
+      margin: 0 auto;
+      border-left: 1px solid rgba(120, 113, 108, 0.2);
+      border-right: 1px solid rgba(120, 113, 108, 0.2);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.12);
     }
     body.mode-windows #app-shell {
-      max-width: 1540px;
-      margin-left: auto;
-      margin-right: auto;
+      max-width: 1520px;
+      margin: 0 auto;
     }
 
-    /* Thermal Print Styles */
+    /* Thermal Print Styles (3-Inch / 80mm & 2-Inch / 58mm Roll Support) */
+    @page {
+      size: 80mm auto;
+      margin: 0mm;
+    }
     @media print {
-      body * {
-        visibility: hidden !important;
-      }
-      #thermal-receipt-printable, #thermal-receipt-printable * {
-        visibility: visible !important;
-      }
-      #thermal-receipt-printable {
-        position: fixed;
-        left: 0;
-        top: 0;
-        width: 80mm;
+      html, body {
+        width: 80mm !important;
+        margin: 0 !important;
+        padding: 0 !important;
         background: #ffffff !important;
         color: #000000 !important;
-        padding: 8px;
-        margin: 0;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      body.print-roll-58mm,
+      body.print-roll-58mm html {
+        width: 58mm !important;
+      }
+      #app-shell > *:not(#receipt-preview-modal) {
+        display: none !important;
+      }
+      #receipt-preview-modal {
+        position: static !important;
+        inset: auto !important;
+        display: block !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        backdrop-filter: none !important;
+      }
+      #receipt-preview-modal > div {
+        max-width: 100% !important;
+        width: 100% !important;
+        max-height: none !important;
         box-shadow: none !important;
         border: none !important;
+        border-radius: 0 !important;
+        background: #ffffff !important;
+      }
+      .no-print-thermal {
+        display: none !important;
+      }
+      #thermal-receipt-scroll-wrap {
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        display: block !important;
+      }
+      #thermal-receipt-printable {
+        width: 72mm !important;
+        max-width: 72mm !important;
+        margin: 0 auto !important;
+        padding: 2mm 1mm 6mm 1mm !important;
+        border: none !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 11px !important;
+        line-height: 1.35 !important;
+      }
+      #thermal-receipt-printable.roll-58mm {
+        width: 48mm !important;
+        max-width: 48mm !important;
+        font-size: 10px !important;
+      }
+      #thermal-receipt-printable * {
+        color: #000000 !important;
+        border-color: #000000 !important;
       }
     }
   </style>
@@ -245,6 +277,12 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2">
+          <!-- Saved Thermal Printer Size Selector (2-Inch 58mm vs 3-Inch 80mm) -->
+          <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-xl border border-stone-300 dark:border-stone-700 text-[11px] font-bold" title="Select Thermal Printer Paper Roll Size">
+            <span class="px-1.5 text-stone-400 hidden sm:inline">Printer:</span>
+            <button type="button" id="pos-roll-btn-58mm" onclick="setThermalRollWidth('58mm', true)" class="px-2 py-1 rounded-lg transition text-stone-600 dark:text-stone-300">2" (58mm)</button>
+            <button type="button" id="pos-roll-btn-80mm" onclick="setThermalRollWidth('80mm', true)" class="px-2 py-1 rounded-lg transition bg-coffee-950 text-amber-300">3" (80mm)</button>
+          </div>
           <span id="pos-active-staff-badge" class="px-2.5 py-1.5 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-900 dark:text-emerald-200 text-xs font-extrabold flex items-center gap-1.5">
             <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
             <span id="pos-active-staff-label">Staff: Counter</span>
@@ -339,6 +377,17 @@
                 <button type="button" onclick="setPosPaymentMode('Cash')" id="pay-mode-Cash" class="py-1.5 rounded-xl bg-coffee-950 text-amber-300 font-bold text-xs">Cash</button>
                 <button type="button" onclick="setPosPaymentMode('UPI')" id="pay-mode-UPI" class="py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs">UPI QR</button>
                 <button type="button" onclick="setPosPaymentMode('Card')" id="pay-mode-Card" class="py-1.5 rounded-xl bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 font-bold text-xs">Card</button>
+              </div>
+
+              <!-- Thermal Printer Roll Size Selector inside POS Billing Panel -->
+              <div class="flex items-center justify-between p-2 rounded-xl bg-stone-100 dark:bg-stone-800/90 border border-stone-200 dark:border-stone-700">
+                <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300 flex items-center gap-1">
+                  <i data-lucide="printer" class="w-3.5 h-3.5 text-amber-600"></i> Thermal Paper:
+                </span>
+                <div class="grid grid-cols-2 gap-1">
+                  <button type="button" id="panel-roll-btn-58mm" onclick="setThermalRollWidth('58mm', true)" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200 transition">2 Inch (58mm)</button>
+                  <button type="button" id="panel-roll-btn-80mm" onclick="setThermalRollWidth('80mm', true)" class="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-coffee-950 text-amber-300 transition">3 Inch (80mm)</button>
+                </div>
               </div>
 
               <!-- Totals Summary -->
@@ -788,40 +837,6 @@
       </div>
     </div>
 
-    <!-- 4. Change Passcodes Modal -->
-    <div id="change-pin-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/75 backdrop-blur-sm">
-      <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
-        <div class="p-4 bg-rose-950 text-rose-100 flex items-center justify-between">
-          <h3 class="font-heading font-bold text-sm text-white">Change Owner & Counter PINs</h3>
-          <button onclick="closeChangePinModal()" class="p-1 rounded-full hover:bg-white/10 text-stone-300">
-            <i data-lucide="x" class="w-5 h-5"></i>
-          </button>
-        </div>
-        <div class="p-4 space-y-3 text-xs">
-          <div>
-            <label class="block font-bold mb-1">Current Owner PIN *</label>
-            <input type="password" id="current-pin-verify" placeholder="Default 5595" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
-          </div>
-          <div class="grid grid-cols-2 gap-2">
-            <div>
-              <label class="block font-bold mb-1">New Owner PIN *</label>
-              <input type="text" id="new-owner-pin-input" maxlength="8" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
-            </div>
-            <div>
-              <label class="block font-bold mb-1">Default Counter PIN *</label>
-              <input type="text" id="new-staff-pin-input" maxlength="8" class="w-full p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
-            </div>
-          </div>
-          <p id="change-pin-feedback" class="text-[11px] font-bold text-red-600 hidden"></p>
-          <div class="flex gap-2">
-            <button onclick="closeChangePinModal()" class="flex-1 py-2 bg-stone-200 dark:bg-stone-800 rounded-xl font-bold">Cancel</button>
-            <button onclick="saveUpdatedPins()" class="flex-1 py-2 bg-rose-600 text-white rounded-xl font-bold">Save PINs</button>
-          </div>
-          <button onclick="resetPinsToDefault()" class="w-full text-[11px] text-stone-500 underline">Reset to Default (5595)</button>
-        </div>
-      </div>
-    </div>
-
     <!-- 5. Multi-Device Cloud Sync & Magic Phone Transfer Modal -->
     <div id="cloud-sync-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/75 backdrop-blur-sm">
       <div class="bg-white dark:bg-stone-900 max-w-md w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden">
@@ -885,6 +900,13 @@
           <div class="grid grid-cols-2 gap-2">
             <div><label class="font-bold">FSSAI License No.</label><input type="text" id="cfg-fssai" placeholder="10426000000123" class="w-full p-2 mt-1 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" /></div>
             <div><label class="font-bold">Café Address</label><input type="text" id="cfg-address" placeholder="Boring Road, Patna" class="w-full p-2 mt-1 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" /></div>
+          </div>
+          <div>
+            <label class="font-bold">Default Thermal Printer Roll Size</label>
+            <select id="cfg-printer-width" class="w-full p-2 mt-1 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold">
+              <option value="80mm">3-Inch Thermal Printer (80mm Roll)</option>
+              <option value="58mm">2-Inch Thermal Printer (58mm Roll)</option>
+            </select>
           </div>
 
           <!-- Custom Floor Table Manager -->
@@ -955,19 +977,29 @@
     <!-- 10. Thermal Receipt / KOT Preview & Print Modal -->
     <div id="receipt-preview-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/75 backdrop-blur-sm">
       <div class="bg-white dark:bg-stone-900 max-w-sm w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
-        <div class="p-3.5 bg-coffee-950 text-amber-100 flex items-center justify-between">
-          <h3 id="receipt-modal-title" class="font-heading font-bold text-sm text-white">Thermal Receipt Preview</h3>
+        <div class="no-print-thermal p-3.5 bg-coffee-950 text-amber-100 flex items-center justify-between">
+          <div>
+            <h3 id="receipt-modal-title" class="font-heading font-bold text-sm text-white">Thermal Receipt Preview</h3>
+            <p class="text-[10px] text-amber-200/80">Set Paper Size: 80mm (3-Inch) • Margins: None</p>
+          </div>
           <button onclick="closeReceiptModal()" class="p-1 rounded-full hover:bg-white/10 text-stone-300">
             <i data-lucide="x" class="w-5 h-5"></i>
           </button>
         </div>
-        <div class="p-4 overflow-y-auto custom-scrollbar bg-stone-100 flex justify-center">
+        <div class="no-print-thermal px-3 py-2 bg-stone-200 dark:bg-stone-800 flex items-center justify-between text-[11px] font-bold">
+          <span>Thermal Roll Width:</span>
+          <div class="flex gap-1">
+            <button type="button" id="roll-btn-80mm" onclick="setThermalRollWidth('80mm', true)" class="px-2.5 py-1 rounded-lg bg-coffee-950 text-amber-300">3-Inch (80mm)</button>
+            <button type="button" id="roll-btn-58mm" onclick="setThermalRollWidth('58mm', true)" class="px-2.5 py-1 rounded-lg bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200">2-Inch (58mm)</button>
+          </div>
+        </div>
+        <div id="thermal-receipt-scroll-wrap" class="p-4 overflow-y-auto custom-scrollbar bg-stone-100 flex justify-center">
           <div id="thermal-receipt-printable" class="w-full max-w-[300px] bg-white text-black p-4 font-mono text-[11px] shadow-md border border-stone-300"></div>
         </div>
-        <div class="p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
+        <div class="no-print-thermal p-3 bg-stone-50 dark:bg-stone-800 border-t border-stone-200 dark:border-stone-700 flex gap-2">
           <button onclick="closeReceiptModal()" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 rounded-xl text-xs font-bold">Close</button>
-          <button onclick="window.print()" class="flex-1 py-2 bg-coffee-950 text-amber-300 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5">
-            <i data-lucide="printer" class="w-4 h-4"></i> Print Receipt
+          <button id="receipt-print-action-btn" onclick="triggerThermalPrint()" class="flex-1 py-2 bg-coffee-950 text-amber-300 rounded-xl text-xs font-extrabold flex items-center justify-center gap-1.5">
+            <i data-lucide="printer" class="w-4 h-4"></i> Print 3" Receipt
           </button>
         </div>
       </div>
@@ -1012,6 +1044,7 @@
       gstin: "",
       fssai: "",
       address: "Boring Road, Patna",
+      printerWidth: "80mm",
       billPrefix: "BN",
       nextBillSeq: 101
     };
@@ -2424,6 +2457,72 @@
       document.getElementById("receipt-preview-modal").classList.add("hidden");
     }
 
+    function applyDynamicThermalPageRule(width) {
+      let styleEl = document.getElementById("dynamic-thermal-page-style");
+      if (!styleEl) {
+        styleEl = document.createElement("style");
+        styleEl.id = "dynamic-thermal-page-style";
+        document.head.appendChild(styleEl);
+      }
+      const mm = width === "58mm" ? "58mm" : "80mm";
+      styleEl.textContent = `@media print { @page { size: ${mm} auto; margin: 0mm; } html, body { width: ${mm} !important; } }`;
+    }
+
+    function setThermalRollWidth(width, persist = false) {
+      const normalized = width === "58mm" ? "58mm" : "80mm";
+      const box = document.getElementById("thermal-receipt-printable");
+      const btn80 = document.getElementById("roll-btn-80mm");
+      const btn58 = document.getElementById("roll-btn-58mm");
+      const posBtn80 = document.getElementById("pos-roll-btn-80mm");
+      const posBtn58 = document.getElementById("pos-roll-btn-58mm");
+      const panelBtn80 = document.getElementById("panel-roll-btn-80mm");
+      const panelBtn58 = document.getElementById("panel-roll-btn-58mm");
+      const printBtn = document.getElementById("receipt-print-action-btn");
+
+      applyDynamicThermalPageRule(normalized);
+
+      if (normalized === "58mm") {
+        document.body.classList.add("print-roll-58mm");
+        if (box) {
+          box.classList.add("roll-58mm");
+          box.style.maxWidth = "215px";
+        }
+        if (btn58) btn58.className = "px-2.5 py-1 rounded-lg bg-coffee-950 text-amber-300";
+        if (btn80) btn80.className = "px-2.5 py-1 rounded-lg bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200";
+        if (posBtn58) posBtn58.className = "px-2 py-1 rounded-lg transition bg-coffee-950 text-amber-300";
+        if (posBtn80) posBtn80.className = "px-2 py-1 rounded-lg transition text-stone-600 dark:text-stone-300";
+        if (panelBtn58) panelBtn58.className = "px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-coffee-950 text-amber-300 transition";
+        if (panelBtn80) panelBtn80.className = "px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200 transition";
+        if (printBtn) printBtn.innerHTML = `<i data-lucide="printer" class="w-4 h-4"></i> Print 2" Receipt`;
+      } else {
+        document.body.classList.remove("print-roll-58mm");
+        if (box) {
+          box.classList.remove("roll-58mm");
+          box.style.maxWidth = "300px";
+        }
+        if (btn80) btn80.className = "px-2.5 py-1 rounded-lg bg-coffee-950 text-amber-300";
+        if (btn58) btn58.className = "px-2.5 py-1 rounded-lg bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200";
+        if (posBtn80) posBtn80.className = "px-2 py-1 rounded-lg transition bg-coffee-950 text-amber-300";
+        if (posBtn58) posBtn58.className = "px-2 py-1 rounded-lg transition text-stone-600 dark:text-stone-300";
+        if (panelBtn80) panelBtn80.className = "px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-coffee-950 text-amber-300 transition";
+        if (panelBtn58) panelBtn58.className = "px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-white dark:bg-stone-700 text-stone-700 dark:text-stone-200 transition";
+        if (printBtn) printBtn.innerHTML = `<i data-lucide="printer" class="w-4 h-4"></i> Print 3" Receipt`;
+      }
+
+      if (persist) {
+        CAFE_CONFIG.printerWidth = normalized;
+        saveConfig();
+        showNotification(`Thermal printer set to ${normalized === "58mm" ? '2-Inch (58mm)' : '3-Inch (80mm)'} roll.`);
+      }
+      refreshLucideIcons();
+    }
+
+    function triggerThermalPrint() {
+      setTimeout(() => {
+        window.print();
+      }, 100);
+    }
+
     function openMoveMergeTableModal() {
       document.getElementById("move-source-table-label").textContent = activeTableName;
       const sel = document.getElementById("move-target-table-select");
@@ -3298,6 +3397,8 @@
       document.getElementById("cfg-gstin").value = CAFE_CONFIG.gstin || "";
       document.getElementById("cfg-fssai").value = CAFE_CONFIG.fssai || "";
       document.getElementById("cfg-address").value = CAFE_CONFIG.address || "";
+      const printerSel = document.getElementById("cfg-printer-width");
+      if (printerSel) printerSel.value = CAFE_CONFIG.printerWidth || "80mm";
       renderFloorTableSettingsChips();
       document.getElementById("cafe-settings-modal").classList.remove("hidden");
       refreshLucideIcons();
@@ -3345,11 +3446,13 @@
       CAFE_CONFIG.gstin = document.getElementById("cfg-gstin")?.value.trim() || "";
       CAFE_CONFIG.fssai = document.getElementById("cfg-fssai")?.value.trim() || "";
       CAFE_CONFIG.address = document.getElementById("cfg-address")?.value.trim() || "";
+      CAFE_CONFIG.printerWidth = document.getElementById("cfg-printer-width")?.value || "80mm";
       saveConfig();
       applyCafeBrandHeader();
+      setThermalRollWidth(CAFE_CONFIG.printerWidth, false);
       renderCustomerTrayDrawer();
       closeCafeSettingsModal();
-      showNotification("Saved café settings, UPI ID & GST details!");
+      showNotification("Saved café settings, thermal printer size & GST details!");
     }
 
     function openQrModal() {
@@ -3433,16 +3536,6 @@
       scheduleCloudPush();
       closeChangePinModal();
       showNotification("Owner & Counter passcodes have been reset.");
-    }
-
-    function resetPinsToDefault() {
-      OWNER_PIN = "5595";
-      STAFF_PIN = "5595";
-      localStorage.setItem("brewnagri_owner_pin", "5595");
-      localStorage.setItem("brewnagri_staff_pin", "5595");
-      scheduleCloudPush();
-      closeChangePinModal();
-      showNotification("Reset Owner & Counter PINs to 5595.");
     }
 
     function switchAppTab(targetTab) {
@@ -3659,6 +3752,7 @@
       }
 
       applyCafeBrandHeader();
+      setThermalRollWidth(CAFE_CONFIG.printerWidth || "80mm", false);
       updateLowStockNavBadge();
       activateCustomerTab();
 
