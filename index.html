@@ -130,7 +130,7 @@
 
       <!-- Brand Logo & Live Sync Indicator -->
       <div class="flex items-center gap-2 shrink-0">
-        <div class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-coffee-950 text-amber-300 flex items-center justify-center font-heading font-extrabold text-sm shadow-xs">
+        <div id="brand-logo-btn" onclick="handleSecretLogoTap()" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-coffee-950 text-amber-300 flex items-center justify-center font-heading font-extrabold text-sm shadow-xs select-none cursor-pointer">
           BN
         </div>
         <div>
@@ -146,11 +146,14 @@
             <span id="cloud-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
             <span id="cloud-status-text">Local Protected • Owner Sync</span>
           </button>
+          <p id="customer-table-subtitle" class="hidden text-[10px] font-semibold text-stone-500 dark:text-stone-400">
+            Self-Order Dining Menu
+          </p>
         </div>
       </div>
 
-      <!-- Center 5-Tab Switcher -->
-      <nav class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 sm:p-1 rounded-full border border-stone-300 dark:border-stone-700 overflow-x-auto no-scrollbar max-w-full order-3 lg:order-2 w-full lg:w-auto justify-between sm:justify-start">
+      <!-- Center 5-Tab Switcher (Hidden in Customer QR Mode) -->
+      <nav id="erp-main-nav" class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 sm:p-1 rounded-full border border-stone-300 dark:border-stone-700 overflow-x-auto no-scrollbar max-w-full order-3 lg:order-2 w-full lg:w-auto justify-between sm:justify-start">
         <button id="tab-btn-customer" onclick="switchAppTab('customer')" class="px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1 shrink-0 touch-manipulation">
           <i data-lucide="utensils" class="w-3.5 h-3.5"></i>
           <span>Menu</span>
@@ -177,7 +180,7 @@
 
       <!-- Right Controls: Mobile/Tablet vs Windows Switcher + Dark Mode -->
       <div class="flex items-center gap-1.5 shrink-0 order-2 lg:order-3">
-        <div class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-full border border-stone-300 dark:border-stone-700 text-[10px] sm:text-[11px] font-bold">
+        <div id="layout-mode-switcher" class="flex items-center bg-stone-100 dark:bg-stone-800 p-0.5 rounded-full border border-stone-300 dark:border-stone-700 text-[10px] sm:text-[11px] font-bold">
           <button id="btn-mode-mobile" onclick="setDeviceLayoutMode('mobile')" class="px-2 py-1 rounded-full bg-coffee-950 text-amber-300 flex items-center gap-1 transition" title="Touch-first Mobile / Tablet layout">
             <i data-lucide="smartphone" class="w-3 h-3"></i>
             <span class="hidden sm:inline">Mobile / Tablet</span>
@@ -188,8 +191,17 @@
           </button>
         </div>
 
-        <button onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Owner Cloud Sync">
+        <button id="header-cloud-btn" onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Owner Cloud Sync">
           <i data-lucide="cloud" class="w-4 h-4 text-emerald-600"></i>
+        </button>
+
+        <button id="hide-erp-tabs-btn" onclick="applyCustomerQrLockdownMode(true); switchAppTab('customer'); showNotification('ERP tabs hidden (Customer View). Click BN 5 times to reopen.');" class="hidden px-2 py-1 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-[10px] font-bold text-stone-600 dark:text-stone-300 hover:bg-stone-200" title="Hide Staff & Owner tabs">
+          Hide Tabs
+        </button>
+
+        <button id="customer-header-tray-btn" onclick="openCustomerTrayDrawer()" class="hidden px-2.5 py-1.5 rounded-full bg-amber-400 hover:bg-amber-300 text-coffee-950 font-extrabold text-xs flex items-center gap-1 shadow-xs">
+          <i data-lucide="shopping-bag" class="w-3.5 h-3.5"></i>
+          <span>Tray (<span id="header-tray-count">0</span>)</span>
         </button>
 
         <button onclick="toggleDarkMode()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200" title="Toggle Dark Mode">
@@ -727,14 +739,29 @@
       </div>
     </div>
 
-    <!-- Menu Item Price, Cost & Photo Editor -->
-    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-3">
+    <!-- Menu Categories, Item Price, Cost & Photo Editor -->
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-3.5">
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-        <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Menu Pricing, Making Cost, Photos & New Dish Manager</h3>
+        <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Menu Categories, Pricing, Making Cost, Photos & New Dish Manager</h3>
       </div>
+
+      <!-- Category Manager (Duplicate-Protected) -->
+      <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-800/70 border border-stone-200 dark:border-stone-700 space-y-2 text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-stone-700 dark:text-stone-200">Menu Categories (Duplicates automatically blocked)</span>
+          <span id="owner-category-count" class="text-[10px] font-bold text-stone-400">0 Categories</span>
+        </div>
+        <div class="flex gap-1.5">
+          <input type="text" id="new-menu-category-input" onkeydown="if(event.key==='Enter') addNewMenuCategory()" placeholder="New Category Name (e.g. Pizza, Mocktails, Pasta)..." class="flex-1 p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
+          <button type="button" onclick="addNewMenuCategory()" class="px-3.5 py-2 bg-coffee-950 text-amber-300 rounded-xl font-extrabold shrink-0">+ Add Category</button>
+        </div>
+        <div id="owner-categories-chips" class="flex flex-wrap gap-1.5 pt-0.5"></div>
+      </div>
+
+      <!-- Add New Dish Row -->
       <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
         <input type="text" id="new-dish-name" placeholder="Dish Name" class="col-span-2 p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
-        <input type="text" id="new-dish-cat" placeholder="Category (e.g. Burgers)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+        <select id="new-dish-cat-select" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold"></select>
         <input type="number" id="new-dish-price" placeholder="Sell Price ₹" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <label class="p-2 bg-stone-50 dark:bg-stone-800 border border-dashed border-stone-400 dark:border-stone-600 rounded-xl font-bold text-center cursor-pointer flex items-center justify-center gap-1 truncate">
           <i data-lucide="image-plus" class="w-3.5 h-3.5 text-amber-600 shrink-0"></i>
@@ -1317,6 +1344,7 @@
     };
 
     let MENU_ITEMS = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+    let MENU_CATEGORIES = [...new Set(DEFAULT_MENU_ITEMS.map(m => m.category))];
     let INVENTORY_ITEMS = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
     let RECIPE_MAP = JSON.parse(JSON.stringify(DEFAULT_RECIPE_MAP));
     let GLOBAL_ADDONS = JSON.parse(JSON.stringify(DEFAULT_ADDONS));
@@ -1341,15 +1369,54 @@
     let pendingCustomizeTarget = null;
     let isOwnerAuthenticated = false;
     let activeStaffUser = null;
-    let activeStaffShiftStartISO = null;
+    let activeStaffShiftStartISO = "";
     let pendingProtectedTab = "owner";
     let isSubmittingOrder = false;
-    let LAST_PLAIN_THERMAL_RECEIPT = "";
+    let activeOwnerReportTab = "items";
     let pendingNewDishImageDataUrl = "";
+    let lastReceiptPrintMode = "bill";
     let CURRENT_RECEIPT_ORDER = null;
-    let CURRENT_RECEIPT_STEP = "kot"; // "kot" (Step 1) or "bill" (Step 2)
+    let CURRENT_RECEIPT_STEP = "kot";
     let CURRENT_RECEIPT_KOT_ONLY = false;
-    let activeOwnerReportTab = "items"; // "items" | "orders" | "stock"
+    let LAST_PLAIN_THERMAL_RECEIPT = "";
+    let IS_CUSTOMER_QR_MODE = true;
+    let logoTapCount = 0;
+    let logoTapResetTimer = null;
+
+    function handleSecretLogoTap() {
+      logoTapCount += 1;
+      clearTimeout(logoTapResetTimer);
+      logoTapResetTimer = setTimeout(() => { logoTapCount = 0; }, 2500);
+      if (logoTapCount >= 5) {
+        logoTapCount = 0;
+        const nextHiddenState = !IS_CUSTOMER_QR_MODE;
+        applyCustomerQrLockdownMode(nextHiddenState);
+        if (!nextHiddenState) {
+          showNotification("Unlocked! Tables & POS, Inventory, Recipe Map & Owner tabs are now visible.");
+        } else {
+          switchAppTab("customer");
+          showNotification("Tabs hidden back into clean Customer Menu mode.");
+        }
+      }
+    }
+
+    function applyCustomerQrLockdownMode(enabled) {
+      IS_CUSTOMER_QR_MODE = Boolean(enabled);
+      document.getElementById("erp-main-nav")?.classList.toggle("hidden", IS_CUSTOMER_QR_MODE);
+      document.getElementById("cloud-status-pill")?.classList.toggle("hidden", IS_CUSTOMER_QR_MODE);
+      document.getElementById("layout-mode-switcher")?.classList.toggle("hidden", IS_CUSTOMER_QR_MODE);
+      document.getElementById("header-cloud-btn")?.classList.toggle("hidden", IS_CUSTOMER_QR_MODE);
+      document.getElementById("hide-erp-tabs-btn")?.classList.toggle("hidden", IS_CUSTOMER_QR_MODE);
+      document.getElementById("customer-table-subtitle")?.classList.toggle("hidden", !IS_CUSTOMER_QR_MODE);
+      document.getElementById("customer-header-tray-btn")?.classList.toggle("hidden", !IS_CUSTOMER_QR_MODE);
+      const tableInp = document.getElementById("order-table-input");
+      const hasUrlTable = new URLSearchParams(window.location.search).has("table");
+      if (tableInp) {
+        tableInp.readOnly = hasUrlTable;
+        tableInp.classList.toggle("opacity-75", hasUrlTable);
+      }
+      refreshLucideIcons();
+    }
 
     function compressDishImageFile(file, callback) {
       const reader = new FileReader();
@@ -1375,6 +1442,22 @@
       return def ? (def.image || "") : "";
     }
 
+    function getAllMenuCategories() {
+      const merged = [];
+      const seen = new Set();
+      [...MENU_CATEGORIES, ...MENU_ITEMS.map(m => m.category)].forEach(c => {
+        const clean = String(c || "").trim();
+        if (!clean) return;
+        const key = clean.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          merged.push(clean);
+        }
+      });
+      MENU_CATEGORIES = merged;
+      return merged;
+    }
+
     // ==================== STORAGE LOAD & SAVE ====================
     function loadAllLocalState() {
       try {
@@ -1392,6 +1475,12 @@
             }));
           }
         }
+        const cats = localStorage.getItem("bn_menu_categories");
+        if (cats) {
+          const parsedCats = JSON.parse(cats);
+          if (Array.isArray(parsedCats) && parsedCats.length > 0) MENU_CATEGORIES = parsedCats;
+        }
+        getAllMenuCategories();
         const inv = localStorage.getItem("bn_inventory");
         if (inv) {
           const parsedInv = JSON.parse(inv);
@@ -1443,6 +1532,7 @@
       try {
         localStorage.setItem("bn_cafe_config", JSON.stringify(CAFE_CONFIG));
         localStorage.setItem("bn_menu_items", JSON.stringify(MENU_ITEMS));
+        localStorage.setItem("bn_menu_categories", JSON.stringify(getAllMenuCategories()));
         localStorage.setItem("bn_inventory", JSON.stringify(INVENTORY_ITEMS));
         localStorage.setItem("bn_recipes", JSON.stringify(RECIPE_MAP));
         localStorage.setItem("bn_addons", JSON.stringify(GLOBAL_ADDONS));
@@ -1509,7 +1599,7 @@
       updateCloudIndicator("syncing", "Syncing...");
       const snapshot = {
         updatedAt: Date.now(),
-        CAFE_CONFIG, MENU_ITEMS, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
+        CAFE_CONFIG, MENU_ITEMS, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
         FLOOR_TABLES, ACTIVE_TABLE_ORDERS, ORDER_LOGS, INVENTORY_LOGS,
         EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, OWNER_PIN
       };
@@ -1538,6 +1628,8 @@
         if (data && data.MENU_ITEMS) {
           CAFE_CONFIG = { ...CAFE_CONFIG, ...(data.CAFE_CONFIG || {}) };
           MENU_ITEMS = data.MENU_ITEMS || MENU_ITEMS;
+          if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
+          getAllMenuCategories();
           INVENTORY_ITEMS = data.INVENTORY_ITEMS || INVENTORY_ITEMS;
           RECIPE_MAP = data.RECIPE_MAP || RECIPE_MAP;
           GLOBAL_ADDONS = data.GLOBAL_ADDONS || GLOBAL_ADDONS;
@@ -1849,6 +1941,11 @@
 
     function switchAppTab(tab) {
       resetSessionInactivityTimer();
+      if (IS_CUSTOMER_QR_MODE && tab !== "customer") {
+        activateView("customer-view", "tab-btn-customer");
+        renderCustomerMenu();
+        return;
+      }
       if (tab === "customer") {
         activateView("customer-view", "tab-btn-customer");
         renderCustomerMenu();
@@ -1864,13 +1961,12 @@
         refreshStaffShiftBar();
         renderPosFloorTables();
         renderPosCategories();
-        renderPosGrid();
-        renderPosCart();
+        selectPosFloorTable(activePosTable);
         return;
       }
       if (!isOwnerAuthenticated) {
         pendingProtectedTab = tab;
-        openOwnerPinModal(tab);
+        openOwnerPinModal("owner");
         return;
       }
       if (tab === "inventory") {
@@ -1879,26 +1975,25 @@
       } else if (tab === "recipes") {
         activateView("recipes-view", "tab-btn-recipes");
         renderRecipesTab();
-      } else {
+      } else if (tab === "owner") {
         activateView("owner-view", "tab-btn-owner");
-        initReportDatesIfEmpty();
         renderOwnerDashboard();
       }
     }
 
-    function activateView(viewId, btnId) {
+    function activateView(viewId, activeBtnId) {
       ["customer-view", "staff-pos-view", "inventory-view", "recipes-view", "owner-view"].forEach(id => {
-        document.getElementById(id)?.classList.add("hidden");
+        document.getElementById(id)?.classList.toggle("hidden", id !== viewId);
       });
-      ["tab-btn-customer", "tab-btn-staff", "tab-btn-inventory", "tab-btn-recipes", "tab-btn-owner"].forEach(id => {
-        const b = document.getElementById(id);
-        if (b) b.className = "px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 flex items-center gap-1 shrink-0 touch-manipulation";
+      ["tab-btn-customer", "tab-btn-staff", "tab-btn-inventory", "tab-btn-recipes", "tab-btn-owner"].forEach(btnId => {
+        const el = document.getElementById(btnId);
+        if (!el) return;
+        if (btnId === activeBtnId) {
+          el.className = "px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition bg-white dark:bg-stone-900 text-coffee-950 dark:text-amber-300 shadow-xs flex items-center gap-1 shrink-0 touch-manipulation";
+        } else {
+          el.className = "px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition text-stone-600 dark:text-stone-300 hover:text-coffee-900 flex items-center gap-1 shrink-0 touch-manipulation";
+        }
       });
-      document.getElementById(viewId)?.classList.remove("hidden");
-      const activeBtn = document.getElementById(btnId);
-      if (activeBtn) {
-        activeBtn.className = "px-2.5 py-1 rounded-full text-[11px] sm:text-xs font-bold transition bg-coffee-950 text-amber-300 shadow-xs flex items-center gap-1 shrink-0 touch-manipulation";
-      }
       refreshLucideIcons();
     }
 
@@ -2138,7 +2233,7 @@
       const grid = document.getElementById("customer-menu-grid");
       const query = (document.getElementById("menu-search-input")?.value || "").trim().toLowerCase();
 
-      const categories = ["All", ...new Set(MENU_ITEMS.map(m => m.category))];
+      const categories = ["All", ...getAllMenuCategories()];
       catContainer.innerHTML = categories.map(cat => `
         <button onclick="selectedCustomerCategory='${cat}'; renderCustomerMenu();" class="px-3 py-1.5 rounded-full text-xs font-bold shrink-0 transition ${selectedCustomerCategory === cat ? 'bg-coffee-950 text-amber-300' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'}">
           ${cat}
@@ -2255,11 +2350,13 @@
       const totalItems = customerTray.reduce((s, l) => s + (Number(l.qty) || 0), 0);
       const totalAmt = customerTray.reduce((s, l) => s + (Number(l.price) || 0) * (Number(l.qty) || 0), 0);
       const heroCount = document.getElementById("hero-tray-count");
+      const headerCount = document.getElementById("header-tray-count");
       const floatBar = document.getElementById("floating-tray-bar");
       const floatItems = document.getElementById("floating-tray-items");
       const floatTotal = document.getElementById("floating-tray-total");
 
       if (heroCount) heroCount.textContent = String(totalItems);
+      if (headerCount) headerCount.textContent = String(totalItems);
       if (floatItems) floatItems.textContent = String(totalItems);
       if (floatTotal) floatTotal.textContent = String(totalAmt);
       if (floatBar) floatBar.classList.toggle("hidden", totalItems === 0);
@@ -2553,7 +2650,7 @@
 
     function renderPosCategories() {
       const wrap = document.getElementById("pos-category-pills");
-      const cats = ["All", ...new Set(MENU_ITEMS.map(m => m.category))];
+      const cats = ["All", ...getAllMenuCategories()];
       wrap.innerHTML = cats.map(c => `
         <button onclick="selectedPosCategory='${c}'; renderPosCategories(); renderPosGrid();" class="px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0 ${selectedPosCategory === c ? 'bg-amber-400 text-coffee-950' : 'bg-stone-100 dark:bg-stone-800 text-stone-600 dark:text-stone-300'}">
           ${c}
@@ -3913,6 +4010,8 @@
           </div>
         `).join("");
 
+      renderOwnerCategoriesManager();
+
       // Menu Item Editor (with Photo Upload, Image URL & Remove Photo in Owner Access)
       document.getElementById("owner-menu-items-list").innerHTML = MENU_ITEMS.map((m, idx) => {
         const hasImg = Boolean((m.image || "").trim());
@@ -4006,11 +4105,78 @@
       renderOwnerDashboard();
     }
 
+    function renderOwnerCategoriesManager() {
+      const cats = getAllMenuCategories();
+      const chipsWrap = document.getElementById("owner-categories-chips");
+      const countEl = document.getElementById("owner-category-count");
+      const dishCatSel = document.getElementById("new-dish-cat-select");
+
+      if (countEl) countEl.textContent = `${cats.length} Categories`;
+      if (chipsWrap) {
+        chipsWrap.innerHTML = cats.map(c => {
+          const itemCount = MENU_ITEMS.filter(m => m.category.toLowerCase() === c.toLowerCase()).length;
+          return `
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 text-[11px] font-bold">
+              <span>${escapeHtml(c)}</span>
+              <span class="text-[10px] text-stone-400">(${itemCount})</span>
+              ${itemCount === 0 && cats.length > 1 ? `<button type="button" onclick="removeUnusedMenuCategory('${escapeHtml(c).replace(/'/g, "\\'")}')" class="text-red-500 font-black ml-0.5" title="Remove empty category">×</button>` : ''}
+            </span>
+          `;
+        }).join("");
+      }
+      if (dishCatSel) {
+        const prev = dishCatSel.value;
+        dishCatSel.innerHTML = cats.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+        if (cats.includes(prev)) dishCatSel.value = prev;
+      }
+    }
+
+    function addNewMenuCategory() {
+      const inp = document.getElementById("new-menu-category-input");
+      const raw = (inp?.value || "").trim().replace(/\s+/g, " ");
+      if (!raw) {
+        showNotification("Enter a category name first.");
+        return;
+      }
+      const existing = getAllMenuCategories().find(c => c.toLowerCase() === raw.toLowerCase());
+      if (existing) {
+        showNotification(`Category "${existing}" already exists — duplicate not added.`);
+        if (inp) inp.value = "";
+        return;
+      }
+      MENU_CATEGORIES.push(raw);
+      if (inp) inp.value = "";
+      persistAllState();
+      renderOwnerCategoriesManager();
+      renderCustomerMenu();
+      renderPosCategories();
+      const dishCatSel = document.getElementById("new-dish-cat-select");
+      if (dishCatSel) dishCatSel.value = raw;
+      showNotification(`Added new category "${raw}"!`);
+    }
+
+    function removeUnusedMenuCategory(catName) {
+      const hasDishes = MENU_ITEMS.some(m => m.category.toLowerCase() === catName.toLowerCase());
+      if (hasDishes) {
+        showNotification(`Cannot remove "${catName}" while dishes are inside it.`);
+        return;
+      }
+      MENU_CATEGORIES = MENU_CATEGORIES.filter(c => c.toLowerCase() !== catName.toLowerCase());
+      persistAllState();
+      renderOwnerCategoriesManager();
+      renderCustomerMenu();
+      renderPosCategories();
+      showNotification(`Removed empty category "${catName}".`);
+    }
+
     function addNewMenuDish() {
       const name = document.getElementById("new-dish-name")?.value.trim();
-      const cat = document.getElementById("new-dish-cat")?.value.trim() || "Specials";
+      const cat = (document.getElementById("new-dish-cat-select")?.value || getAllMenuCategories()[0] || "Specials").trim();
       const price = parseFloat(document.getElementById("new-dish-price")?.value) || 99;
       if (!name) return;
+      if (!getAllMenuCategories().some(c => c.toLowerCase() === cat.toLowerCase())) {
+        MENU_CATEGORIES.push(cat);
+      }
       MENU_ITEMS.push({
         id: "dish-" + Date.now(),
         name,
@@ -4028,7 +4194,8 @@
       persistAllState();
       renderOwnerDashboard();
       renderCustomerMenu();
-      showNotification(`Added "${name}" to Menu!`);
+      renderPosCategories();
+      showNotification(`Added "${name}" under ${cat}!`);
     }
 
     // ==================== OUTLET, RECEIPT BRANDING & TABLE QR SETTINGS ====================
@@ -4162,7 +4329,7 @@
 
     function exportFullBackupJson() {
       const blob = new Blob([JSON.stringify({
-        CAFE_CONFIG, MENU_ITEMS, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
+        CAFE_CONFIG, MENU_ITEMS, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
         FLOOR_TABLES, ORDER_LOGS, EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS
       }, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
@@ -4179,6 +4346,8 @@
         try {
           const data = JSON.parse(e.target.result);
           if (data.MENU_ITEMS) MENU_ITEMS = data.MENU_ITEMS;
+          if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
+          getAllMenuCategories();
           if (data.INVENTORY_ITEMS) INVENTORY_ITEMS = data.INVENTORY_ITEMS;
           if (data.RECIPE_MAP) RECIPE_MAP = data.RECIPE_MAP;
           if (data.ORDER_LOGS) ORDER_LOGS = data.ORDER_LOGS;
@@ -4219,6 +4388,7 @@
         if (pill) { pill.textContent = tbl; pill.classList.remove("hidden"); }
         if (inp) inp.value = tbl;
       }
+      applyCustomerQrLockdownMode(true);
 
       if (localStorage.getItem("bn_dark_mode") === "1") {
         document.documentElement.classList.add("dark");
@@ -4259,9 +4429,3 @@
   </script>
 </body>
 </html>
-```
-
-I have hardened `index.html` with multiple layers of protection so it cannot be easily broken into or crashed:
-* **SHA-256 Passcode Hashing & 5-Try Lockout:** All Owner and Staff passcodes are hashed with SHA-256 (never stored in plain text in browser storage or cloud backups), and 5 wrong attempts trigger a 30-second brute-force lockout.
-* **Owner-Locked Cloud Sync & URL Scrubbing:** Opening **Cloud Sync** now requires the Owner passcode, and any `?cloudUrl=` transfer parameter is immediately scrubbed from the browser address bar after linking a device.
-* **15-Minute Inactivity Auto-Lock & Input Guards:** Automatically locks Staff/Owner sessions after 15 minutes of inactivity and blocks negative or invalid price/stock values.
