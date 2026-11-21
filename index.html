@@ -65,6 +65,14 @@
       margin-right: auto;
     }
 
+    /* Animated customer-menu promotion ticker */
+    @keyframes bnPromoMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+    .bn-promo-marquee { overflow: hidden; white-space: nowrap; }
+    .bn-promo-track { display: inline-flex; width: max-content; min-width: 200%; animation: bnPromoMarquee 22s linear infinite; }
+    .bn-promo-marquee:hover .bn-promo-track { animation-play-state: paused; }
+    .bn-promo-message { display: inline-flex; align-items: center; gap: .55rem; padding: .4rem 1.25rem; font-size: 11px; font-weight: 800; letter-spacing: .02em; }
+    @media (prefers-reduced-motion: reduce) { .bn-promo-track { animation: none; min-width: 100%; } }
+
     /* Thermal Printer Rules (Supports 80mm / 3-inch & 58mm / 2-inch) */
     @media print {
       @page {
@@ -120,7 +128,13 @@
         border-color: #000000 !important;
       }
     }
-  </style>
+  
+      .bn-banner-dish-visual{width:190px;height:132px;flex:0 0 190px;border-radius:16px;overflow:hidden;position:relative;background:#1c1917;border:1px solid rgba(252,211,77,.35);box-shadow:0 8px 24px #0005}
+      .bn-banner-dish-visual img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;animation:bnDishFade 5s ease-in-out infinite}
+      @keyframes bnDishFade{0%,100%{opacity:.25;transform:scale(1.04)}15%,80%{opacity:1;transform:scale(1)}}
+      @media(max-width:640px){.bn-banner-dish-visual{width:100%;height:150px;flex-basis:auto;order:-1}}
+      @media(prefers-reduced-motion:reduce){.bn-banner-dish-visual img{animation:none}}
+    </style>
 </head>
 <body class="bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 font-sans antialiased transition-colors duration-200 mode-mobile">
 
@@ -215,16 +229,21 @@
   <main id="customer-view" class="app-container px-3 sm:px-5 py-4 pb-28">
     <!-- Hero Banner -->
     <div class="bg-gradient-to-r from-coffee-950 via-coffee-900 to-stone-900 rounded-2xl p-4 sm:p-6 text-amber-50 shadow-md mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-      <div>
-        <span class="inline-block px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider mb-1">
-          Freshly Brewed & Made to Order
-        </span>
-        <h2 class="font-heading font-extrabold text-lg sm:text-2xl text-white">
-          Welcome to <span id="hero-cafe-title">Brew Nagri</span>
-        </h2>
-        <p class="text-xs text-amber-100/80 mt-0.5">
-          Customize extra cheese, sugar level, or Jain prep & order straight to your table.
-        </p>
+      <div id="menu-banner-dish-visual" class="bn-banner-dish-visual hidden" aria-label="Featured Brew Nagri dishes"></div>
+      <div class="min-w-0 flex-1 relative z-10">
+        <span id="menu-banner-eyebrow" class="inline-block px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 text-[10px] font-bold uppercase tracking-wider mb-1">Freshly Brewed & Made to Order</span>
+        <h2 id="menu-banner-title" class="font-heading font-extrabold text-lg sm:text-2xl text-white">Welcome to <span id="hero-cafe-title">Brew Nagri</span></h2>
+        <p id="menu-banner-subtitle" class="text-xs text-amber-100/80 mt-0.5">Customize extra cheese, sugar level, or Jain prep & order straight to your table.</p>
+        <div id="menu-offer-wrap" class="hidden mt-2.5">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-300 text-coffee-950 text-xs font-black shadow">
+            <i data-lucide="tag" class="w-3.5 h-3.5"></i><span id="menu-offer-text"></span>
+          </span>
+        </div>
+        <div id="menu-banner-motion-wrap" class="mt-3 rounded-xl border border-amber-300/25 bg-black/20 overflow-hidden">
+          <div class="bn-promo-marquee" aria-label="Brew Nagri special announcements">
+            <div id="menu-banner-motion" class="bn-promo-track"></div>
+          </div>
+        </div>
       </div>
       <div class="flex items-center gap-2 shrink-0">
         <button onclick="openCustomerTrayDrawer()" class="px-3.5 py-2.5 bg-amber-400 hover:bg-amber-300 text-coffee-950 font-extrabold rounded-xl text-xs shadow-xs flex items-center gap-1.5 touch-btn">
@@ -463,6 +482,8 @@
         <input type="number" id="new-inv-stock" placeholder="Stock (e.g. 100)" min="0" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <input type="text" id="new-inv-unit" placeholder="Unit (slices, pcs)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <input type="number" id="new-inv-unit-cost" placeholder="Cost/Unit ₹ (e.g. 12)" min="0" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+        <input type="text" id="new-inv-barcode" placeholder="Barcode (optional)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+        <button type="button" onclick="openBarcodeScanner()" class="py-2 px-3 bg-indigo-600 text-white font-bold rounded-xl">📷 Scan Barcode</button>
         <button onclick="addNewInventoryIngredient()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">+ Add Stock</button>
       </div>
     </div>
@@ -681,6 +702,7 @@
           <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Shift Logout & Cash Handover History</h3>
           <span class="text-[10px] text-stone-400">Verifies exact cash handed over by each staff</span>
         </div>
+        <div id="owner-attendance-summary" class="mb-2 p-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/30 text-xs"></div>
         <div id="owner-shift-handovers-list" class="space-y-2 max-h-60 overflow-y-auto custom-scrollbar text-xs"></div>
       </div>
     </div>
@@ -745,6 +767,36 @@
         <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Menu Categories, Pricing, Making Cost, Photos & New Dish Manager</h3>
       </div>
 
+      <!-- Customer Menu Banner & Offer Editor (shown only on customer menu) -->
+      <div class="p-3 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 space-y-2.5 text-xs">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-bold text-amber-950 dark:text-amber-200">Customer Menu Banner & Offer</span>
+          <span class="text-[10px] text-stone-500">Visible on Menu only</span>
+        </div>
+        <label class="flex items-center gap-2 font-bold"><input id="promo-banner-enabled" type="checkbox" class="accent-amber-600" checked /> Show banner on customer menu</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div><label class="block font-bold mb-1">Small label</label><input id="promo-eyebrow-input" maxlength="50" type="text" placeholder="Freshly Brewed & Made to Order" class="w-full p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg" /></div>
+          <div><label class="block font-bold mb-1">Banner heading</label><input id="promo-title-input" maxlength="90" type="text" placeholder="Welcome to Brew Nagri" class="w-full p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg" /></div>
+        </div>
+        <div><label class="block font-bold mb-1">Short description</label><input id="promo-subtitle-input" maxlength="160" type="text" placeholder="Fresh food, coffee and good times." class="w-full p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg" /></div>
+        <div class="border-t border-amber-200 dark:border-amber-800 pt-2 space-y-2">
+          <label class="flex items-center gap-2 font-bold"><input id="promo-offer-enabled" type="checkbox" class="accent-amber-600" /> Show offer strip</label>
+          <div><label class="block font-bold mb-1">Offer text</label><input id="promo-offer-input" maxlength="100" type="text" placeholder="Example: Combo offer — Save ₹20 today!" class="w-full p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg" /></div>
+        </div>
+        <div class="border-t border-amber-200 dark:border-amber-800 pt-2 space-y-1.5">
+          <label class="block font-bold mb-1">Dish banner photos (upload up to 5)</label>
+          <input id="promo-dish-images-input" type="file" accept="image/*" multiple onchange="handlePromoDishImages(event)" class="block w-full text-xs" />
+          <div class="flex items-center justify-between"><span id="promo-dish-images-count" class="text-[10px] text-stone-500">No banner photos selected</span><button type="button" onclick="clearPromoDishImages()" class="text-[10px] text-red-600 font-bold">Remove photos</button></div>
+          <p class="text-[10px] text-stone-500">Photos automatically fade/slide in the customer menu banner. Use compressed images for reliable browser storage.</p>
+        </div>
+        <div class="border-t border-amber-200 dark:border-amber-800 pt-2">
+          <label class="block font-bold mb-1">Animated banner messages (separate messages with | )</label>
+          <textarea id="promo-motion-input" rows="2" maxlength="400" placeholder="Fresh Coffee, Fresh Mood | Pizza, Burgers & Momos | Visit Brew Nagri Today" class="w-full p-2 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg"></textarea>
+          <p class="text-[10px] text-stone-500 mt-1">These messages continuously slide across the customer menu. Example: Fresh Coffee | Hot Pizza | Special Combo Offer</p>
+        </div>
+        <button type="button" onclick="saveMenuPromotionSettings()" class="px-4 py-2 bg-coffee-950 text-amber-300 rounded-lg font-extrabold">Save Banner & Offer</button>
+      </div>
+
       <!-- Category Manager (Duplicate-Protected) -->
       <div class="p-3 rounded-xl bg-stone-50 dark:bg-stone-800/70 border border-stone-200 dark:border-stone-700 space-y-2 text-xs">
         <div class="flex items-center justify-between">
@@ -774,6 +826,15 @@
     </div>
   </section>
 
+  <div id="barcode-scanner-modal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 bg-stone-950/90">
+    <div class="bg-white dark:bg-stone-900 w-full max-w-md rounded-2xl p-4 space-y-3">
+      <div class="flex justify-between items-center"><h3 class="font-bold">Scan product barcode</h3><button onclick="closeBarcodeScanner()" class="font-bold text-red-600">Close</button></div>
+      <video id="barcode-video" autoplay muted playsinline class="w-full rounded-xl bg-black max-h-64"></video>
+      <p id="barcode-scan-status" class="text-xs text-stone-500">Allow camera access and hold the barcode in view.</p>
+      <div class="flex gap-2"><input id="barcode-manual-input" class="flex-1 p-2 border rounded-lg dark:bg-stone-800" placeholder="Or type barcode manually" /><button onclick="useManualBarcode()" class="px-3 py-2 bg-indigo-600 text-white rounded-lg">Use</button></div>
+    </div>
+  </div>
+
   <!-- ==================== MODALS ==================== -->
 
   <!-- 1. Customer Tray & UPI QR Checkout Drawer -->
@@ -787,11 +848,16 @@
         <button onclick="closeCustomerTrayDrawer()" class="p-1.5 rounded-full hover:bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <div class="p-4 overflow-y-auto custom-scrollbar space-y-3 text-xs flex-1">
-        <div class="grid grid-cols-3 gap-2">
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
           <input type="text" id="order-customer-name" placeholder="Your Name" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
-          <input type="tel" id="order-customer-phone" placeholder="Mobile (Optional)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+          <input type="tel" id="order-customer-phone" placeholder="Mobile for 10% offer" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
           <input type="text" id="order-table-input" placeholder="Table No." class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
         </div>
+        <label class="flex items-start gap-2 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-[11px]">
+          <input type="checkbox" id="customer-loyalty-consent" class="mt-0.5 accent-emerald-600" />
+          <span><strong>Get 10% off this order.</strong> I agree that Brew Nagri may save my name and mobile number for loyalty offers and order history.</span>
+        </label>
+        <p id="customer-loyalty-hint" class="text-[10px] text-emerald-700 dark:text-emerald-300">Enter your name + 10-digit mobile and tick the box to claim 10% off.</p>
         <div id="customer-tray-items-list" class="space-y-2"></div>
 
         <!-- Dynamic UPI QR Payment Box -->
@@ -1344,6 +1410,7 @@
     };
 
     let MENU_ITEMS = JSON.parse(JSON.stringify(DEFAULT_MENU_ITEMS));
+    let MENU_PROMO = { bannerImages: [], bannerEnabled: true, eyebrow: "Freshly Brewed & Made to Order", title: "Welcome to Brew Nagri", subtitle: "Customize extra cheese, sugar level, or Jain prep & order straight to your table.", offerEnabled: false, offerText: "", motionMessages: ["Fresh Coffee, Fresh Mood", "Pizza • Burgers • Momos • Shakes", "Visit Brew Nagri Today"] };
     let MENU_CATEGORIES = [...new Set(DEFAULT_MENU_ITEMS.map(m => m.category))];
     let INVENTORY_ITEMS = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
     let RECIPE_MAP = JSON.parse(JSON.stringify(DEFAULT_RECIPE_MAP));
@@ -1356,6 +1423,10 @@
     let CUSTOMER_CRM = {};
     let STAFF_ACCOUNTS = JSON.parse(JSON.stringify(DEFAULT_STAFF_ACCOUNTS));
     let SHIFT_HANDOVERS = [];
+    let STAFF_ATTENDANCE = [];
+    let barcodeStream = null;
+    let barcodeScanTimer = null;
+    let bannerImageTimer = null;
     let OWNER_PIN = "5595";
 
     let CLOUD_CONFIG = { dbUrl: "", workspaceId: "brewnagri-main" };
@@ -1463,6 +1534,8 @@
       try {
         const cfg = localStorage.getItem("bn_cafe_config");
         if (cfg) CAFE_CONFIG = { ...CAFE_CONFIG, ...JSON.parse(cfg) };
+        const promo = localStorage.getItem("bn_menu_promo");
+        if (promo) MENU_PROMO = { ...MENU_PROMO, ...JSON.parse(promo) };
         const m = localStorage.getItem("bn_menu_items");
         if (m) {
           const parsedM = JSON.parse(m);
@@ -1521,6 +1594,8 @@
         }
         const shf = localStorage.getItem("bn_shift_handovers");
         if (shf) SHIFT_HANDOVERS = JSON.parse(shf) || [];
+        const att = localStorage.getItem("bn_staff_attendance");
+        if (att) STAFF_ATTENDANCE = JSON.parse(att) || [];
         const opin = localStorage.getItem("bn_owner_pin");
         if (opin) OWNER_PIN = opin;
         const cld = localStorage.getItem("bn_cloud_config");
@@ -1532,6 +1607,7 @@
       try {
         localStorage.setItem("bn_cafe_config", JSON.stringify(CAFE_CONFIG));
         localStorage.setItem("bn_menu_items", JSON.stringify(MENU_ITEMS));
+        localStorage.setItem("bn_menu_promo", JSON.stringify(MENU_PROMO));
         localStorage.setItem("bn_menu_categories", JSON.stringify(getAllMenuCategories()));
         localStorage.setItem("bn_inventory", JSON.stringify(INVENTORY_ITEMS));
         localStorage.setItem("bn_recipes", JSON.stringify(RECIPE_MAP));
@@ -1544,6 +1620,7 @@
         localStorage.setItem("bn_customer_crm", JSON.stringify(CUSTOMER_CRM));
         localStorage.setItem("bn_staff_accounts", JSON.stringify(STAFF_ACCOUNTS));
         localStorage.setItem("bn_shift_handovers", JSON.stringify(SHIFT_HANDOVERS));
+        localStorage.setItem("bn_staff_attendance", JSON.stringify(STAFF_ATTENDANCE));
         localStorage.setItem("bn_owner_pin", OWNER_PIN);
       } catch (e) {
         showNotification("Browser storage nearly full—export a Backup JSON or compress photos.");
@@ -1599,9 +1676,9 @@
       updateCloudIndicator("syncing", "Syncing...");
       const snapshot = {
         updatedAt: Date.now(),
-        CAFE_CONFIG, MENU_ITEMS, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
+        CAFE_CONFIG, MENU_ITEMS, MENU_PROMO, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
         FLOOR_TABLES, ACTIVE_TABLE_ORDERS, ORDER_LOGS, INVENTORY_LOGS,
-        EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, OWNER_PIN
+        EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, STAFF_ATTENDANCE, OWNER_PIN
       };
       try {
         const res = await fetch(url, {
@@ -1628,6 +1705,7 @@
         if (data && data.MENU_ITEMS) {
           CAFE_CONFIG = { ...CAFE_CONFIG, ...(data.CAFE_CONFIG || {}) };
           MENU_ITEMS = data.MENU_ITEMS || MENU_ITEMS;
+          if (data.MENU_PROMO) MENU_PROMO = { ...MENU_PROMO, ...data.MENU_PROMO };
           if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
           getAllMenuCategories();
           INVENTORY_ITEMS = data.INVENTORY_ITEMS || INVENTORY_ITEMS;
@@ -1641,6 +1719,7 @@
           CUSTOMER_CRM = data.CUSTOMER_CRM || CUSTOMER_CRM;
           STAFF_ACCOUNTS = data.STAFF_ACCOUNTS || STAFF_ACCOUNTS;
           SHIFT_HANDOVERS = data.SHIFT_HANDOVERS || SHIFT_HANDOVERS;
+          STAFF_ATTENDANCE = data.STAFF_ATTENDANCE || STAFF_ATTENDANCE;
           if (data.OWNER_PIN) OWNER_PIN = data.OWNER_PIN;
           await migratePlainPasscodesToHashes();
           persistAllState(false);
@@ -2062,6 +2141,9 @@
           isOwnerAuthenticated = true;
           activeStaffUser = { id: "owner", name: "Owner" };
           activeStaffShiftStartISO = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const loginAt = new Date(); closeStaleAttendanceForLogin("owner", loginAt);
+          STAFF_ATTENDANCE.unshift({ id: Date.now(), staffId: "owner", staffName: "Owner", clockInISO: loginAt.toISOString(), clockOutISO: null, durationMinutes: null });
+          persistAllState();
           resetSessionInactivityTimer();
           closeOwnerPinModal();
           switchAppTab("staff");
@@ -2073,10 +2155,13 @@
           FAILED_LOGIN_ATTEMPTS = 0;
           activeStaffUser = { id: staffObj.id, name: staffObj.name };
           activeStaffShiftStartISO = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const loginAt = new Date(); closeStaleAttendanceForLogin(staffObj.id, loginAt);
+          STAFF_ATTENDANCE.unshift({ id: Date.now(), staffId: staffObj.id, staffName: staffObj.name, clockInISO: loginAt.toISOString(), clockOutISO: null, durationMinutes: null });
+          persistAllState();
           resetSessionInactivityTimer();
           closeOwnerPinModal();
           switchAppTab("staff");
-          showNotification(`Shift started for ${staffObj.name}.`);
+          showNotification(`Attendance clocked in for ${staffObj.name}.`);
           return;
         }
         handleFailedAttempt("Invalid staff passcode.");
@@ -2100,6 +2185,18 @@
       } else {
         handleFailedAttempt("Incorrect Owner passcode.");
       }
+    }
+
+    function closeStaleAttendanceForLogin(staffId, loginTime) {
+      STAFF_ATTENDANCE.filter(a => a.staffId === staffId && !a.clockOutISO).forEach(a => {
+        a.clockOutISO = loginTime.toISOString(); a.durationMinutes = Math.max(0, Math.round((loginTime - new Date(a.clockInISO)) / 60000)); a.autoClosedAtNextLogin = true;
+      });
+    }
+    function exportStaffAttendanceCSV() {
+      const rows = [["Staff","Clock In","Clock Out","Hours","Auto Closed"]];
+      STAFF_ATTENDANCE.forEach(a => rows.push([a.staffName,a.clockInISO || "",a.clockOutISO || "",a.durationMinutes == null ? "" : (a.durationMinutes/60).toFixed(2),a.autoClosedAtNextLogin ? "Yes" : "No"]));
+      const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+      const url = URL.createObjectURL(new Blob([csv], {type:"text/csv"})); const link = document.createElement("a"); link.href = url; link.download = `BrewNagri_Attendance_${getTodayISO()}.csv`; link.click(); URL.revokeObjectURL(url);
     }
 
     function computeActiveStaffShiftStats() {
@@ -2133,7 +2230,10 @@
       if (!activeStaffUser) return;
       const stats = computeActiveStaffShiftStats();
       const today = getTodayISO();
-      const endTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const endDate = new Date();
+      const endTime = endDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const openAttendance = STAFF_ATTENDANCE.find(a => a.staffId === activeStaffUser.id && !a.clockOutISO);
+      if (openAttendance) { openAttendance.clockOutISO = endDate.toISOString(); openAttendance.durationMinutes = Math.max(0, Math.round((endDate - new Date(openAttendance.clockInISO)) / 60000)); }
 
       SHIFT_HANDOVERS.unshift({
         id: Date.now(),
@@ -2142,6 +2242,9 @@
         dateISO: today,
         startTime: activeStaffShiftStartISO || endTime,
         endTime,
+        clockInISO: openAttendance?.clockInISO || null,
+        clockOutISO: endDate.toISOString(),
+        durationMinutes: openAttendance?.durationMinutes ?? null,
         billsCount: stats.bills,
         cashCollected: stats.cash,
         upiCollected: stats.upi,
@@ -2227,11 +2330,80 @@
       showNotification("Passcode updated & encrypted with SHA-256.");
     }
 
+    // ==================== CUSTOMER MENU PROMOTION ====================
+    function renderMenuPromotion() {
+      const banner = document.querySelector("#customer-view > .bg-gradient-to-r");
+      if (banner) banner.classList.toggle("hidden", MENU_PROMO.bannerEnabled === false);
+      const eyebrow = document.getElementById("menu-banner-eyebrow");
+      const title = document.getElementById("menu-banner-title");
+      const subtitle = document.getElementById("menu-banner-subtitle");
+      const offerWrap = document.getElementById("menu-offer-wrap");
+      const offerText = document.getElementById("menu-offer-text");
+      const motionWrap = document.getElementById("menu-banner-motion-wrap");
+      const dishVisual = document.getElementById("menu-banner-dish-visual");
+      const bannerImgs = Array.isArray(MENU_PROMO.bannerImages) ? MENU_PROMO.bannerImages.filter(Boolean) : [];
+      if (dishVisual) {
+        dishVisual.classList.toggle("hidden", !bannerImgs.length);
+        if (bannerImgs.length) {
+          dishVisual.innerHTML = `<img id="bn-banner-dish-img" src="${bannerImgs[0]}" alt="Featured Brew Nagri dishes">`;
+          let ix = 0; if (bannerImageTimer) clearInterval(bannerImageTimer);
+          if (bannerImgs.length > 1) bannerImageTimer = setInterval(() => { ix = (ix + 1) % bannerImgs.length; const im = document.getElementById("bn-banner-dish-img"); if (im) { im.style.opacity = "0"; setTimeout(() => { if (im) { im.src = bannerImgs[ix]; im.style.opacity = "1"; } }, 220); } }, 4200);
+        } else dishVisual.innerHTML = "";
+      }
+      const imgCount = document.getElementById("promo-dish-images-count"); if (imgCount) imgCount.textContent = `${bannerImgs.length} banner photo(s) saved`;
+      const motionTrack = document.getElementById("menu-banner-motion");
+      if (eyebrow) eyebrow.textContent = MENU_PROMO.eyebrow || "Freshly Brewed & Made to Order";
+      if (title) title.textContent = MENU_PROMO.title || `Welcome to ${CAFE_CONFIG.cafeName || "Brew Nagri"}`;
+      if (subtitle) subtitle.textContent = MENU_PROMO.subtitle || "";
+      if (offerText) offerText.textContent = MENU_PROMO.offerText || "";
+      if (offerWrap) offerWrap.classList.toggle("hidden", !(MENU_PROMO.offerEnabled && (MENU_PROMO.offerText || "").trim()));
+      const messages = Array.isArray(MENU_PROMO.motionMessages) ? MENU_PROMO.motionMessages.filter(Boolean) : [];
+      if (motionTrack) {
+        const safeMessages = messages.length ? messages : ["Fresh Coffee, Fresh Mood", "Pizza • Burgers • Momos • Shakes", "Visit Brew Nagri Today"];
+        const oneSet = safeMessages.map(msg => `<span class="bn-promo-message"><span class="text-amber-300">✦</span>${escapeHtml(msg)}</span>`).join("");
+        motionTrack.innerHTML = oneSet + oneSet;
+      }
+      if (motionWrap) motionWrap.classList.toggle("hidden", MENU_PROMO.bannerEnabled === false);
+      refreshLucideIcons();
+    }
+
+    function handlePromoDishImages(event) {
+      const files = Array.from(event.target.files || []).slice(0, 5);
+      if (!files.length) return;
+      Promise.all(files.map(file => new Promise(resolve => {
+        const reader = new FileReader(); reader.onload = () => {
+          const img = new Image(); img.onload = () => {
+            const canvas = document.createElement("canvas"); const scale = Math.min(640 / img.width, 420 / img.height, 1);
+            canvas.width = Math.round(img.width * scale); canvas.height = Math.round(img.height * scale);
+            canvas.getContext("2d").drawImage(img, 0, 0, canvas.width, canvas.height); resolve(canvas.toDataURL("image/jpeg", .62));
+          }; img.onerror = () => resolve(null); img.src = reader.result;
+        }; reader.onerror = () => resolve(null); reader.readAsDataURL(file);
+      }))).then(images => { MENU_PROMO.bannerImages = images.filter(Boolean); persistAllState(); renderMenuPromotion(); showNotification("Dish banner photos saved."); });
+    }
+    function clearPromoDishImages() { MENU_PROMO.bannerImages = []; persistAllState(); renderMenuPromotion(); }
+
+    function saveMenuPromotionSettings() {
+      MENU_PROMO = {
+        bannerImages: MENU_PROMO.bannerImages || [],
+        bannerEnabled: document.getElementById("promo-banner-enabled")?.checked ?? true,
+        eyebrow: document.getElementById("promo-eyebrow-input")?.value.trim() || "Freshly Brewed & Made to Order",
+        title: document.getElementById("promo-title-input")?.value.trim() || `Welcome to ${CAFE_CONFIG.cafeName || "Brew Nagri"}`,
+        subtitle: document.getElementById("promo-subtitle-input")?.value.trim() || "",
+        offerEnabled: document.getElementById("promo-offer-enabled")?.checked ?? false,
+        offerText: document.getElementById("promo-offer-input")?.value.trim() || "",
+        motionMessages: (document.getElementById("promo-motion-input")?.value || "").split("|").map(x => x.trim()).filter(Boolean).slice(0, 8)
+      };
+      persistAllState();
+      renderMenuPromotion();
+      showNotification("Customer menu banner and offer updated.");
+    }
+
     // ==================== CUSTOMER MENU & TRAY ====================
     function renderCustomerMenu() {
       const catContainer = document.getElementById("customer-category-pills");
       const grid = document.getElementById("customer-menu-grid");
       const query = (document.getElementById("menu-search-input")?.value || "").trim().toLowerCase();
+      renderMenuPromotion();
 
       const categories = ["All", ...getAllMenuCategories()];
       catContainer.innerHTML = categories.map(cat => `
@@ -2378,6 +2550,8 @@
       const upiBox = document.getElementById("customer-upi-qr-box");
       const upiCanvas = document.getElementById("customer-upi-qr-canvas");
 
+      const loyaltyHint = document.getElementById("customer-loyalty-hint");
+      if (loyaltyHint) loyaltyHint.textContent = "Enter your name + valid 10-digit mobile and tick the box to claim 10% off at checkout.";
       if (customerTray.length === 0) {
         list.innerHTML = `<p class="text-center text-stone-400 py-6">Your tray is empty.</p>`;
         totalEl.textContent = "0";
@@ -2428,6 +2602,7 @@
 
       const guestName = document.getElementById("order-customer-name")?.value.trim() || "Guest";
       const guestPhone = document.getElementById("order-customer-phone")?.value.trim() || "";
+      const loyaltyOptIn = !!document.getElementById("customer-loyalty-consent")?.checked;
       const tableLabel = document.getElementById("order-table-input")?.value.trim() || "Table 1";
 
       let rev = 0, cost = 0;
@@ -2437,6 +2612,10 @@
         cost += (l.costPrice || 35) * l.qty;
       });
 
+      const loyaltyValid = loyaltyOptIn && guestName !== "Guest" && /^[6-9]\d{9}$/.test(guestPhone);
+      if (loyaltyOptIn && !loyaltyValid) { isSubmittingOrder = false; showNotification("For 10% off, enter your name and a valid 10-digit Indian mobile number."); return; }
+      const discount = loyaltyValid ? Math.round(rev * 0.10 * 100) / 100 : 0;
+      const payable = Math.max(0, rev - discount);
       const billNo = String(CAFE_CONFIG.nextBillSeq++);
       const newOrder = {
         id: Date.now(),
@@ -2452,22 +2631,25 @@
         staffName: "QR Self-Order",
         items: linesCopy,
         subtotal: rev,
-        discount: 0,
+        discount,
         gstRate: 0,
         gstAmount: 0,
-        revenue: rev,
+        revenue: payable,
         cost,
-        profit: rev - cost,
+        profit: payable - cost,
         summary: linesCopy.map(l => `${l.name} x${l.qty}`).join(", ")
       };
 
       deductInventoryForOrder(linesCopy, billNo, `${guestName} (${tableLabel})`);
       ORDER_LOGS.unshift(newOrder);
-      updateCustomerCrmRecord(guestPhone, guestName, rev);
+      if (loyaltyValid) {
+        updateCustomerCrmRecord(guestPhone, guestName, payable);
+        if (CUSTOMER_CRM[guestPhone]) { CUSTOMER_CRM[guestPhone].loyaltyOptIn = true; CUSTOMER_CRM[guestPhone].lastSeen = new Date().toISOString(); }
+      }
 
       const matchedTable = FLOOR_TABLES.find(t => t.toLowerCase() === tableLabel.toLowerCase()) || FLOOR_TABLES[0];
       if (!ACTIVE_TABLE_ORDERS[matchedTable]) ACTIVE_TABLE_ORDERS[matchedTable] = { lines: [], customer: "", phone: "" };
-      ACTIVE_TABLE_ORDERS[matchedTable].waAlert = `WA Order #${billNo} (₹${rev})`;
+      ACTIVE_TABLE_ORDERS[matchedTable].waAlert = `WA Order #${billNo} (₹${payable})`;
       ACTIVE_TABLE_ORDERS[matchedTable].customer = guestName;
 
       const msgLines = [
@@ -2476,7 +2658,8 @@
         `--------------------------`,
         ...linesCopy.map(l => `• ${l.name} x${l.qty} = ₹${l.price * l.qty}${l.addons?.length ? ` (+${l.addons.map(a=>a.name).join(', ')})` : ''}`),
         `--------------------------`,
-        `*Total: ₹${rev}*`
+        ...(discount ? [`Loyalty discount (10%): -₹${discount.toFixed(2)}`] : []),
+        `*Total payable: ₹${payable.toFixed(2)}*`
       ];
 
       customerTray = [];
@@ -3325,7 +3508,7 @@
             <div class="flex items-start justify-between">
               <div>
                 <h4 class="font-heading font-bold text-xs sm:text-sm">${item.name}</h4>
-                <p class="text-[10px] text-stone-400">₹${item.unitCost || 0}/${item.unit} • Alert &le; ${item.lowThreshold || 15}</p>
+                <p class="text-[10px] text-stone-400">₹${item.unitCost || 0}/${item.unit} • Alert &le; ${item.lowThreshold || 15}${item.barcode ? ` • Barcode: ${escapeHtml(item.barcode)}` : ""}</p>
               </div>
               <div class="text-right">
                 <span class="text-xl font-black ${low ? 'text-red-600' : 'text-emerald-600'}">${item.stock}</span>
@@ -3397,17 +3580,45 @@
       renderInventoryTab();
     }
 
+    async function openBarcodeScanner() {
+      const modal = document.getElementById("barcode-scanner-modal"); const video = document.getElementById("barcode-video");
+      modal.classList.remove("hidden");
+      const status = document.getElementById("barcode-scan-status");
+      if (!navigator.mediaDevices?.getUserMedia) { status.textContent = "Camera needs HTTPS or localhost. You can type the barcode below."; return; }
+      if (!("BarcodeDetector" in window)) { status.textContent = "This browser does not support live barcode detection. Type barcode manually or use a compatible Chrome/Android browser."; return; }
+      try {
+        const detector = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39", "itf"] });
+        barcodeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false });
+        video.srcObject = barcodeStream; await video.play(); status.textContent = "Camera active — hold a barcode steady in the frame.";
+        const scan = async () => {
+          if (!barcodeStream || modal.classList.contains("hidden")) return;
+          try { const codes = await detector.detect(video); if (codes.length) { document.getElementById("new-inv-barcode").value = codes[0].rawValue; status.textContent = `Scanned: ${codes[0].rawValue}`; closeBarcodeScanner(); showNotification("Barcode captured."); return; } } catch(e) {}
+          barcodeScanTimer = setTimeout(scan, 250);
+        }; scan();
+      } catch (e) { status.textContent = "Could not open camera. Check browser permission and use HTTPS, or type barcode manually."; }
+    }
+    function closeBarcodeScanner() {
+      if (barcodeScanTimer) clearTimeout(barcodeScanTimer); barcodeScanTimer = null;
+      if (barcodeStream) barcodeStream.getTracks().forEach(t => t.stop()); barcodeStream = null;
+      const video = document.getElementById("barcode-video"); if (video) video.srcObject = null;
+      document.getElementById("barcode-scanner-modal")?.classList.add("hidden");
+    }
+    function useManualBarcode() { const value = document.getElementById("barcode-manual-input")?.value.trim(); if (!value) return; document.getElementById("new-inv-barcode").value = value; closeBarcodeScanner(); }
+
     function addNewInventoryIngredient() {
       const name = document.getElementById("new-inv-name")?.value.trim();
       const stock = parseInt(document.getElementById("new-inv-stock")?.value, 10);
       const unit = document.getElementById("new-inv-unit")?.value.trim() || "units";
       const cost = parseFloat(document.getElementById("new-inv-unit-cost")?.value) || 0;
       if (!name) return;
-      INVENTORY_ITEMS.push({ id: "inv-" + Date.now(), name, stock: isNaN(stock) ? 100 : stock, unit, lowThreshold: 15, unitCost: cost });
+      const barcode = document.getElementById("new-inv-barcode")?.value.trim() || "";
+      if (barcode && INVENTORY_ITEMS.some(i => i.barcode === barcode)) { showNotification("This barcode is already assigned to an inventory item."); return; }
+      INVENTORY_ITEMS.push({ id: "inv-" + Date.now(), name, stock: isNaN(stock) ? 100 : stock, unit, lowThreshold: 15, unitCost: cost, barcode });
       document.getElementById("new-inv-name").value = "";
       document.getElementById("new-inv-stock").value = "";
       document.getElementById("new-inv-unit").value = "";
       document.getElementById("new-inv-unit-cost").value = "";
+      document.getElementById("new-inv-barcode").value = "";
       persistAllState();
       renderInventoryTab();
       showNotification(`Added ${name} to Inventory!`);
@@ -3936,6 +4147,12 @@
       });
     }
 
+    function saveCrmCustomerName(phone) {
+      const record = CUSTOMER_CRM[phone]; const input = document.getElementById(`crm-name-${phone}`);
+      if (!record || !input || !input.value.trim()) { showNotification("Enter a customer name first."); return; }
+      record.name = input.value.trim(); persistAllState(); renderOwnerDashboard(); showNotification("Customer name updated.");
+    }
+
     function renderOwnerDashboard() {
       renderActiveOwnerReportPanel();
       const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
@@ -3975,13 +4192,26 @@
           <div class="p-2.5 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 flex items-center justify-between gap-2">
             <div>
               <p class="font-bold">${sh.staffName} <span class="text-[10px] text-stone-400">(${sh.dateISO} ${sh.startTime}–${sh.endTime})</span></p>
-              <p class="text-[10px] text-stone-500">${sh.billsCount} Bills • UPI/Card: ₹${sh.upiCollected}</p>
+              <p class="text-[10px] text-stone-500">${sh.billsCount} Bills • UPI/Card: ₹${sh.upiCollected} • Worked: ${sh.durationMinutes != null ? `${Math.floor(sh.durationMinutes/60)}h ${sh.durationMinutes%60}m` : "not recorded"}</p>
             </div>
             <div class="text-right">
               <span class="px-2 py-0.5 rounded bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 font-black">Cash Handover: ₹${sh.cashCollected}</span>
             </div>
           </div>
         `).join("");
+
+      // Attendance totals by month/year, derived from recorded clock-in/out sessions.
+      const attendanceEl = document.getElementById("owner-attendance-summary");
+      if (attendanceEl) {
+        const now = new Date(); const monthKey = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+        const yearKey = String(now.getFullYear());
+        const mins = (arr) => arr.reduce((sum,a) => sum + (Number(a.durationMinutes) || 0), 0);
+        const monthRows = STAFF_ATTENDANCE.filter(a => (a.clockInISO || "").slice(0,7) === monthKey);
+        const yearRows = STAFF_ATTENDANCE.filter(a => (a.clockInISO || "").slice(0,4) === yearKey);
+        const fmt = m => `${Math.floor(m/60)}h ${m%60}m`;
+        const byStaff = STAFF_ACCOUNTS.map(st => { const rows = STAFF_ATTENDANCE.filter(a => a.staffId === st.id); return `<span class="inline-block mr-3 mb-1"><b>${escapeHtml(st.name)}</b>: ${fmt(mins(rows))} total (${rows.filter(a=>a.clockOutISO).length} shifts)</span>`; }).join("");
+        attendanceEl.innerHTML = `<div class="flex items-center justify-between gap-2 mb-1"><span class="font-extrabold text-indigo-900 dark:text-indigo-200">Staff Attendance — ${monthKey} / ${yearKey}</span><button onclick="exportStaffAttendanceCSV()" class="px-2 py-1 bg-indigo-700 text-white rounded-lg text-[10px] font-bold">Export CSV</button></div><div class="grid grid-cols-2 gap-2"><div>Month hours: <b>${fmt(mins(monthRows))}</b> (${monthRows.length} logins)</div><div>Year hours: <b>${fmt(mins(yearRows))}</b> (${yearRows.length} logins)</div></div><div class="mt-2 border-t border-indigo-200 dark:border-indigo-800 pt-2">${byStaff || "No staff profiles"}</div><p class="text-[10px] mt-1 text-stone-500">Open shifts are counted only after logout. Attendance is stored on this device and included in backup/cloud sync.</p>`;
+      }
 
       // Expected Cash Drawer Today
       const todayCash = ORDER_LOGS.filter(o => !o.voided && o.dateISO === getTodayISO() && o.paymentMode === "Cash")
@@ -4004,9 +4234,9 @@
       document.getElementById("owner-crm-list").innerHTML = crmEntries.length === 0
         ? `<p class="text-stone-400 py-4 text-center">Customer phone visits will appear here automatically.</p>`
         : crmEntries.map(([ph, c]) => `
-          <div class="p-2 rounded-xl bg-stone-50 dark:bg-stone-800 flex items-center justify-between">
-            <span class="font-bold">${c.name} (${ph})</span>
-            <span class="text-purple-700 dark:text-purple-300 font-extrabold">${c.visits} Visits • ₹${c.totalSpent}</span>
+          <div class="p-2 rounded-xl bg-stone-50 dark:bg-stone-800 border border-stone-200 dark:border-stone-700 space-y-1.5">
+            <div class="flex flex-wrap items-center gap-1.5"><input id="crm-name-${escapeHtml(ph)}" value="${escapeHtml(c.name || "")}" class="flex-1 min-w-28 p-1.5 rounded-lg border bg-white dark:bg-stone-900" /><span class="text-[10px] text-stone-500">${escapeHtml(ph)}</span><button onclick="saveCrmCustomerName('${escapeHtml(ph)}')" class="px-2 py-1 bg-coffee-950 text-amber-300 rounded-lg font-bold">Update</button></div>
+            <div class="text-[10px] text-purple-700 dark:text-purple-300 font-extrabold">${c.visits || 0} Visits • ₹${c.totalSpent || 0} • ${c.loyaltyOptIn ? "Loyalty opt-in" : "No marketing opt-in"}</div>
           </div>
         `).join("");
 
@@ -4045,6 +4275,16 @@
           </div>
         `;
       }).join("");
+      const promoFields = {
+        "promo-banner-enabled": MENU_PROMO.bannerEnabled !== false,
+        "promo-eyebrow-input": MENU_PROMO.eyebrow || "",
+        "promo-title-input": MENU_PROMO.title || "",
+        "promo-subtitle-input": MENU_PROMO.subtitle || "",
+        "promo-offer-enabled": MENU_PROMO.offerEnabled === true,
+        "promo-offer-input": MENU_PROMO.offerText || "",
+        "promo-motion-input": (Array.isArray(MENU_PROMO.motionMessages) ? MENU_PROMO.motionMessages : []).join(" | ")
+      };
+      Object.entries(promoFields).forEach(([id, value]) => { const el = document.getElementById(id); if (el) { if (el.type === "checkbox") el.checked = value; else el.value = value; } });
       refreshLucideIcons();
     }
 
@@ -4201,8 +4441,10 @@
     // ==================== OUTLET, RECEIPT BRANDING & TABLE QR SETTINGS ====================
     function applyCafeBrandHeader() {
       const title = CAFE_CONFIG.cafeName || "Brew Nagri";
-      document.getElementById("header-cafe-name").textContent = title;
-      document.getElementById("hero-cafe-title").textContent = title;
+      const headerName = document.getElementById("header-cafe-name");
+      const heroName = document.getElementById("hero-cafe-title");
+      if (headerName) headerName.textContent = title;
+      if (heroName) heroName.textContent = title;
     }
 
     function updateSettingsLogoPreview() {
@@ -4329,8 +4571,8 @@
 
     function exportFullBackupJson() {
       const blob = new Blob([JSON.stringify({
-        CAFE_CONFIG, MENU_ITEMS, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
-        FLOOR_TABLES, ORDER_LOGS, EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS
+        CAFE_CONFIG, MENU_ITEMS, MENU_PROMO, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
+        FLOOR_TABLES, ORDER_LOGS, EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, STAFF_ATTENDANCE
       }, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -4346,6 +4588,7 @@
         try {
           const data = JSON.parse(e.target.result);
           if (data.MENU_ITEMS) MENU_ITEMS = data.MENU_ITEMS;
+          if (data.MENU_PROMO) MENU_PROMO = { ...MENU_PROMO, ...data.MENU_PROMO };
           if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
           getAllMenuCategories();
           if (data.INVENTORY_ITEMS) INVENTORY_ITEMS = data.INVENTORY_ITEMS;
