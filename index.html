@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Brew Nagri — Digital Menu, POS, Inventory & Cloud ERP</title>
+  <title>Brew Nagri — 3 Tables, Editable Inventory, Disposables & Add-ons</title>
 
   <!-- Google Fonts: Inter & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -24,7 +24,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 
   <script>
-    tailwind.config = {
+    if (window.tailwind) tailwind.config = {
       darkMode: 'class',
       theme: {
         extend: {
@@ -68,10 +68,11 @@
     /* Animated customer-menu promotion ticker */
     @keyframes bnPromoMarquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
     .bn-promo-marquee { overflow: hidden; white-space: nowrap; }
-    .bn-promo-track { display: inline-flex; width: max-content; min-width: 200%; animation: bnPromoMarquee 22s linear infinite; }
+    .bn-promo-track { display: inline-flex; width: max-content; min-width: 200%; animation: bnPromoMarquee 13s linear infinite; }
     .bn-promo-marquee:hover .bn-promo-track { animation-play-state: paused; }
     .bn-promo-message { display: inline-flex; align-items: center; gap: .55rem; padding: .4rem 1.25rem; font-size: 11px; font-weight: 800; letter-spacing: .02em; }
-    @media (prefers-reduced-motion: reduce) { .bn-promo-track { animation: none; min-width: 100%; } }
+    /* Keep announcements readable when the device requests reduced motion. */
+    @media (prefers-reduced-motion: reduce) { .bn-promo-track { animation-duration: 35s; } }
 
     /* Thermal Printer Rules (Supports 80mm / 3-inch & 58mm / 2-inch) */
     @media print {
@@ -133,7 +134,8 @@
       .bn-banner-dish-visual img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;animation:bnDishFade 5s ease-in-out infinite}
       @keyframes bnDishFade{0%,100%{opacity:.25;transform:scale(1.04)}15%,80%{opacity:1;transform:scale(1)}}
       @media(max-width:640px){.bn-banner-dish-visual{width:100%;height:150px;flex-basis:auto;order:-1}}
-      @media(prefers-reduced-motion:reduce){.bn-banner-dish-visual img{animation:none}}
+      @media(prefers-reduced-motion:reduce){.bn-banner-dish-visual img{animation-duration:12s}}
+      @media(max-width:640px){.bn-promo-track{animation-duration:11s}.bn-banner-dish-visual{box-shadow:0 0 0 2px rgba(251,191,36,.25),0 0 18px rgba(251,191,36,.22)}#menu-banner-motion-wrap{border-color:rgba(251,191,36,.7)}}
     </style>
 </head>
 <body class="bg-stone-100 dark:bg-stone-950 text-stone-900 dark:text-stone-100 font-sans antialiased transition-colors duration-200 mode-mobile">
@@ -158,7 +160,7 @@
           </div>
           <button onclick="openCloudSyncModal()" id="cloud-status-pill" class="flex items-center gap-1 text-[10px] font-semibold text-stone-500 dark:text-stone-400 hover:text-emerald-600 transition">
             <span id="cloud-dot" class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-            <span id="cloud-status-text">Local Protected • Owner Sync</span>
+            <span id="cloud-status-text">Local only • secure chain app separate</span>
           </button>
           <p id="customer-table-subtitle" class="hidden text-[10px] font-semibold text-stone-500 dark:text-stone-400">
             Self-Order Dining Menu
@@ -205,7 +207,7 @@
           </button>
         </div>
 
-        <button id="header-cloud-btn" onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Owner Cloud Sync">
+        <button id="header-cloud-btn" onclick="openCloudSyncModal()" class="p-1.5 rounded-full bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 text-stone-700 dark:text-stone-200 hover:bg-emerald-50" title="Launch separately deployed secure chain POS">
           <i data-lucide="cloud" class="w-4 h-4 text-emerald-600"></i>
         </button>
 
@@ -225,6 +227,7 @@
     </div>
   </header>
 
+  <!-- Local-only app: do not enable cross-device syncing without authenticated, transactional backend. -->
   <!-- ==================== VIEW 1: CUSTOMER DIGITAL MENU ==================== -->
   <main id="customer-view" class="app-container px-3 sm:px-5 py-4 pb-28">
     <!-- Hero Banner -->
@@ -253,7 +256,7 @@
       </div>
     </div>
 
-    <!-- Search & Category Filter Bar -->
+<!-- Search & Category Filter Bar -->
     <div class="bg-white dark:bg-stone-900 p-3 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-xs mb-4 space-y-2.5">
       <div class="relative">
         <i data-lucide="search" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"></i>
@@ -319,7 +322,11 @@
           <i data-lucide="grid" class="w-3.5 h-3.5 text-amber-500"></i>
           <span>Live Floor Tables & Takeaway Counters (Tap to Open Tab)</span>
         </h3>
-        <span id="floor-occupied-summary" class="text-[11px] font-bold text-amber-700 dark:text-amber-300">0 Active Tables</span>
+        <div class="flex flex-wrap items-center gap-2">
+          <span id="floor-occupied-summary" class="text-[11px] font-bold text-amber-700 dark:text-amber-300">0 Active Tables</span>
+          <button type="button" onclick="bnAddPosTable()" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs touch-btn" title="Create another table without leaving billing">+ Add Table</button>
+          <button type="button" onclick="openCafeSettingsModal()" class="px-2 py-1.5 rounded-lg border border-stone-300 dark:border-stone-700 text-[11px] font-bold" title="Manage table names and remove empty tables">Manage</button>
+        </div>
       </div>
       <div id="pos-floor-tables-grid" class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2"></div>
     </div>
@@ -369,7 +376,7 @@
           <!-- Loyalty Regular Banner -->
           <div id="pos-loyalty-banner" class="hidden mb-2 p-2 rounded-xl bg-purple-50 dark:bg-purple-950/50 border border-purple-200 dark:border-purple-800 flex items-center justify-between text-[11px]">
             <span id="pos-loyalty-text" class="font-bold text-purple-900 dark:text-purple-200">Regular Guest!</span>
-            <button onclick="applyLoyaltyTenPercentDiscount()" class="px-2 py-0.5 bg-purple-700 text-white rounded-lg font-bold">Apply 10% Off</button>
+            <button onclick="applyLoyaltyTenPercentDiscount()" class="px-2 py-0.5 bg-purple-700 text-white rounded-lg font-bold">Apply 5% Off</button>
           </div>
 
           <!-- Running Items List -->
@@ -381,7 +388,7 @@
           <div class="grid grid-cols-3 gap-1.5">
             <div>
               <label class="text-[10px] text-stone-400 font-bold block">Discount (₹)</label>
-              <input type="number" id="pos-discount-input" value="0" min="0" oninput="renderPosCart()" class="w-full p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" />
+              <input type="number" id="pos-discount-input" value="0" min="0" oninput="bnDiscountChanged()" class="w-full p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" />
             </div>
             <div>
               <label class="text-[10px] text-stone-400 font-bold block">GST Slab</label>
@@ -396,10 +403,17 @@
                 <option value="Cash">Cash</option>
                 <option value="UPI">UPI / QR</option>
                 <option value="Card">Card</option>
+                <option value="Udhaar">Udhaar / Credit</option>
               </select>
             </div>
           </div>
 
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-[11px] font-semibold">Serving <select id="bn-serving-mode" onchange="bnUpdateServingMode(this.value)" class="w-full rounded border p-1 dark:bg-stone-800"><option value="dinein">Dine-in</option><option value="takeaway">Takeaway / Packing</option></select></label>
+            <label class="text-[11px] font-semibold">Carry bags used <input id="bn-carry-bags" type="number" min="0" step="1" value="0" onchange="bnUpdateCarryBags(this.value)" class="w-full rounded border p-1 dark:bg-stone-800" /></label>
+          </div>
+          <button onclick="bnRequestDiscountApproval()" type="button" class="text-xs px-2 py-1 bg-violet-700 text-white rounded-lg font-bold">Owner approval for discount above 5%</button>
+          <p class="text-[10px] text-stone-500">Udhaar: customer name + valid phone mandatory. Limit ₹500 by default. Final bills cannot be discounted afterward.</p>
           <!-- Thermal Printer Paper Width Selector right inside POS -->
           <div class="flex items-center justify-between bg-stone-50 dark:bg-stone-800/80 px-2.5 py-1.5 rounded-xl border border-stone-200 dark:border-stone-700">
             <span class="text-[11px] font-bold text-stone-600 dark:text-stone-300 flex items-center gap-1">
@@ -461,33 +475,59 @@
           <i data-lucide="message-circle" class="w-3.5 h-3.5"></i>
           <span>WhatsApp Low-Stock List</span>
         </button>
-        <button onclick="simulateCheeseDemoOrder()" class="px-3 py-2 bg-amber-500 hover:bg-amber-600 text-stone-950 rounded-xl text-xs font-bold flex items-center gap-1.5 touch-btn">
-          <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-          <span>Test 5 Burgers + 5 Sandwiches (-10 Cheese)</span>
-        </button>
-        <button onclick="resetDefaultInventory()" class="px-3 py-2 bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl text-xs font-bold touch-btn">
-          Reset Stock to 100
-        </button>
+        <!-- Demo order stock deduction removed from live Inventory controls. -->
+        <!-- Dangerous reset-to-100 removed; count physical stock and edit each item. -->
         <button onclick="lockProtectedSessions()" class="px-3 py-2 bg-red-50 dark:bg-red-950/50 text-red-600 border border-red-200 dark:border-red-900 rounded-xl text-xs font-bold touch-btn">
           Lock
         </button>
       </div>
     </div>
 
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-3 border mb-4 text-xs space-y-2">
+      <b>Ingredient, Packaging & Operating Supplies Master</b>
+      <p>Photo-identified new products are listed with <b>stock not counted</b>. Press Edit to enter actual quantity, unit cost and low-stock threshold. Coffee beans are measured in grams; 1 kg = 1,000 g. Old stock records are preserved.</p>
+      <p><b>Confirmed Coffee Beans:</b> Espresso 14g · Hot Cappuccino 16g · Iced Cappuccino 16g · Iced Mocha 14g · Caramel Macchiato 14g · Hazelnut Frappe 14g · Special Coffee 15g · Signature Cold Coffee 15g. Cappuccino defaults are 16g from your 15–16g range. Add any missing drinks to Menu Editor; the coffee mapping will apply automatically.</p>
+      <button onclick="bnRenderPackagingEditor();document.getElementById('bn-packaging-editor').classList.toggle('hidden')" class="p-2 bg-amber-400 text-stone-950 font-bold rounded">Advanced: packaging code editor</button>
+      <div id="bn-packaging-editor" class="hidden max-h-72 overflow-y-auto"></div>
+    </div>
+    <div class="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 text-xs text-amber-950 dark:text-amber-100"><b>Stock check:</b> Existing sample stock may show 100 units. Verify physical quantities and ingredient costs before using stock reports. Newly added photo ingredients remain <b>Not counted</b> until entered.</div>
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-3 border border-stone-200 dark:border-stone-800 mb-4 space-y-2">
+      <div class="flex items-center justify-between gap-2 flex-wrap">
+        <h3 class="font-bold text-sm">Inventory categories</h3>
+        <span id="bn-inv-count" class="text-[11px] text-stone-500">All stock items</span>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+        <input id="bn-inventory-search" type="search" oninput="renderInventoryTab()" placeholder="Search foil, cheese, milk, cups..." class="p-2 rounded-xl border border-stone-300 dark:border-stone-700 dark:bg-stone-800 text-xs" />
+        <select id="bn-inventory-category" onchange="renderInventoryTab()" class="p-2 rounded-xl border border-stone-300 dark:border-stone-700 dark:bg-stone-800 text-xs font-semibold"><option value="all">All categories</option></select>
+      </div>
+      <p class="text-[11px] text-stone-500">Use <b>Disposables</b> for aluminium foil, boxes, cups and plates. Use <b>Add-ons &amp; Toppings</b> for cheese or any optional topping. Edit any item to change its category.</p>
+    </div>
     <!-- Add New Raw Material -->
     <div class="bg-white dark:bg-stone-900 rounded-2xl p-3.5 border border-stone-200 dark:border-stone-800 shadow-xs mb-4">
-      <h3 class="font-heading font-bold text-xs text-coffee-950 dark:text-amber-100 mb-2">Add New Raw Ingredient</h3>
+      <h3 class="font-heading font-bold text-xs text-coffee-950 dark:text-amber-100 mb-2">Add Inventory Item (ingredient, disposable or add-on)</h3>
       <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 text-xs">
         <input type="text" id="new-inv-name" placeholder="Name (e.g. Cheese Slices)" class="col-span-2 p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <input type="number" id="new-inv-stock" placeholder="Stock (e.g. 100)" min="0" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <input type="text" id="new-inv-unit" placeholder="Unit (slices, pcs)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <input type="number" id="new-inv-unit-cost" placeholder="Cost/Unit ₹ (e.g. 12)" min="0" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+        <select id="new-inv-category" aria-label="New item inventory category" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl">
+          <option value="Ingredients">Ingredients</option><option value="Add-ons &amp; Toppings">Add-ons &amp; Toppings</option><option value="Disposables">Disposables</option><option value="Packaging">Packaging</option><option value="Dairy">Dairy</option><option value="Coffee &amp; Tea">Coffee &amp; Tea</option><option value="Sauces &amp; Spreads">Sauces &amp; Spreads</option><option value="Cleaning &amp; Consumables">Cleaning &amp; Consumables</option><option value="Equipment">Equipment</option>
+        </select>
         <input type="text" id="new-inv-barcode" placeholder="Barcode (optional)" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         <button type="button" onclick="openBarcodeScanner()" class="py-2 px-3 bg-indigo-600 text-white font-bold rounded-xl">📷 Scan Barcode</button>
         <button onclick="addNewInventoryIngredient()" class="py-2 px-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl">+ Add Stock</button>
       </div>
     </div>
 
+    <div id="bn-inventory-dish-card" class="bg-white dark:bg-stone-900 rounded-2xl p-3.5 border border-stone-200 dark:border-stone-800 mb-4 space-y-3">
+      <div class="flex flex-wrap items-center justify-between gap-2">
+        <h3 class="font-heading font-bold text-sm">Edit Dish → Ingredients, Add-ons &amp; Disposables</h3>
+        <button onclick="bnGoToAddons()" class="px-3 py-1.5 rounded-lg bg-purple-700 text-white text-xs font-bold">Edit Cheese / Other Add-ons</button>
+      </div>
+      <p class="text-[11px] text-stone-500">Select a dish to edit its ingredient consumption and dine-in or takeaway disposables. Set the usage quantity per dish; actual stock is deducted when the bill is finalized.</p>
+      <select id="bn-inv-dish-select" onchange="bnRenderInventoryDishEditor()" class="w-full p-2 rounded-xl border border-stone-300 dark:border-stone-700 dark:bg-stone-800 text-xs font-semibold"></select>
+      <div id="bn-inv-dish-editor" class="space-y-3"></div>
+    </div>
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-7 space-y-2.5">
         <div id="inventory-items-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2.5"></div>
@@ -530,8 +570,10 @@
         <select id="new-addon-inv" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl">
           <option value="">No Stock Deduction</option>
         </select>
+        <input id="new-addon-qty" type="number" min="0.01" step="any" value="1" title="Quantity of ingredient used when this add-on is selected" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" placeholder="Stock qty per add-on" />
         <button onclick="addNewGlobalAddon()" class="py-2 px-3 bg-purple-700 hover:bg-purple-800 text-white font-bold rounded-xl">+ Add Modifier</button>
       </div>
+      <p class="text-[11px] text-stone-500">Example: Extra Cheese Slice +₹20 consumes 1 cheese slice. The price and stock quantity are editable; do not add cheese twice to a dish's base recipe.</p>
       <div id="global-addons-chips" class="flex flex-wrap gap-1.5"></div>
     </div>
 
@@ -564,7 +606,7 @@
         </button>
         <button onclick="openCloudSyncModal()" class="px-3 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 touch-btn">
           <i data-lucide="cloud" class="w-3.5 h-3.5"></i>
-          <span>Cloud Sync</span>
+          <span>Secure POS Portal</span>
         </button>
         <button onclick="openChangePinModal()" class="px-3 py-2 bg-rose-600 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 touch-btn">
           <i data-lucide="key-round" class="w-3.5 h-3.5"></i>
@@ -576,7 +618,7 @@
       </div>
     </div>
 
-    <!-- ==================== DEDICATED REPORTS SUITE (Item Reports | Order Reports | Stock Summary) ==================== -->
+<!-- ==================== DEDICATED REPORTS SUITE (Item Reports | Order Reports | Stock Summary) ==================== -->
     <div class="bg-white dark:bg-stone-900 rounded-2xl border border-stone-200 dark:border-stone-800 shadow-xs overflow-hidden">
       <!-- Report Sub-Navigation & PDF / Excel Export Buttons -->
       <div class="p-3.5 bg-stone-50 dark:bg-stone-800/80 border-b border-stone-200 dark:border-stone-700 flex flex-wrap items-center justify-between gap-2">
@@ -666,15 +708,15 @@
         <p id="kpi-revenue" class="text-lg sm:text-xl font-black text-coffee-950 dark:text-amber-200 mt-0.5">₹0</p>
       </div>
       <div class="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800">
-        <p class="text-[11px] font-bold text-stone-400">Ingredient Cost</p>
+        <p class="text-[11px] font-bold text-stone-400">Verified Direct Costs</p>
         <p id="kpi-cost" class="text-lg sm:text-xl font-black text-stone-700 dark:text-stone-300 mt-0.5">₹0</p>
       </div>
       <div class="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800">
-        <p class="text-[11px] font-bold text-stone-400">Daily Expenses</p>
+        <p class="text-[11px] font-bold text-stone-400">Period Expenses</p>
         <p id="kpi-expenses" class="text-lg sm:text-xl font-black text-rose-600 mt-0.5">₹0</p>
       </div>
       <div class="bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800">
-        <p class="text-[11px] font-bold text-stone-400">Net Take-Home Profit</p>
+        <p class="text-[11px] font-bold text-stone-400">Est. Operating Contribution</p>
         <p id="kpi-net-profit" class="text-lg sm:text-xl font-black text-emerald-600 mt-0.5">₹0</p>
       </div>
       <div class="col-span-2 sm:col-span-1 bg-white dark:bg-stone-900 p-3.5 rounded-2xl border border-stone-200 dark:border-stone-800">
@@ -682,6 +724,8 @@
         <p id="kpi-orders-margin" class="text-lg sm:text-xl font-black text-indigo-600 mt-0.5">0 • 0%</p>
       </div>
     </div>
+
+    <p id="bn-financial-verification-note" class="rounded-xl border border-amber-300 bg-amber-50 dark:bg-amber-950/40 p-3 text-[11px] text-amber-900 dark:text-amber-200">Reports exclude voided bills, use actual recorded expense dates and need verified costs. Estimated contribution is not audited net profit or franchise HQ income.</p>
 
     <!-- Staff Shift Accountability & Handover Audit -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -707,12 +751,29 @@
       </div>
     </div>
 
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border space-y-3 text-xs">
+      <h3 class="font-bold text-base">Outlet Settings — POS Rules (Owner Only)</h3>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <label>Outlet ID<input id="bn-outlet-id" class="p-2 border rounded w-full dark:bg-stone-800" value="BN-001" /></label>
+        <label>Outlet Name<input id="bn-outlet-name" class="p-2 border rounded w-full dark:bg-stone-800" value="Brew Nagri Bhagalpur" /></label>
+        <label>Default Udhaar Limit ₹<input id="bn-limit" type="number" min="0" class="p-2 border rounded w-full dark:bg-stone-800" value="500" /></label>
+        <label>Staff Discount Maximum %<input id="bn-discount-limit" type="number" min="0" max="100" class="p-2 border rounded w-full dark:bg-stone-800" value="5" /></label>
+      </div>
+      <button onclick="bnSavePolicies()" class="p-2 rounded bg-emerald-700 text-white font-bold">Save Owner Settings</button>
+      <div class="flex flex-wrap items-center justify-between gap-2"><b>Customer Udhaar Ledger</b><div class="flex flex-wrap gap-2"><button class="p-2 bg-amber-700 text-white rounded" onclick="bnSetCustomerCreditLimit()">Set Customer Credit Limit</button><button class="p-2 bg-indigo-700 text-white rounded" onclick="bnCreditRegister()">Receive Udhaar Payment</button></div></div>
+      <div id="bn-credit-summary" class="max-h-40 overflow-y-auto"></div>
+    </div>
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border text-xs space-y-2">
+      <h3 class="font-bold text-base">Historical Reference — POS Photo (27 Nov 2026)</h3>
+      <p><b>35 transactions / ₹2,406 reported sales</b> in the supplied screenshot. This is a reference only, <b>not imported as 35 real orders</b>.</p>
+      <p>Visible items: Adrak Chai 33 (₹330); Black Coffee 1 (₹35); Cappuccino 1 (₹59); Espresso 2 (₹70); Latte 8 (₹392); Margherita Pizza 1 (₹99); Mocha 1 (₹69). The photo shows only part of the complete report.</p>
+    </div>
     <!-- End-of-Day Cash Drawer Counter & Backup -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-7 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
         <div class="flex items-center justify-between">
           <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">End-of-Day Cash Drawer Reconciliation</h3>
-          <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">System Cash Sales Today: ₹<span id="drawer-expected-cash">0</span></span>
+          <span class="text-[11px] font-bold text-emerald-700 dark:text-emerald-400">Recorded Cash Sales Today: ₹<span id="drawer-expected-cash">0</span></span>
         </div>
         <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5">
           <div><label class="text-[10px] font-bold">₹500 ×</label><input type="number" id="note-500" value="0" min="0" oninput="calculateCashDrawer()" class="w-full p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" /></div>
@@ -726,6 +787,9 @@
           <span>Physical Cash Counted: <strong>₹<span id="drawer-counted-cash">0</span></strong></span>
           <span id="drawer-diff-badge" class="px-2 py-0.5 rounded bg-stone-200 dark:bg-stone-700">Diff: ₹0</span>
         </div>
+        <p class="text-[10px] text-stone-500">Expected amount is recorded cash sales only. Adjust separately for opening float, cash-paid expenses and withdrawals before interpreting a shortage.</p>
+        <button onclick="saveCashReconciliation()" class="w-full py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl font-extrabold">Save Daily Cash Closing</button>
+        <div id="cash-reconciliation-history" class="max-h-28 overflow-y-auto text-[10px] space-y-1 text-stone-500"></div>
       </div>
 
       <div class="lg:col-span-5 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs flex flex-col justify-between">
@@ -746,12 +810,17 @@
     <!-- Daily Operating Expenses & Customer Loyalty CRM -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
       <div class="lg:col-span-6 bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2.5 text-xs">
-        <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Daily Operating Expenses (Milk, Gas, Wages)</h3>
+        <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Operating Expenses — Daily &amp; Monthly</h3>
+        <p class="text-[11px] text-stone-500">Enter real rent, salaries, electricity and overheads. Do not enter raw-material purchases again as an operating expense if their cost is already deducted by recipes.</p>
         <div class="grid grid-cols-3 gap-2">
           <input type="text" id="exp-title" placeholder="Expense (e.g. Milk Delivery)" class="col-span-2 p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
           <input type="number" id="exp-amount" placeholder="₹ Amount" min="1" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
         </div>
-        <button onclick="addDailyExpense()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl">+ Log Expense</button>
+        <div class="grid grid-cols-2 gap-2">
+          <label class="font-semibold">Expense date<input id="bn-expense-date" type="date" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+          <label class="font-semibold">Category<select id="bn-expense-category" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800"><option>Other</option><option>Rent</option><option>Staff salaries</option><option>Electricity</option><option>Gas</option><option>Internet</option><option>Repairs</option><option>Marketing</option><option>Franchise outlet overhead</option></select></label>
+        </div>
+        <button onclick="addDailyExpense()" class="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl">+ Log Dated Expense</button>
         <div id="owner-expenses-list" class="space-y-1.5 max-h-44 overflow-y-auto custom-scrollbar"></div>
       </div>
 
@@ -759,6 +828,11 @@
         <h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Customer CRM & Repeat Loyalty Directory</h3>
         <div id="owner-crm-list" class="space-y-1.5 max-h-56 overflow-y-auto custom-scrollbar"></div>
       </div>
+    </div>
+
+    <div class="bg-white dark:bg-stone-900 rounded-2xl p-4 border border-stone-200 dark:border-stone-800 space-y-2">
+      <div class="flex items-center justify-between"><h3 class="font-heading font-bold text-sm text-coffee-950 dark:text-amber-100">Owner Audit Trail</h3><span class="text-[10px] text-stone-400">Recent sensitive actions</span></div>
+      <div id="owner-audit-log" class="max-h-48 overflow-y-auto space-y-1.5 text-[10px] text-stone-600 dark:text-stone-300"></div>
     </div>
 
     <!-- Menu Categories, Item Price, Cost & Photo Editor -->
@@ -849,23 +923,23 @@
       </div>
       <div class="p-4 overflow-y-auto custom-scrollbar space-y-3 text-xs flex-1">
         <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          <input type="text" id="order-customer-name" placeholder="Your Name" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
-          <input type="tel" id="order-customer-phone" placeholder="Mobile for 10% offer" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+          <input type="text" id="order-customer-name" oninput="renderCustomerTrayDrawer()" placeholder="Your Name" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
+          <input type="tel" id="order-customer-phone" oninput="renderCustomerTrayDrawer()" placeholder="Mobile for 5% offer" class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
           <input type="text" id="order-table-input" placeholder="Table No." class="p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
         </div>
         <label class="flex items-start gap-2 p-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 text-[11px]">
-          <input type="checkbox" id="customer-loyalty-consent" class="mt-0.5 accent-emerald-600" />
-          <span><strong>Get 10% off this order.</strong> I agree that Brew Nagri may save my name and mobile number for loyalty offers and order history.</span>
+          <input type="checkbox" id="customer-loyalty-consent" onchange="renderCustomerTrayDrawer()" class="mt-0.5 accent-emerald-600" />
+          <span><strong>Get up to 5% off this order.</strong> I agree that Brew Nagri may save my name and mobile number for loyalty offers and order history.</span>
         </label>
-        <p id="customer-loyalty-hint" class="text-[10px] text-emerald-700 dark:text-emerald-300">Enter your name + 10-digit mobile and tick the box to claim 10% off.</p>
+        <p id="customer-loyalty-hint" class="text-[10px] text-emerald-700 dark:text-emerald-300">Enter your name + 10-digit mobile and tick the box to claim up to 5% off. Staff must verify the final amount.</p>
         <div id="customer-tray-items-list" class="space-y-2"></div>
 
         <!-- Dynamic UPI QR Payment Box -->
         <div id="customer-upi-qr-box" class="hidden p-3 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 flex items-center gap-3">
           <div id="customer-upi-qr-canvas" class="bg-white p-1.5 rounded-xl shrink-0"></div>
           <div>
-            <p class="font-bold text-emerald-900 dark:text-emerald-200">Instant UPI Pay — ₹<span id="customer-upi-amount">0</span></p>
-            <p class="text-[11px] text-emerald-700 dark:text-emerald-300">Scan with GPay, PhonePe, or Paytm (<span id="customer-upi-id-label"></span>)</p>
+            <p class="font-bold text-emerald-900 dark:text-emerald-200">UPI payment request — ₹<span id="customer-upi-amount">0</span></p>
+            <p class="text-[11px] text-emerald-700 dark:text-emerald-300">Scan with GPay, PhonePe, or Paytm (<span id="customer-upi-id-label"></span>). Staff must verify payment.</p>
           </div>
         </div>
       </div>
@@ -964,40 +1038,28 @@
     </div>
   </div>
 
-  <!-- 5. Multi-Device Cloud Sync & Magic Transfer QR Modal -->
+  <!-- 5. Safe transition into the separately deployed authenticated chain app -->
   <div id="cloud-sync-modal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 bg-stone-950/75 backdrop-blur-xs">
     <div class="bg-white dark:bg-stone-900 max-w-lg w-full rounded-2xl shadow-2xl border border-stone-200 dark:border-stone-800 overflow-hidden flex flex-col max-h-[90vh]">
-      <div class="p-4 bg-emerald-950 text-white flex items-center justify-between">
-        <div>
-          <h3 class="font-heading font-bold text-base">Zero-Loss Multi-Device Cloud Sync</h3>
-          <p class="text-[11px] text-emerald-300">Switch phones anytime without losing orders, stock, or menu</p>
-        </div>
-        <button onclick="closeCloudSyncModal()" class="p-1 rounded-full hover:bg-white/10"><i data-lucide="x" class="w-5 h-5"></i></button>
+      <div class="p-4 bg-coffee-950 text-white flex items-center justify-between">
+        <div><h3 class="font-heading font-bold text-base">Brew Nagri Secure Chain POS</h3><p class="text-[11px] text-amber-300">Project brewnagri-7dcd1 · outlet access only</p></div>
+        <button type="button" onclick="closeCloudSyncModal()" class="p-1 rounded-full hover:bg-white/10" aria-label="Close"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <div class="p-4 overflow-y-auto custom-scrollbar space-y-3 text-xs">
-        <div>
-          <label class="font-bold block mb-1">Firebase Realtime Database URL (or Google Apps Script URL)</label>
-          <input type="url" id="cloud-db-url-input" placeholder="https://your-project-default-rtdb.firebaseio.com" class="w-full p-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-mono text-[11px]" />
+      <div class="p-4 space-y-3 text-xs overflow-y-auto">
+        <div class="p-3 bg-amber-50 dark:bg-amber-950/40 border border-amber-300 rounded-xl text-amber-950 dark:text-amber-200">
+          <b>This HTML is LOCAL ONLY.</b> It cannot securely synchronize bills or customers between outlets. The original full-snapshot cloud transfer has been disabled to protect data. Configure a <b>deployed, authenticated Firebase Hosting URL</b> to launch the separate chain POS. This does not migrate local data.
         </div>
-        <div>
-          <label class="font-bold block mb-1">Café Workspace ID (Same on all phones)</label>
-          <input type="text" id="cloud-workspace-input" placeholder="brewnagri-main" class="w-full p-2.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl font-bold" />
-        </div>
+        <label class="font-bold block">Authenticated chain app's Firebase Hosting URL
+          <input id="bn-chain-hosting-url" type="url" placeholder="https://YOUR_PROJECT.web.app" autocomplete="off" class="mt-1 w-full p-2.5 border border-stone-300 dark:border-stone-700 rounded-xl dark:bg-stone-800" />
+        </label>
+        <p class="text-stone-500">Only HTTPS hosting is accepted (localhost for development). Use an address from your actual Firebase deployment—not a Realtime Database URL. Do not enter passwords or API private keys.</p>
         <div class="flex gap-2">
-          <button onclick="saveAndConnectCloud()" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold rounded-xl">Connect & Push Now</button>
-          <button onclick="pullFromCloudNow()" class="flex-1 py-2.5 bg-stone-800 text-white font-bold rounded-xl">Pull Latest from Cloud</button>
+          <button type="button" onclick="bnSaveChainHostingUrl()" class="flex-1 p-2.5 bg-emerald-700 text-white font-bold rounded-xl">Save Portal URL</button>
+          <button type="button" onclick="bnOpenChainStaffPos()" class="flex-1 p-2.5 bg-indigo-700 text-white font-bold rounded-xl">Open Secure POS</button>
         </div>
-
-        <!-- 1-Tap Magic Phone Transfer Link & QR -->
-        <div id="magic-transfer-box" class="hidden p-3 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-800 space-y-2">
-          <p class="font-bold text-amber-950 dark:text-amber-200">1-Tap New Phone Transfer Link & QR:</p>
-          <p class="text-[11px] text-stone-600 dark:text-stone-300">Scan this QR or open this link on your new phone to automatically link your cloud database:</p>
-          <div id="magic-transfer-qr" class="bg-white p-2 rounded-xl inline-block"></div>
-          <div class="flex gap-1.5">
-            <input type="text" id="magic-transfer-url" readonly class="flex-1 p-1.5 bg-white dark:bg-stone-900 border border-stone-300 dark:border-stone-700 rounded-lg text-[10px] font-mono" />
-            <button onclick="copyMagicTransferLink()" class="px-2.5 py-1.5 bg-coffee-950 text-amber-300 rounded-lg font-bold">Copy</button>
-          </div>
-        </div>
+        <p id="bn-chain-portal-status" role="status" class="font-semibold text-stone-500">Cloud mode has not been configured.</p>
+        <button type="button" onclick="exportFullBackupJson()" class="w-full p-2 border rounded-xl font-bold">Export This Device's Backup JSON First</button>
+        <p class="text-stone-500">HQ is a <b>separate authenticated portal</b> under <code>/hq.html</code>. No franchise financial terms or network-wide data are shown in this outlet screen.</p>
       </div>
     </div>
   </div>
@@ -1075,7 +1137,7 @@
 
         <!-- Custom Floor Tables Editor -->
         <div class="pt-2 border-t border-stone-200 dark:border-stone-800">
-          <label class="font-bold block mb-1">Floor Tables & Delivery Counters</label>
+          <label class="font-bold block mb-1">Floor Tables (3 by default; add more as needed)</label>
           <div class="flex gap-1.5 mb-2">
             <input type="text" id="new-floor-table-name" placeholder="e.g. Table 7, Garden 1, Zomato" class="flex-1 p-2 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-xl" />
             <button onclick="addCustomFloorTable()" class="px-3 py-2 bg-emerald-600 text-white rounded-xl font-bold">+ Add</button>
@@ -1087,6 +1149,38 @@
         <button type="button" onclick="closeCafeSettingsModal()" class="flex-1 py-2 bg-stone-200 dark:bg-stone-700 rounded-xl font-bold text-xs">Cancel</button>
         <button type="button" onclick="saveCafeSettings()" class="flex-1 py-2 bg-coffee-950 text-amber-300 rounded-xl font-extrabold text-xs">Save Settings</button>
       </div>
+    </div>
+  </div>
+
+  <!-- Brew Nagri: edit add-on price and exact inventory stock usage -->
+  <div id="bn-edit-addon-modal" role="dialog" aria-modal="true" aria-label="Edit add-on" class="hidden fixed inset-0 z-[70] bg-stone-950/75 p-3 flex items-center justify-center">
+    <div class="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 w-full max-w-md rounded-2xl shadow-xl p-4 space-y-3">
+      <div class="flex items-center justify-between"><h3 class="font-heading font-bold text-base">Edit Dish Add-on</h3><button type="button" onclick="bnCloseAddonEdit()" class="px-2 py-1 border rounded">Close</button></div>
+      <input type="hidden" id="bn-edit-addon-index" />
+      <label class="block text-xs font-bold">Add-on name<input id="bn-edit-addon-name" class="w-full mt-1 p-2 border rounded dark:bg-stone-800" /></label>
+      <label class="block text-xs font-bold">Extra charge to customer (₹)<input id="bn-edit-addon-price" type="number" step="any" min="0" class="w-full mt-1 p-2 border rounded dark:bg-stone-800" /></label>
+      <label class="block text-xs font-bold">Inventory item used<select id="bn-edit-addon-stock" class="w-full mt-1 p-2 border rounded dark:bg-stone-800"></select></label>
+      <label class="block text-xs font-bold">Quantity used per add-on<input id="bn-edit-addon-qty" type="number" min="0" step="any" class="w-full mt-1 p-2 border rounded dark:bg-stone-800" /></label>
+      <p class="text-[11px] text-stone-500">Example: Extra Cheese Slice → Cheese Slices → 1 slice. This is separate from the regular cheese already in a dish recipe.</p>
+      <button type="button" onclick="bnSaveAddonEdit()" class="w-full rounded-xl p-2 bg-emerald-700 text-white text-xs font-bold">Save Add-on</button>
+    </div>
+  </div>
+
+  <!-- Brew Nagri: edit inventory item as a single form -->
+  <div id="bn-edit-stock-modal" role="dialog" aria-modal="true" aria-label="Edit inventory item" class="hidden fixed inset-0 z-[70] bg-stone-950/75 p-3 flex items-center justify-center">
+    <div class="bg-white dark:bg-stone-900 text-stone-900 dark:text-stone-100 w-full max-w-lg rounded-2xl shadow-xl p-4 space-y-3 max-h-[92vh] overflow-y-auto">
+      <div class="flex justify-between gap-2 items-center"><h3 class="font-heading font-bold text-base">Edit Inventory Item</h3><button type="button" onclick="bnCloseStockModal()" class="px-2 py-1 rounded border text-sm">Close</button></div>
+      <input type="hidden" id="bn-edit-stock-id" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+        <label class="sm:col-span-2 font-semibold">Item name <input id="bn-edit-stock-name" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+        <label class="font-semibold">Category <select id="bn-edit-stock-category" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800"></select></label>
+        <label class="font-semibold">Unit (slices, sheets, g, ml...) <input id="bn-edit-stock-unit" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+        <label class="font-semibold">Actual stock (blank = not counted) <input id="bn-edit-stock-quantity" type="number" min="0" step="any" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+        <label class="font-semibold">Cost per unit ₹ <input id="bn-edit-stock-cost" type="number" min="0" step="any" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+        <label class="font-semibold">Low-stock alert at <input id="bn-edit-stock-low" type="number" min="0" step="any" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+        <label class="font-semibold">Barcode (optional) <input id="bn-edit-stock-barcode" class="mt-1 w-full p-2 border rounded-lg dark:bg-stone-800" /></label>
+      </div>
+      <div class="grid grid-cols-2 gap-2"><button type="button" onclick="bnCloseStockModal()" class="p-2 rounded-xl bg-stone-200 dark:bg-stone-700 font-bold text-xs">Cancel</button><button type="button" onclick="bnSaveInventoryItemEdit()" class="p-2 rounded-xl bg-emerald-700 text-white font-bold text-xs">Save Item</button></div>
     </div>
   </div>
 
@@ -1346,7 +1440,7 @@
     ];
 
     const DEFAULT_INVENTORY = [
-      { id: "inv-cheese", name: "Cheese Slices", stock: 100, unit: "slices", lowThreshold: 15, unitCost: 12 },
+      { id: "inv-cheese", name: "Cheese Slices", category: "Add-ons & Toppings", stock: 100, unit: "slices", lowThreshold: 15, unitCost: 12 },
       { id: "inv-buns", name: "Burger Buns", stock: 100, unit: "buns", lowThreshold: 15, unitCost: 10 },
       { id: "inv-bread", name: "Bread Slices", stock: 100, unit: "slices", lowThreshold: 20, unitCost: 4 },
       { id: "inv-patty", name: "Veg Herb Patties", stock: 100, unit: "pcs", lowThreshold: 15, unitCost: 16 },
@@ -1358,6 +1452,420 @@
       { id: "inv-coffee", name: "Espresso Coffee Shots", stock: 100, unit: "shots", lowThreshold: 20, unitCost: 14 },
       { id: "inv-milk", name: "Fresh Milk Cups", stock: 100, unit: "cups", lowThreshold: 20, unitCost: 10 }
     ];
+
+    const BN_NEW_INVENTORY_CATALOG = [
+    {
+        "id": "bn-coffee-beans",
+        "name": "Coffee Beans (1 kg packets)",
+        "category": "Coffee & Tea",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-milk-ml",
+        "name": "Amul Gold Milk",
+        "category": "Dairy",
+        "unit": "ml",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-sandwich-spread",
+        "name": "Dr. Oetker Cucumber & Carrot Sandwich Spread (225 g)",
+        "category": "Sauces & Spreads",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-schezwan",
+        "name": "Ching’s Secret Schezwan Chutney",
+        "category": "Sauces & Spreads",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-vanilla-icecream",
+        "name": "Amul Vanilla Magic Ice Cream",
+        "category": "Frozen Ingredients",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-amul-butter",
+        "name": "Amul Butter Portions",
+        "category": "Dairy",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-masala-magic",
+        "name": "Maggi Masala-ae-Magic (2 g sachets)",
+        "category": "Seasonings",
+        "unit": "sachets",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-amul-cheese",
+        "name": "Amul Cheese Slices",
+        "category": "Add-ons & Toppings",
+        "unit": "slices",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-monin-hazelnut",
+        "name": "Monin Hazelnut Syrup",
+        "category": "Syrups",
+        "unit": "ml",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-teisseire-mojito",
+        "name": "Mathieu Teisseire Mojito Mint Syrup",
+        "category": "Syrups",
+        "unit": "ml",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-hersheys",
+        "name": "Hershey’s Chocolate Syrup",
+        "category": "Syrups",
+        "unit": "ml",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-oreo",
+        "name": "Cadbury Oreo Original",
+        "category": "Biscuits & Toppings",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-kitkat",
+        "name": "Nestlé KitKat",
+        "category": "Biscuits & Toppings",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-oregano",
+        "name": "Keya Pizza Oregano Spice Mix",
+        "category": "Seasonings",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-condensed",
+        "name": "Amul Gold Sweetened Condensed Milk",
+        "category": "Dairy",
+        "unit": "g",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-water",
+        "name": "Drinking Water (dispenser)",
+        "category": "Beverages",
+        "unit": "litres",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-plate",
+        "name": "Common Disposable Plate (burger/sandwich/momos)",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-maggi-bowl",
+        "name": "Maggi Disposable Bowl",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-small-bowl",
+        "name": "Small Bowl (Wai Wai / Sweet Corn)",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-momo-box",
+        "name": "Aluminium Momos Packing Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-chutney-cup",
+        "name": "Chutney Container with Lid",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-hot-cup",
+        "name": "Hot Coffee Cup",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-cold-glass",
+        "name": "Cold Coffee Glass",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-cold-lid",
+        "name": "Cold Coffee Lid",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-chai-cup",
+        "name": "Chai Cup",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-kulhad",
+        "name": "Clay Kulhad",
+        "category": "Disposables",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-spoon",
+        "name": "Disposable Spoon",
+        "category": "Cutlery",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-fork",
+        "name": "Disposable Fork",
+        "category": "Cutlery",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-carry-bag",
+        "name": "Takeaway Carry Bag",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-pizza8",
+        "name": "8-inch Pizza Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-pizza9",
+        "name": "9-inch Pizza Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-pizza10",
+        "name": "10-inch Pizza Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-sauce-cup",
+        "name": "Sauce Packing Container",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-burger-box",
+        "name": "Single Burger Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-burger-duo",
+        "name": "Duo Burger Box",
+        "category": "Packaging",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-dustbin-bag",
+        "name": "Dustbin / Garbage Bag",
+        "category": "Operating Supplies",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-thermal-roll",
+        "name": "Thermal Printer Paper Roll",
+        "category": "Operating Supplies",
+        "unit": "rolls",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-gloves",
+        "name": "Biodegradable PE Gloves",
+        "category": "Operating Supplies",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-spout-pouch",
+        "name": "Reusable Spout Pouch",
+        "category": "Equipment",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-waste-bin",
+        "name": "Waste Bin",
+        "category": "Equipment",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {
+        "id": "bn-water-jar",
+        "name": "Reusable Water Jar",
+        "category": "Equipment",
+        "unit": "pcs",
+        "stock": 0,
+        "tracked": false,
+        "lowThreshold": 0,
+        "unitCost": 0
+    },
+    {"id":"bn-aluminium-foil","name":"Aluminium Foil","category":"Disposables","unit":"sheets","stock":0,"tracked":false,"lowThreshold":0,"unitCost":0}
+];
 
     const DEFAULT_RECIPE_MAP = {
       "bg-1": [{ invId: "inv-cheese", qty: 1 }, { invId: "inv-buns", qty: 1 }, { invId: "inv-patty", qty: 1 }],
@@ -1383,7 +1891,7 @@
       { id: "add-paneer", name: "Extra Paneer", price: 30, invId: "inv-paneer", invQty: 1 },
       { id: "add-shot", name: "Extra Espresso Shot", price: 25, invId: "inv-coffee", invQty: 1 },
       { id: "add-less-sugar", name: "Less Sugar", price: 0, invId: "", invQty: 0 },
-      { id: "add-jain", name: "Jain / No Onion-Garlic", price: 0, invId: "", invQty: 0 }
+      { id: "add-jain", name: "Jain / No Onion-Garlic", price: 0, invId: "", invQty: 0 },
     ];
 
     const DEFAULT_STAFF_ACCOUNTS = [
@@ -1414,8 +1922,70 @@
     let MENU_CATEGORIES = [...new Set(DEFAULT_MENU_ITEMS.map(m => m.category))];
     let INVENTORY_ITEMS = JSON.parse(JSON.stringify(DEFAULT_INVENTORY));
     let RECIPE_MAP = JSON.parse(JSON.stringify(DEFAULT_RECIPE_MAP));
+    const BN_COFFEE_RECIPES = {"Espresso":14,"Hot Cappuccino":16,"Iced Cappuccino":16,"Iced Mocha":14,"Caramel Macchiato":14,"Hazelnut Frappe":14,"Special Coffee":15,"Signature Cold Coffee":15};
+    const BN_PACKAGING_DEFAULTS = {
+      "bg-1":{dinein:[["plate",1]],takeaway:[["burger-box",1]]},"bg-2":{dinein:[["plate",1]],takeaway:[["burger-box",1]]},"bg-3":{dinein:[["plate",1]],takeaway:[["burger-box",1]]},
+      "sw-1":{dinein:[["plate",1]],takeaway:[["plate",1]]},"sw-2":{dinein:[["plate",1]],takeaway:[["plate",1]]},"sw-3":{dinein:[["plate",1]],takeaway:[["plate",1]]},
+      "mg-1":{dinein:[["maggi-bowl",1],["spoon",1],["fork",1]],takeaway:[["maggi-bowl",1],["spoon",1],["fork",1]]},
+      "mg-2":{dinein:[["maggi-bowl",1],["spoon",1],["fork",1]],takeaway:[["maggi-bowl",1],["spoon",1],["fork",1]]},
+      "mo-1":{dinein:[["plate",1]],takeaway:[["momo-box",1],["chutney-cup",3]]},"mo-2":{dinein:[["plate",1]],takeaway:[["momo-box",1],["chutney-cup",3]]},
+      "cc-1":{dinein:[["cold-glass",1],["cold-lid",1]],takeaway:[["cold-glass",1],["cold-lid",1]]},
+      "cc-2":{dinein:[["cold-glass",1],["cold-lid",1]],takeaway:[["cold-glass",1],["cold-lid",1]]},
+      "sh-1":{dinein:[["cold-glass",1],["cold-lid",1]],takeaway:[["cold-glass",1],["cold-lid",1]]},
+      "hb-1":{dinein:[["hot-cup",1]],takeaway:[["hot-cup",1]]},"hb-2":{dinein:[["kulhad",1]],takeaway:[["chai-cup",1]]}
+    };
+    let BN_PACKAGING_MAP = JSON.parse(JSON.stringify(BN_PACKAGING_DEFAULTS));
+    let BN_CREDIT_PAYMENTS = [];
+    let BN_CUSTOMER_LIMITS = {};
+    let BN_OUTLET = {id:"BN-001",name:"Brew Nagri Bhagalpur"};
+    let BN_POLICIES = {creditLimit:500,staffDiscountPercent:5};
+    let BN_DISCOUNT_APPROVAL = null;
+    let BN_HOLD_CLOUD = true; // old full-snapshot cloud synchronization is unsafe for multiple devices
+    function bnMergeCatalog() {
+      for (const item of BN_NEW_INVENTORY_CATALOG) {
+        if (!INVENTORY_ITEMS.some(old=>old.id===item.id)) INVENTORY_ITEMS.push({...item});
+      }
+      const legacyCheese=INVENTORY_ITEMS.find(x=>x.id==="inv-cheese");
+      if(legacyCheese&&!legacyCheese.category)legacyCheese.category="Add-ons & Toppings";
+      const amulCheese=INVENTORY_ITEMS.find(x=>x.id==="bn-amul-cheese");
+      if(amulCheese&&amulCheese.category==="Dairy")amulCheese.category="Add-ons & Toppings";
+      // Preserve existing recipes; replace old generic coffee-shot link with precise grams for known dishes.
+      for (const dish of MENU_ITEMS) {
+        const grams = BN_COFFEE_RECIPES[dish.name];
+        if (!grams) continue;
+        const links = RECIPE_MAP[dish.id] || [];
+        if(links.some(x=>x.invId==="bn-coffee-beans")) continue; // never overwrite owner's edited quantity
+        const old=links.filter(x=>x.invId!=="inv-coffee");
+        old.push({invId:"bn-coffee-beans",qty:grams});
+        RECIPE_MAP[dish.id]=old;
+      }
+      // New menu items also get sensible packaging templates, without editing existing mappings.
+      for(const d of MENU_ITEMS){
+        if(BN_PACKAGING_MAP[d.id]) continue;
+        const name=d.name.toLowerCase();
+        let rule=null;
+        if(name.includes("pizza")){const size=name.match(/(8|9|10)[ -]?(?:inch|inches|")/);const box=size?"pizza"+size[1]:"pizza8";rule={dinein:[["plate",1]],takeaway:[[box,1],["sauce-cup",1]]};}
+        else if(name.includes("wai wai")||name.includes("wai-wai")||name.includes("sweet corn")){rule={dinein:[["small-bowl",1],["spoon",1]],takeaway:[["small-bowl",1],["spoon",1]]};}
+        else if(name.includes("momos")){rule={dinein:[["plate",1]],takeaway:[["momo-box",1],["chutney-cup",3]]};}
+        else if(name.includes("burger")){rule={dinein:[["plate",1]],takeaway:[["burger-box",1]]};}
+        else if(name.includes("sandwich")){rule={dinein:[["plate",1]],takeaway:[["plate",1]]};}
+        else if(name.includes("cold coffee")||name.includes("iced")||name.includes("frappe")){rule={dinein:[["cold-glass",1],["cold-lid",1]],takeaway:[["cold-glass",1],["cold-lid",1]]};}
+        if(rule)BN_PACKAGING_MAP[d.id]=rule;
+      }
+    }
+    function bnMigrateDefaultTables() {
+      // Older builds created 6 tables and 2 counters by default. Only reduce that exact
+      // untouched list, and only if there are no unpaid orders/alerts on extra tables.
+      const old=["Table 1","Table 2","Table 3","Table 4","Table 5","Table 6","Takeaway 1","Takeaway 2"];
+      if (Array.isArray(FLOOR_TABLES) && FLOOR_TABLES.length===old.length && FLOOR_TABLES.every((t,i)=>t===old[i])) {
+        const occupied=old.slice(3).some(t=>ACTIVE_TABLE_ORDERS[t] && ((ACTIVE_TABLE_ORDERS[t].lines||[]).length || ACTIVE_TABLE_ORDERS[t].waAlert));
+        if (!occupied) FLOOR_TABLES=old.slice(0,3);
+      }
+      if (!Array.isArray(FLOOR_TABLES) || !FLOOR_TABLES.length) FLOOR_TABLES=["Table 1","Table 2","Table 3"];
+      if (!FLOOR_TABLES.includes(activePosTable)) activePosTable=FLOOR_TABLES[0];
+    }
     let GLOBAL_ADDONS = JSON.parse(JSON.stringify(DEFAULT_ADDONS));
-    let FLOOR_TABLES = ["Table 1", "Table 2", "Table 3", "Table 4", "Table 5", "Table 6", "Takeaway 1", "Takeaway 2"];
+    let FLOOR_TABLES = ["Table 1", "Table 2", "Table 3"];
     let ACTIVE_TABLE_ORDERS = {};
     let ORDER_LOGS = [];
     let INVENTORY_LOGS = [];
@@ -1424,6 +1994,8 @@
     let STAFF_ACCOUNTS = JSON.parse(JSON.stringify(DEFAULT_STAFF_ACCOUNTS));
     let SHIFT_HANDOVERS = [];
     let STAFF_ATTENDANCE = [];
+    let CASH_RECONCILIATIONS = [];
+    let AUDIT_LOGS = [];
     let barcodeStream = null;
     let barcodeScanTimer = null;
     let bannerImageTimer = null;
@@ -1596,6 +2168,17 @@
         if (shf) SHIFT_HANDOVERS = JSON.parse(shf) || [];
         const att = localStorage.getItem("bn_staff_attendance");
         if (att) STAFF_ATTENDANCE = JSON.parse(att) || [];
+        const cashRec = localStorage.getItem("bn_cash_reconciliations");
+        if (cashRec) CASH_RECONCILIATIONS = JSON.parse(cashRec) || [];
+        const audit = localStorage.getItem("bn_audit_logs");
+        if (audit) AUDIT_LOGS = JSON.parse(audit) || [];
+        try { BN_POLICIES={...BN_POLICIES,...JSON.parse(localStorage.getItem("bn_policies")||"{}")}; } catch(e) {}
+        try { BN_PACKAGING_MAP={...BN_PACKAGING_MAP,...JSON.parse(localStorage.getItem("bn_packaging_map")||"{}")}; } catch(e) {}
+        try { BN_CREDIT_PAYMENTS=JSON.parse(localStorage.getItem("bn_credit_payments")||"[]"); } catch(e) {}
+        try { BN_CUSTOMER_LIMITS=JSON.parse(localStorage.getItem("bn_customer_limits")||"{}"); } catch(e) {}
+        try { const o=JSON.parse(localStorage.getItem("bn_outlet")||"{}");BN_OUTLET={id:String(o.id||BN_OUTLET.id),name:String(o.name||BN_OUTLET.name)}; } catch(e) {}
+        bnMergeCatalog();
+        bnMigrateDefaultTables();
         const opin = localStorage.getItem("bn_owner_pin");
         if (opin) OWNER_PIN = opin;
         const cld = localStorage.getItem("bn_cloud_config");
@@ -1605,6 +2188,11 @@
 
     function persistAllState(triggerCloud = true) {
       try {
+        localStorage.setItem("bn_policies",JSON.stringify(BN_POLICIES));
+        localStorage.setItem("bn_packaging_map",JSON.stringify(BN_PACKAGING_MAP));
+        localStorage.setItem("bn_credit_payments",JSON.stringify(BN_CREDIT_PAYMENTS));
+        localStorage.setItem("bn_customer_limits",JSON.stringify(BN_CUSTOMER_LIMITS));
+        localStorage.setItem("bn_outlet",JSON.stringify(BN_OUTLET));
         localStorage.setItem("bn_cafe_config", JSON.stringify(CAFE_CONFIG));
         localStorage.setItem("bn_menu_items", JSON.stringify(MENU_ITEMS));
         localStorage.setItem("bn_menu_promo", JSON.stringify(MENU_PROMO));
@@ -1621,15 +2209,20 @@
         localStorage.setItem("bn_staff_accounts", JSON.stringify(STAFF_ACCOUNTS));
         localStorage.setItem("bn_shift_handovers", JSON.stringify(SHIFT_HANDOVERS));
         localStorage.setItem("bn_staff_attendance", JSON.stringify(STAFF_ATTENDANCE));
+        localStorage.setItem("bn_cash_reconciliations", JSON.stringify(CASH_RECONCILIATIONS));
+        localStorage.setItem("bn_audit_logs", JSON.stringify(AUDIT_LOGS));
         localStorage.setItem("bn_owner_pin", OWNER_PIN);
       } catch (e) {
         showNotification("Browser storage nearly full—export a Backup JSON or compress photos.");
       }
       updateBadges();
-      if (triggerCloud && CLOUD_CONFIG.dbUrl) {
-        clearTimeout(cloudSyncTimer);
-        cloudSyncTimer = setTimeout(() => pushStateToCloud(true), 800);
-      }
+      // No automatic snapshot PUT or cross-device data writes in this local file.
+
+    }
+
+    function recordAudit(action, details = "") {
+      AUDIT_LOGS.unshift({ id: Date.now() + Math.random(), at: new Date().toISOString(), actor: activeStaffUser?.name || (isOwnerAuthenticated ? "Owner" : "System"), action, details: String(details || "") });
+      if (AUDIT_LOGS.length > 1000) AUDIT_LOGS = AUDIT_LOGS.slice(0, 1000);
     }
 
     function getTodayISO() {
@@ -1653,139 +2246,69 @@
     }
 
     // ==================== CLOUD SYNC ACROSS PHONES ====================
-    function buildCloudEndpointUrl() {
-      const base = (CLOUD_CONFIG.dbUrl || "").trim().replace(/\/+$/, "");
-      const ws = (CLOUD_CONFIG.workspaceId || "brewnagri-main").trim().replace(/[^a-zA-Z0-9_-]/g, "");
-      if (!base) return "";
-      if (base.includes("script.google.com")) return `${base}?workspace=${encodeURIComponent(ws)}`;
-      return `${base}/workspaces/${encodeURIComponent(ws)}.json`;
-    }
-
+    // Legacy full-snapshot Realtime Database writes and Magic Transfer QR have been removed.
+    // Secure cloud functions live in the separately deployed Firebase chain app.
     function updateCloudIndicator(status, label) {
-      const dot = document.getElementById("cloud-dot");
-      const txt = document.getElementById("cloud-status-text");
-      if (txt) txt.textContent = label;
-      if (dot) {
-        dot.className = `w-1.5 h-1.5 rounded-full ${status === 'synced' ? 'bg-emerald-500' : status === 'syncing' ? 'bg-blue-500 animate-ping' : 'bg-amber-500'}`;
-      }
+      const txt=document.getElementById("cloud-status-text");
+      if(txt) txt.textContent="Local only • secure chain app separate";
+      const dot=document.getElementById("cloud-dot");
+      if(dot)dot.className="w-1.5 h-1.5 rounded-full bg-amber-500";
+    }
+    function pushStateToCloud(silent = false) {
+      if (!silent) showNotification("Unsafe full-snapshot sync removed. Use the authenticated chain POS and separate HQ.");
+      updateCloudIndicator("local", "Local only");
+      return Promise.resolve(false);
+    }
+    function pullFromCloudNow(silent = false) {
+      if (!silent) showNotification("Unsafe full-snapshot import removed. Export backup and migrate using the chain setup process.");
+      return Promise.resolve(false);
     }
 
-    async function pushStateToCloud(silent = false) {
-      const url = buildCloudEndpointUrl();
-      if (!url) return;
-      updateCloudIndicator("syncing", "Syncing...");
-      const snapshot = {
-        updatedAt: Date.now(),
-        CAFE_CONFIG, MENU_ITEMS, MENU_PROMO, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
-        FLOOR_TABLES, ACTIVE_TABLE_ORDERS, ORDER_LOGS, INVENTORY_LOGS,
-        EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, STAFF_ATTENDANCE, OWNER_PIN
-      };
+    function bnChainUrl(value) {
       try {
-        const res = await fetch(url, {
-          method: url.includes("script.google.com") ? "POST" : "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(snapshot)
-        });
-        if (!res.ok) throw new Error("Sync failed");
-        updateCloudIndicator("synced", "Cloud Synced");
-        if (!silent) showNotification("All café data synced to Cloud!");
-      } catch (e) {
-        updateCloudIndicator("local", "Cloud Retry Pending");
-        if (!silent) showNotification("Could not reach Cloud URL. Check URL permissions.");
-      }
+        const url = new URL(String(value || "").trim());
+        const local = /^(localhost|127\.0\.0\.1)$/.test(url.hostname);
+        if (url.protocol !== "https:" && !(local && url.protocol === "http:")) return null;
+        if (url.username || url.password || url.search || url.hash) return null;
+        if (/(^|\.)(firebaseio\.com|firebasedatabase\.app|googleapis\.com)$/.test(url.hostname) || url.hostname === "script.google.com") return null;
+        return url.origin;
+      } catch (_) { return null; }
     }
-
-    async function pullFromCloudNow(silent = false) {
-      const url = buildCloudEndpointUrl();
-      if (!url) return;
-      updateCloudIndicator("syncing", "Fetching...");
-      try {
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.MENU_ITEMS) {
-          CAFE_CONFIG = { ...CAFE_CONFIG, ...(data.CAFE_CONFIG || {}) };
-          MENU_ITEMS = data.MENU_ITEMS || MENU_ITEMS;
-          if (data.MENU_PROMO) MENU_PROMO = { ...MENU_PROMO, ...data.MENU_PROMO };
-          if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
-          getAllMenuCategories();
-          INVENTORY_ITEMS = data.INVENTORY_ITEMS || INVENTORY_ITEMS;
-          RECIPE_MAP = data.RECIPE_MAP || RECIPE_MAP;
-          GLOBAL_ADDONS = data.GLOBAL_ADDONS || GLOBAL_ADDONS;
-          FLOOR_TABLES = data.FLOOR_TABLES || FLOOR_TABLES;
-          ACTIVE_TABLE_ORDERS = data.ACTIVE_TABLE_ORDERS || ACTIVE_TABLE_ORDERS;
-          ORDER_LOGS = data.ORDER_LOGS || ORDER_LOGS;
-          INVENTORY_LOGS = data.INVENTORY_LOGS || INVENTORY_LOGS;
-          EXPENSE_LOGS = data.EXPENSE_LOGS || EXPENSE_LOGS;
-          CUSTOMER_CRM = data.CUSTOMER_CRM || CUSTOMER_CRM;
-          STAFF_ACCOUNTS = data.STAFF_ACCOUNTS || STAFF_ACCOUNTS;
-          SHIFT_HANDOVERS = data.SHIFT_HANDOVERS || SHIFT_HANDOVERS;
-          STAFF_ATTENDANCE = data.STAFF_ATTENDANCE || STAFF_ATTENDANCE;
-          if (data.OWNER_PIN) OWNER_PIN = data.OWNER_PIN;
-          await migratePlainPasscodesToHashes();
-          persistAllState(false);
-          applyCafeBrandHeader();
-          renderCustomerMenu();
-          renderPosFloorTables();
-          renderInventoryTab();
-          renderOwnerDashboard();
-          updateCloudIndicator("synced", "Cloud Synced");
-          if (!silent) showNotification("Loaded latest café data from Cloud!");
-        } else {
-          updateCloudIndicator("synced", "Cloud Ready");
-        }
-      } catch (e) {
-        updateCloudIndicator("local", "Local Protected");
-      }
+    function bnSaveChainHostingUrl() {
+      const el = document.getElementById("bn-chain-hosting-url");
+      const url = bnChainUrl(el?.value);
+      if (!url) { showNotification("Enter a valid HTTPS Hosting URL; never a Firebase database URL."); return false; }
+      try { localStorage.setItem("bn_chain_portal_origin", url); }
+      catch (_) { showNotification("Could not save portal URL on this device."); return false; }
+      const status = document.getElementById("bn-chain-portal-status");
+      if (status) status.textContent = `Saved secure portal location: ${url} — not connected or migrated yet.`;
+      showNotification("Portal URL saved. Cloud billing requires deployment and authorized sign-in.");
+      return true;
     }
-
+    function bnOpenChainStaffPos() {
+      const url = bnChainUrl(localStorage.getItem("bn_chain_portal_origin"));
+      if (!url) { showNotification("Save your deployed secure Hosting URL first."); return; }
+      const target = new URL("/staff.html", url).href;
+      window.open(target, "_blank", "noopener,noreferrer");
+    }
     function openCloudSyncModal() {
       if (!isOwnerAuthenticated) {
         pendingProtectedTab = "cloud_sync";
         openOwnerPinModal("owner");
         return;
       }
-      document.getElementById("cloud-db-url-input").value = CLOUD_CONFIG.dbUrl || "";
-      document.getElementById("cloud-workspace-input").value = CLOUD_CONFIG.workspaceId || "brewnagri-main";
-      renderMagicTransferLink();
+      const url = localStorage.getItem("bn_chain_portal_origin") || "";
+      const input = document.getElementById("bn-chain-hosting-url");
+      if (input) input.value = url;
+      const status = document.getElementById("bn-chain-portal-status");
+      if (status) status.textContent = bnChainUrl(url)
+        ? `Portal URL configured: ${url}. Live synchronization has not been verified.`
+        : "Portal not configured. Firebase deployment is still required.";
       document.getElementById("cloud-sync-modal").classList.remove("hidden");
       refreshLucideIcons();
     }
-
     function closeCloudSyncModal() {
       document.getElementById("cloud-sync-modal").classList.add("hidden");
-    }
-
-    function saveAndConnectCloud() {
-      CLOUD_CONFIG.dbUrl = document.getElementById("cloud-db-url-input").value.trim();
-      CLOUD_CONFIG.workspaceId = document.getElementById("cloud-workspace-input").value.trim() || "brewnagri-main";
-      localStorage.setItem("bn_cloud_config", JSON.stringify(CLOUD_CONFIG));
-      renderMagicTransferLink();
-      pushStateToCloud(false);
-    }
-
-    function renderMagicTransferLink() {
-      const box = document.getElementById("magic-transfer-box");
-      const qrDiv = document.getElementById("magic-transfer-qr");
-      const urlInput = document.getElementById("magic-transfer-url");
-      if (!CLOUD_CONFIG.dbUrl) {
-        box.classList.add("hidden");
-        return;
-      }
-      box.classList.remove("hidden");
-      const baseUrl = window.location.href.split("?")[0];
-      const magicUrl = `${baseUrl}?cloudUrl=${encodeURIComponent(CLOUD_CONFIG.dbUrl)}&ws=${encodeURIComponent(CLOUD_CONFIG.workspaceId)}`;
-      urlInput.value = magicUrl;
-      qrDiv.innerHTML = "";
-      if (window.QRCode) {
-        new QRCode(qrDiv, { text: magicUrl, width: 110, height: 110 });
-      }
-    }
-
-    function copyMagicTransferLink() {
-      const inp = document.getElementById("magic-transfer-url");
-      inp.select();
-      document.execCommand("copy");
-      showNotification("Magic Phone Transfer link copied! Open it on any new phone.");
     }
 
     // ==================== DEVICE LAYOUT & THEME ====================
@@ -1925,7 +2448,7 @@
       let minServings = 999;
       links.forEach(l => {
         const inv = INVENTORY_ITEMS.find(i => i.id === l.invId);
-        if (inv && l.qty > 0) {
+        if (inv && inv.tracked !== false && l.qty > 0) {
           const possible = Math.floor((Number(inv.stock) || 0) / Number(l.qty));
           if (possible < minServings) minServings = possible;
         }
@@ -1958,16 +2481,23 @@
         });
       });
 
+      const packMode=window.BN_CURRENT_PACK_MODE||"dinein";
+      orderLines.forEach(line=>{
+        const pairs=BN_PACKAGING_MAP[line.id]?.[packMode]||[];
+        for(const [key,amount] of pairs){const id=INVENTORY_ITEMS.some(i=>i.id===key)?key:"bn-"+key;usageMap[id]=(usageMap[id]||0)+Number(amount)*(Number(line.qty)||1);(reasonMap[id]||(reasonMap[id]=[])).push(`${line.qty}× ${line.name} packaging`);}
+      });
+      const bags=Number(window.BN_CURRENT_CARRY_BAGS||0);if(bags>0){usageMap["bn-carry-bag"]=(usageMap["bn-carry-bag"]||0)+bags;(reasonMap["bn-carry-bag"]||(reasonMap["bn-carry-bag"]=[])).push("Carry bags used");}
       const summaryParts = [];
       const timeStr = `${getTodayISO()} ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
 
       Object.keys(usageMap).forEach(invId => {
         const inv = INVENTORY_ITEMS.find(i => i.id === invId);
-        if (inv) {
+        if (inv && inv.tracked !== false) {
           const prev = Number(inv.stock) || 0;
           const used = usageMap[invId];
           const next = Math.max(0, prev - used);
           inv.stock = next;
+          if(prev < used) recordAudit("Inventory shortage during settlement",`${inv.name}: available ${prev} ${inv.unit}, recipe use ${used} ${inv.unit}. Check physical stock.`);
           const formula = `${prev} - ${used} = ${next}`;
           summaryParts.push(`${inv.name}: ${formula}`);
           INVENTORY_LOGS.unshift({
@@ -2003,7 +2533,7 @@
 
     // ==================== NAVIGATION & STAFF SHIFT AUTH ====================
     function updateBadges() {
-      const lowCount = INVENTORY_ITEMS.filter(i => i.stock <= (i.lowThreshold || 15)).length;
+      const lowCount = INVENTORY_ITEMS.filter(i => i.tracked !== false && i.stock <= (i.lowThreshold ?? 15)).length;
       const invBadge = document.getElementById("nav-low-stock-badge");
       if (invBadge) {
         invBadge.textContent = String(lowCount);
@@ -2189,7 +2719,7 @@
 
     function closeStaleAttendanceForLogin(staffId, loginTime) {
       STAFF_ATTENDANCE.filter(a => a.staffId === staffId && !a.clockOutISO).forEach(a => {
-        a.clockOutISO = loginTime.toISOString(); a.durationMinutes = Math.max(0, Math.round((loginTime - new Date(a.clockInISO)) / 60000)); a.autoClosedAtNextLogin = true;
+        a.clockOutISO = loginTime.toISOString(); a.durationMinutes = null; a.autoClosedAtNextLogin = true; a.durationUnknown = true;
       });
     }
     function exportStaffAttendanceCSV() {
@@ -2342,11 +2872,12 @@
       const motionWrap = document.getElementById("menu-banner-motion-wrap");
       const dishVisual = document.getElementById("menu-banner-dish-visual");
       const bannerImgs = Array.isArray(MENU_PROMO.bannerImages) ? MENU_PROMO.bannerImages.filter(Boolean) : [];
+      if (bannerImageTimer) { clearInterval(bannerImageTimer); bannerImageTimer = null; }
       if (dishVisual) {
         dishVisual.classList.toggle("hidden", !bannerImgs.length);
         if (bannerImgs.length) {
           dishVisual.innerHTML = `<img id="bn-banner-dish-img" src="${bannerImgs[0]}" alt="Featured Brew Nagri dishes">`;
-          let ix = 0; if (bannerImageTimer) clearInterval(bannerImageTimer);
+          let ix = 0;
           if (bannerImgs.length > 1) bannerImageTimer = setInterval(() => { ix = (ix + 1) % bannerImgs.length; const im = document.getElementById("bn-banner-dish-img"); if (im) { im.style.opacity = "0"; setTimeout(() => { if (im) { im.src = bannerImgs[ix]; im.style.opacity = "1"; } }, 220); } }, 4200);
         } else dishVisual.innerHTML = "";
       }
@@ -2361,7 +2892,10 @@
       if (motionTrack) {
         const safeMessages = messages.length ? messages : ["Fresh Coffee, Fresh Mood", "Pizza • Burgers • Momos • Shakes", "Visit Brew Nagri Today"];
         const oneSet = safeMessages.map(msg => `<span class="bn-promo-message"><span class="text-amber-300">✦</span>${escapeHtml(msg)}</span>`).join("");
-        motionTrack.innerHTML = oneSet + oneSet;
+        motionTrack.innerHTML = oneSet + oneSet + oneSet + oneSet;
+        motionTrack.style.animation = "none";
+        void motionTrack.offsetWidth;
+        motionTrack.style.animation = "";
       }
       if (motionWrap) motionWrap.classList.toggle("hidden", MENU_PROMO.bannerEnabled === false);
       refreshLucideIcons();
@@ -2551,7 +3085,7 @@
       const upiCanvas = document.getElementById("customer-upi-qr-canvas");
 
       const loyaltyHint = document.getElementById("customer-loyalty-hint");
-      if (loyaltyHint) loyaltyHint.textContent = "Enter your name + valid 10-digit mobile and tick the box to claim 10% off at checkout.";
+      if (loyaltyHint) loyaltyHint.textContent = "Enter your name + valid 10-digit mobile and tick the box to claim up to 5% off at checkout.";
       if (customerTray.length === 0) {
         list.innerHTML = `<p class="text-center text-stone-400 py-6">Your tray is empty.</p>`;
         totalEl.textContent = "0";
@@ -2579,12 +3113,18 @@
 
       totalEl.textContent = String(total);
 
+      const offerName = document.getElementById("order-customer-name")?.value.trim() || "";
+      const offerPhone = document.getElementById("order-customer-phone")?.value.trim() || "";
+      const offerChecked = !!document.getElementById("customer-loyalty-consent")?.checked;
+      const offerEligible = offerChecked && offerName && /^[6-9]\d{9}$/.test(offerPhone);
+      const upiPayable = Math.max(0, total - (offerEligible ? Math.round(total * bnQrPromoPercent() / 100 * 100) / 100 : 0));
+      totalEl.textContent = upiPayable.toFixed(2);
       if (CAFE_CONFIG.upiId && total > 0) {
         upiBox.classList.remove("hidden");
-        document.getElementById("customer-upi-amount").textContent = String(total);
+        document.getElementById("customer-upi-amount").textContent = String(upiPayable);
         document.getElementById("customer-upi-id-label").textContent = CAFE_CONFIG.upiId;
         upiCanvas.innerHTML = "";
-        const upiUri = `upi://pay?pa=${encodeURIComponent(CAFE_CONFIG.upiId)}&pn=${encodeURIComponent(CAFE_CONFIG.cafeName)}&am=${total}&cu=INR`;
+        const upiUri = `upi://pay?pa=${encodeURIComponent(CAFE_CONFIG.upiId)}&pn=${encodeURIComponent(CAFE_CONFIG.cafeName)}&am=${upiPayable}&cu=INR`;
         if (window.QRCode) new QRCode(upiCanvas, { text: upiUri, width: 84, height: 84 });
       } else {
         upiBox.classList.add("hidden");
@@ -2605,61 +3145,42 @@
       const loyaltyOptIn = !!document.getElementById("customer-loyalty-consent")?.checked;
       const tableLabel = document.getElementById("order-table-input")?.value.trim() || "Table 1";
 
-      let rev = 0, cost = 0;
+      let rev = 0;
       const linesCopy = JSON.parse(JSON.stringify(customerTray));
-      linesCopy.forEach(l => {
-        rev += l.price * l.qty;
-        cost += (l.costPrice || 35) * l.qty;
-      });
+      linesCopy.forEach(l => { rev += l.price * l.qty; });
+      // This is an unconfirmed customer request, NOT an invoice or a profit entry.
+      // Only the staff's final bill calculates audited ingredient/packaging cost.
 
       const loyaltyValid = loyaltyOptIn && guestName !== "Guest" && /^[6-9]\d{9}$/.test(guestPhone);
-      if (loyaltyOptIn && !loyaltyValid) { isSubmittingOrder = false; showNotification("For 10% off, enter your name and a valid 10-digit Indian mobile number."); return; }
-      const discount = loyaltyValid ? Math.round(rev * 0.10 * 100) / 100 : 0;
+      if (loyaltyOptIn && !loyaltyValid) { isSubmittingOrder = false; showNotification("For a loyalty offer, enter your name and a valid 10-digit Indian mobile number."); return; }
+      const discount = loyaltyValid ? Math.round(rev * bnQrPromoPercent() / 100 * 100) / 100 : 0;
       const payable = Math.max(0, rev - discount);
-      const billNo = String(CAFE_CONFIG.nextBillSeq++);
-      const newOrder = {
-        id: Date.now(),
-        billNo,
-        dateISO: getTodayISO(),
-        dateDisplay: formatIndianDate(getTodayISO()),
-        time: format12HourTime(new Date()),
-        customer: guestName,
-        phone: guestPhone,
-        table: tableLabel,
-        paymentMode: "WhatsApp/UPI",
-        staffId: "qr-self",
-        staffName: "QR Self-Order",
-        items: linesCopy,
-        subtotal: rev,
-        discount,
-        gstRate: 0,
-        gstAmount: 0,
-        revenue: payable,
-        cost,
-        profit: payable - cost,
-        summary: linesCopy.map(l => `${l.name} x${l.qty}`).join(", ")
-      };
-
-      deductInventoryForOrder(linesCopy, billNo, `${guestName} (${tableLabel})`);
-      ORDER_LOGS.unshift(newOrder);
-      if (loyaltyValid) {
-        updateCustomerCrmRecord(guestPhone, guestName, payable);
-        if (CUSTOMER_CRM[guestPhone]) { CUSTOMER_CRM[guestPhone].loyaltyOptIn = true; CUSTOMER_CRM[guestPhone].lastSeen = new Date().toISOString(); }
-      }
-
+      const requestNo = `QR-${Date.now().toString().slice(-7)}`;
       const matchedTable = FLOOR_TABLES.find(t => t.toLowerCase() === tableLabel.toLowerCase()) || FLOOR_TABLES[0];
-      if (!ACTIVE_TABLE_ORDERS[matchedTable]) ACTIVE_TABLE_ORDERS[matchedTable] = { lines: [], customer: "", phone: "" };
-      ACTIVE_TABLE_ORDERS[matchedTable].waAlert = `WA Order #${billNo} (₹${payable})`;
-      ACTIVE_TABLE_ORDERS[matchedTable].customer = guestName;
+      if (!ACTIVE_TABLE_ORDERS[matchedTable]) ACTIVE_TABLE_ORDERS[matchedTable] = { lines: [], customer: "", phone: "", waAlert: "" };
+      const tableSession = ACTIVE_TABLE_ORDERS[matchedTable];
+      if ((tableSession.lines || []).length || tableSession.waAlert) {
+        isSubmittingOrder = false;
+        showNotification(`${matchedTable} already has an active order. Please ask staff for another table or counter.`);
+        return;
+      }
+      tableSession.lines = linesCopy;
+      tableSession.customer = guestName;
+      tableSession.phone = guestPhone;
+      tableSession.pendingDiscount = (Number(tableSession.pendingDiscount) || 0) + discount;
+      tableSession.loyaltyOptIn = Boolean(tableSession.loyaltyOptIn || loyaltyValid);
+      tableSession.waAlert = `QR REQUEST ${requestNo} • ₹${payable} • VERIFY & SETTLE`;
+      recordAudit("QR order request received", `${requestNo} • ${guestName} • ${tableLabel} • ₹${payable}`);
 
       const msgLines = [
-        `*New Order — ${CAFE_CONFIG.cafeName}* (#${billNo})`,
+        `*Order Request — ${CAFE_CONFIG.cafeName}* (${requestNo})`,
         `Table: *${tableLabel}* | Guest: *${guestName}*`,
         `--------------------------`,
         ...linesCopy.map(l => `• ${l.name} x${l.qty} = ₹${l.price * l.qty}${l.addons?.length ? ` (+${l.addons.map(a=>a.name).join(', ')})` : ''}`),
         `--------------------------`,
-        ...(discount ? [`Loyalty discount (10%): -₹${discount.toFixed(2)}`] : []),
-        `*Total payable: ₹${payable.toFixed(2)}*`
+        ...(discount ? [`Loyalty discount (${bnQrPromoPercent()}%): -₹${discount.toFixed(2)}`] : []),
+        `*Requested total: ₹${payable.toFixed(2)}*`,
+        `Payment is NOT automatically verified. Please wait for staff confirmation and final bill.`
       ];
 
       customerTray = [];
@@ -2750,7 +3271,7 @@
       const summary = document.getElementById("floor-occupied-summary");
       let activeCount = 0;
 
-      grid.innerHTML = FLOOR_TABLES.map(tbl => {
+      grid.innerHTML = FLOOR_TABLES.map((tbl,tableIdx) => {
         const session = ACTIVE_TABLE_ORDERS[tbl] || { lines: [] };
         const itemsCount = session.lines.reduce((s, l) => s + l.qty, 0);
         const tabTotal = session.lines.reduce((s, l) => s + l.price * l.qty, 0);
@@ -2759,9 +3280,9 @@
         const isSelected = activePosTable === tbl;
 
         return `
-          <button onclick="selectPosFloorTable('${tbl}')" class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between ${isSelected ? 'ring-2 ring-amber-500 border-amber-500 bg-amber-50/70 dark:bg-amber-950/40' : isOccupied ? 'border-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30' : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60'}">
+          <button onclick="bnSelectPosFloorTableByIndex(${tableIdx})" class="p-2.5 rounded-xl border text-left transition flex flex-col justify-between ${isSelected ? 'ring-2 ring-amber-500 border-amber-500 bg-amber-50/70 dark:bg-amber-950/40' : isOccupied ? 'border-emerald-400 bg-emerald-50/40 dark:bg-emerald-950/30' : 'border-stone-200 dark:border-stone-800 bg-stone-50 dark:bg-stone-800/60'}">
             <div class="flex items-center justify-between gap-1">
-              <span class="font-heading font-extrabold text-xs truncate">${tbl}</span>
+              <span class="font-heading font-extrabold text-xs truncate">${escapeHtml(tbl)}</span>
               <span class="w-2 h-2 rounded-full ${isOccupied ? 'bg-emerald-500' : 'bg-stone-300 dark:bg-stone-600'}"></span>
             </div>
             <p class="text-[10px] font-bold mt-1 ${isOccupied ? 'text-emerald-700 dark:text-emerald-300' : 'text-stone-400'}">
@@ -2775,6 +3296,24 @@
       updateBadges();
     }
 
+    function bnSelectPosFloorTableByIndex(index){const t=FLOOR_TABLES[index];if(t)selectPosFloorTable(t);}
+    function bnAddPosTable(){
+      const names=new Set(FLOOR_TABLES.map(x=>x.toLowerCase()));let n=1;while(names.has(("Table "+n).toLowerCase()))n++;
+      const raw=prompt("New table name", "Table "+n);if(raw===null)return;
+      const val=raw.trim().replace(/\s+/g," ");
+      if(!val||val.length>40||/[<>]/.test(val))return showNotification("Enter a valid table name (up to 40 characters).");
+      if(names.has(val.toLowerCase()))return showNotification("A table with that name already exists.");
+      FLOOR_TABLES.push(val);persistAllState();renderPosFloorTables();selectPosFloorTable(val);showNotification(val+" added. It is ready for billing.");
+    }
+    function bnRemoveFloorTable(index){
+      const t=FLOOR_TABLES[index];if(!t)return;
+      if(FLOOR_TABLES.length<=3)return showNotification("Keep at least 3 tables. Add another table before removing this one.");
+      const ses=ACTIVE_TABLE_ORDERS[t];if(ses&&((ses.lines||[]).length||ses.waAlert))return showNotification("Cannot remove an occupied table. Settle or move its order first.");
+      if(!confirm("Remove "+t+"? Its empty table session will be removed."))return;
+      FLOOR_TABLES.splice(index,1);delete ACTIVE_TABLE_ORDERS[t];
+      if(activePosTable===t)activePosTable=FLOOR_TABLES[0];
+      persistAllState();renderFloorTableSettingsChips();renderPosFloorTables();selectPosFloorTable(activePosTable);
+    }
     function selectPosFloorTable(tbl) {
       activePosTable = tbl;
       ensureActiveTableSession();
@@ -2782,7 +3321,10 @@
       document.getElementById("pos-selected-table-title").textContent = tbl;
       document.getElementById("pos-customer-name").value = session.customer || "";
       document.getElementById("pos-customer-phone").value = session.phone || "";
-      document.getElementById("pos-discount-input").value = "0";
+      document.getElementById("pos-discount-input").value = String(Number(session.pendingDiscount) || 0);
+      const servingEl=document.getElementById("bn-serving-mode");if(servingEl)servingEl.value=session.servingMode||"dinein";
+      const bagsEl=document.getElementById("bn-carry-bags");if(bagsEl)bagsEl.value=String(session.carryBags||0);
+      BN_DISCOUNT_APPROVAL=null;
       const gstSel = document.getElementById("pos-gst-select");
       if (gstSel) gstSel.value = CAFE_CONFIG.defaultGstRate || "0";
 
@@ -2822,13 +3364,156 @@
       }
     }
 
+    function bnQrPromoPercent() { return Math.min(5, Math.max(0, Number(BN_POLICIES.staffDiscountPercent)||0)); }
+    function bnDiscountChanged() {
+      BN_DISCOUNT_APPROVAL=null;
+      const sess=ACTIVE_TABLE_ORDERS[activePosTable];
+      if(sess) sess.pendingDiscount=Number(document.getElementById("pos-discount-input")?.value)||0;
+      renderPosCart();
+    }
+    function bnUpdateServingMode(mode) { ensureActiveTableSession(); ACTIVE_TABLE_ORDERS[activePosTable].servingMode=mode==="takeaway"?"takeaway":"dinein";persistAllState(); }
+    function bnUpdateCarryBags(count) { ensureActiveTableSession(); const n=Number(count);if(!Number.isInteger(n)||n<0){showNotification("Enter whole carry-bag count");return;} ACTIVE_TABLE_ORDERS[activePosTable].carryBags=n;persistAllState(); }
+    async function bnRequestDiscountApproval() {
+      const sess=ACTIVE_TABLE_ORDERS[activePosTable];
+      const subtotal=(sess?.lines||[]).reduce((s,l)=>s+l.price*l.qty,0);
+      const discount=Math.min(subtotal,Math.max(0,Number(document.getElementById("pos-discount-input")?.value)||0));
+      if(!subtotal||discount<=subtotal*BN_POLICIES.staffDiscountPercent/100){showNotification("Discount is within staff limit; no approval needed.");return;}
+      const pin=prompt("Owner passcode to authorize discount above " + BN_POLICIES.staffDiscountPercent + "%:");
+      if(!pin) return;
+      if(!(await verifyPasscodeAgainstStored(pin,OWNER_PIN))){showNotification("Owner permission denied.");return;}
+      BN_DISCOUNT_APPROVAL={table:activePosTable,subtotal,discount,at:Date.now()};
+      recordAudit("Excess discount approved",`Table ${activePosTable} • ₹${discount} of ₹${subtotal}`);
+      showNotification("Owner approved this discount for the current bill.");
+    }
+    function bnDiscountAllowed(subtotal,discount) {
+      if(discount<=subtotal*(Number(BN_POLICIES.staffDiscountPercent)||0)/100+0.001) return true;
+      const a=BN_DISCOUNT_APPROVAL;
+      return Boolean(a&&a.table===activePosTable&&a.subtotal===subtotal&&a.discount===discount&&Date.now()-a.at<300000);
+    }
+    function bnCustomerCreditLimit(phone) {
+      if (phone && Object.prototype.hasOwnProperty.call(BN_CUSTOMER_LIMITS,phone)) return Number(BN_CUSTOMER_LIMITS[phone]);
+      return Number(BN_POLICIES.creditLimit)||0;
+    }
+    function bnSetCustomerCreditLimit() {
+      if(!isOwnerAuthenticated) return showNotification("Unlock Owner Access to change a customer's Udhaar limit.");
+      const phone=(prompt("Customer's 10-digit mobile number")||"").trim();
+      if(!/^[6-9]\d{9}$/.test(phone)) return showNotification("Enter a valid 10-digit mobile number.");
+      const current=bnCustomerCreditLimit(phone);
+      const str=prompt(`Udhaar limit for ${phone}. Leave blank to use default ₹${BN_POLICIES.creditLimit}`,String(current));
+      if(str===null) return;
+      if(!str.trim()) delete BN_CUSTOMER_LIMITS[phone];
+      else if(!Number.isFinite(+str)||+str<0||+str>1000000) return showNotification("Invalid limit.");
+      else BN_CUSTOMER_LIMITS[phone]=Number(str);
+      recordAudit("Customer credit limit changed",`${phone}: ₹${bnCustomerCreditLimit(phone)}`);
+      persistAllState();renderOwnerDashboard();showNotification("Customer Udhaar limit saved.");
+    }
+    function bnCreditBalance(phone) {
+      return Math.max(0,ORDER_LOGS.filter(o=>!o.voided&&o.paymentMode==="Udhaar"&&o.phone===phone&&(o.outletId||"BN-001")===BN_OUTLET.id).reduce((v,o)=>v+Number(o.revenue||0),0)-BN_CREDIT_PAYMENTS.filter(p=>p.phone===phone && p.outletId===BN_OUTLET.id).reduce((v,p)=>v+Number(p.amount||0),0));
+    }
+    function bnCreditRegister() {
+      if(!isOwnerAuthenticated)return showNotification("Owner Access required for credit repayment in this local edition.");
+      const phone=(prompt("Customer's 10-digit mobile number for Udhaar repayment:")||"").trim();
+      if(!/^[6-9]\d{9}$/.test(phone))return showNotification("Valid mobile number required.");
+      const due=bnCreditBalance(phone);
+      if(!due)return showNotification("No pending Udhaar for this mobile.");
+      const amount=Number(prompt(`Outstanding ₹${due}. Amount received in ₹:`,String(due)));
+      if(!Number.isFinite(amount)||amount<=0||amount>due)return showNotification("Invalid repayment amount.");
+      const method=prompt("Payment method: Cash, UPI or Card","Cash")||"";
+      if(!["Cash","UPI","Card"].includes(method))return showNotification("Payment method must be Cash, UPI or Card.");
+      BN_CREDIT_PAYMENTS.push({id:window.crypto?.randomUUID?.()||String(Date.now()),phone,amount,method,at:new Date().toISOString(),outletId:BN_OUTLET.id});
+      recordAudit("Udhaar payment received",`${phone} • ₹${amount} • ${method}`);
+      persistAllState();renderOwnerDashboard();showNotification(`Received ₹${amount}; pending ₹${bnCreditBalance(phone)}`);
+    }
+    function bnRenderCreditSummary() {
+      const el=document.getElementById("bn-credit-summary");if(!el)return;
+      const debtors=[...new Set(ORDER_LOGS.filter(o=>!o.voided&&o.paymentMode==="Udhaar").map(o=>o.phone).filter(Boolean))].map(phone=>({phone,due:bnCreditBalance(phone),name:CUSTOMER_CRM[phone]?.name||"Customer"})).filter(x=>x.due>0);
+      const total=debtors.reduce((a,b)=>a+b.due,0);
+      el.innerHTML=`<b>Outstanding Udhaar: ₹${total.toFixed(2)}</b> • ${debtors.length} customers`+debtors.slice(0,20).map(x=>`<div class="border-b py-1">${escapeHtml(x.name)} • ${escapeHtml(x.phone)} — ₹${x.due.toFixed(2)} / Limit ₹${bnCustomerCreditLimit(x.phone)}</div>`).join("");
+    }
+    function bnSavePolicies() {
+      if(!isOwnerAuthenticated)return showNotification("Open Owner Access first.");
+      const c=Number(document.getElementById("bn-limit")?.value);const d=Number(document.getElementById("bn-discount-limit")?.value);
+      if(!Number.isFinite(c)||c<0||!Number.isFinite(d)||d<0||d>100)return showNotification("Enter valid policy limits.");
+      BN_POLICIES.creditLimit=c;BN_POLICIES.staffDiscountPercent=d;
+      const id=(document.getElementById("bn-outlet-id")?.value||"").trim();if(!/^[A-Za-z0-9-]{2,24}$/.test(id))return showNotification("Invalid outlet ID");
+      BN_OUTLET.id=id;BN_OUTLET.name=(document.getElementById("bn-outlet-name")?.value||"").trim()||BN_OUTLET.name;
+      persistAllState();recordAudit("Owner policy update",`Credit ₹${c}, staff discount ${d}%, outlet ${id}`);showNotification("Policies saved locally.");
+    }
+    const BN_INVENTORY_CATEGORIES=["Ingredients","Add-ons & Toppings","Disposables","Packaging","Dairy","Coffee & Tea","Sauces & Spreads","Seasonings","Syrups","Frozen Ingredients","Beverages","Cleaning & Consumables","Operating Supplies","Equipment"];
+    function bnAvailableInventoryCategories() {
+      return [...new Set([...BN_INVENTORY_CATEGORIES,...INVENTORY_ITEMS.map(i=>i.category||"Ingredients")])].sort((a,b)=>a.localeCompare(b));
+    }
+    function bnEditInventoryItem(invId) {
+      const i=INVENTORY_ITEMS.find(x=>x.id===invId);if(!i)return;
+      document.getElementById("bn-edit-stock-id").value=i.id;
+      document.getElementById("bn-edit-stock-name").value=i.name||"";
+      document.getElementById("bn-edit-stock-category").innerHTML=bnAvailableInventoryCategories().map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+      document.getElementById("bn-edit-stock-category").value=i.category||"Ingredients";
+      document.getElementById("bn-edit-stock-unit").value=i.unit||"pcs";
+      document.getElementById("bn-edit-stock-quantity").value=i.tracked===false?"":String(i.stock??0);
+      document.getElementById("bn-edit-stock-cost").value=String(i.unitCost??0);
+      document.getElementById("bn-edit-stock-low").value=String(i.lowThreshold??0);
+      document.getElementById("bn-edit-stock-barcode").value=i.barcode||"";
+      document.getElementById("bn-edit-stock-modal").classList.remove("hidden");
+    }
+    function bnCloseStockModal() { document.getElementById("bn-edit-stock-modal").classList.add("hidden"); }
+    function bnSaveInventoryItemEdit() {
+      const i=INVENTORY_ITEMS.find(x=>x.id===document.getElementById("bn-edit-stock-id").value);if(!i)return;
+      const v=id=>document.getElementById(id).value.trim();
+      const name=v("bn-edit-stock-name"),cat=v("bn-edit-stock-category"),unit=v("bn-edit-stock-unit"),q=v("bn-edit-stock-quantity"),c=v("bn-edit-stock-cost"),lo=v("bn-edit-stock-low"),bc=v("bn-edit-stock-barcode");
+      if(!name||!cat||!unit||name.length>120||unit.length>25)return showNotification("Item name, category and unit are required.");
+      if((q!==""&&(!Number.isFinite(Number(q))||Number(q)<0))||c===""||!Number.isFinite(Number(c))||Number(c)<0||lo===""||!Number.isFinite(Number(lo))||Number(lo)<0)return showNotification("Enter valid stock quantities and costs.");
+      if(bc && INVENTORY_ITEMS.some(x=>x.id!==i.id&&x.barcode===bc))return showNotification("Barcode already belongs to another inventory item.");
+      Object.assign(i,{name,category:cat,unit,stock:q===""?0:Number(q),tracked:q!=="",unitCost:Number(c),lowThreshold:Number(lo),barcode:bc});
+      recordAudit("Inventory item edited",name+" • "+cat);
+      persistAllState();bnCloseStockModal();renderInventoryTab();bnRenderInventoryDishEditor();showNotification("Inventory item updated.");
+    }
+    function bnGoToAddons() {
+      switchAppTab("recipes");
+      const field=document.getElementById("new-addon-name");
+      if(field)field.scrollIntoView({behavior:"smooth",block:"center"});
+    }
+    function bnRenderInventoryDishEditor() {
+      const select=document.getElementById("bn-inv-dish-select"),area=document.getElementById("bn-inv-dish-editor");
+      if(!select||!area)return;
+      const prev=select.value;
+      select.innerHTML=MENU_ITEMS.map(d=>`<option value="${escapeHtml(d.id)}">${escapeHtml(d.name)}</option>`).join("");
+      if(MENU_ITEMS.some(d=>d.id===prev))select.value=prev;
+      const d=MENU_ITEMS.find(d=>d.id===select.value);if(!d){area.innerHTML="No menu dishes found.";return;}
+      const links=RECIPE_MAP[d.id]||[];
+      const stockOps=INVENTORY_ITEMS.map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)} (${escapeHtml(x.unit)})</option>`).join("");
+      const packOps=INVENTORY_ITEMS.filter(x=>["Disposables","Packaging"].includes(x.category)).map(x=>`<option value="${escapeHtml(x.id)}">${escapeHtml(x.name)} (${escapeHtml(x.unit)})</option>`).join("");
+      const ingredients=links.map((l,n)=>{const stock=INVENTORY_ITEMS.find(i=>i.id===l.invId);return `<div class="flex flex-wrap items-center gap-2 rounded-lg bg-stone-50 dark:bg-stone-800 border p-2 text-xs"><span class="flex-1 min-w-28 font-semibold">${escapeHtml(stock?.name||l.invId)}</span><input id="bn-dish-link-qty-${n}" type="number" min="0.01" step="any" class="w-20 p-1 border rounded dark:bg-stone-800" value="${l.qty}" aria-label="Per-dish ingredient quantity"/><span>${escapeHtml(stock?.unit||"")}</span><button onclick="bnSaveDishIngredientQty(${n})" class="bg-emerald-700 text-white rounded px-2 py-1">Save</button><button onclick="bnRemoveDishIngredient(${n})" class="bg-red-100 text-red-700 rounded px-2 py-1">Remove</button></div>`;}).join("");
+      const pack=mode=>(BN_PACKAGING_MAP[d.id]?.[mode]||[]).map(([key,qty],n)=>{const stock=INVENTORY_ITEMS.find(i=>i.id===(INVENTORY_ITEMS.some(x=>x.id===key)?key:"bn-"+key));return `<span class="inline-flex gap-1 items-center border rounded px-2 py-1 text-xs">${escapeHtml(stock?.name||key)} ×${qty} <button class="text-red-600 font-bold" onclick="bnRemoveDishPackaging('${mode}',${n})" aria-label="Remove packaging">×</button></span>`;}).join("")||`<span class="text-xs text-stone-400">None linked</span>`;
+      area.innerHTML=`<div class="rounded-xl border p-3 space-y-2"><b class="text-xs">Dish ingredients (used for every order)</b>${ingredients||'<p class="text-xs text-stone-500">No recipe ingredients linked.</p>'}<div class="flex flex-wrap gap-2"><select id="bn-dish-new-ingredient" class="flex-1 min-w-36 border rounded p-2 dark:bg-stone-800 text-xs">${stockOps}</select><input id="bn-dish-new-qty" type="number" min="0.01" step="any" value="1" class="w-20 border rounded p-2 dark:bg-stone-800 text-xs"/><button onclick="bnAddDishIngredient()" class="bg-purple-700 text-white rounded px-3 py-1 text-xs font-bold">+ Link</button></div></div><div class="rounded-xl border p-3 space-y-2"><b class="text-xs">Disposable / Packaging usage</b><p class="text-[11px] text-stone-500">For foil, choose Aluminium Foil. Packaging is used only in the matching serving mode.</p><p class="text-[11px] font-semibold">Dine-in</p><div class="flex gap-1 flex-wrap">${pack("dinein")}</div><p class="text-[11px] font-semibold">Takeaway</p><div class="flex gap-1 flex-wrap">${pack("takeaway")}</div><div class="grid grid-cols-2 sm:grid-cols-4 gap-2"><select id="bn-dish-pack-mode" class="border rounded p-2 dark:bg-stone-800 text-xs"><option value="takeaway">Takeaway</option><option value="dinein">Dine-in</option></select><select id="bn-dish-pack-item" class="border rounded p-2 dark:bg-stone-800 text-xs">${packOps}</select><input id="bn-dish-pack-qty" type="number" min="0.01" step="any" value="1" class="border rounded p-2 dark:bg-stone-800 text-xs"/><button onclick="bnAddDishPackaging()" class="bg-amber-500 text-stone-950 rounded px-2 py-1 text-xs font-bold">+ Link Disposable</button></div></div>`;
+    }
+    function bnCurrentInventoryDishId(){return document.getElementById("bn-inv-dish-select")?.value||"";}
+    function bnSaveDishIngredientQty(idx){const id=bnCurrentInventoryDishId(),l=RECIPE_MAP[id]?.[idx];if(!l)return;const qty=Number(document.getElementById("bn-dish-link-qty-"+idx).value);if(!Number.isFinite(qty)||qty<=0)return showNotification("Enter a positive quantity.");l.qty=qty;persistAllState();bnRenderInventoryDishEditor();renderRecipesTab();}
+    function bnRemoveDishIngredient(idx){const id=bnCurrentInventoryDishId();if(!RECIPE_MAP[id]?.[idx])return;RECIPE_MAP[id].splice(idx,1);persistAllState();bnRenderInventoryDishEditor();renderRecipesTab();}
+    function bnAddDishIngredient(){const id=bnCurrentInventoryDishId(),invId=document.getElementById("bn-dish-new-ingredient")?.value,qty=Number(document.getElementById("bn-dish-new-qty")?.value);if(!id||!INVENTORY_ITEMS.some(x=>x.id===invId)||!Number.isFinite(qty)||qty<=0)return showNotification("Select a stock item and positive usage quantity.");if(!RECIPE_MAP[id])RECIPE_MAP[id]=[];const l=RECIPE_MAP[id].find(x=>x.invId===invId);if(l)l.qty=qty;else RECIPE_MAP[id].push({invId,qty});persistAllState();bnRenderInventoryDishEditor();renderRecipesTab();showNotification("Dish recipe linked.");}
+    function bnAddDishPackaging(){const id=bnCurrentInventoryDishId(),mode=document.getElementById("bn-dish-pack-mode")?.value,invId=document.getElementById("bn-dish-pack-item")?.value,qty=Number(document.getElementById("bn-dish-pack-qty")?.value);const item=INVENTORY_ITEMS.find(x=>x.id===invId);if(!id||!item||!["Disposables","Packaging"].includes(item.category)||!Number.isFinite(qty)||qty<=0)return showNotification("Select a disposable/packaging item and a valid quantity.");if(!BN_PACKAGING_MAP[id])BN_PACKAGING_MAP[id]={dinein:[],takeaway:[]};const arr=BN_PACKAGING_MAP[id][mode]||(BN_PACKAGING_MAP[id][mode]=[]);const key=invId.startsWith("bn-")?invId.slice(3):invId;const existing=arr.find(x=>x[0]===key);if(existing)existing[1]=qty;else arr.push([key,qty]);persistAllState();bnRenderInventoryDishEditor();showNotification("Disposable linked to dish.");}
+    function bnRemoveDishPackaging(mode,idx){const id=bnCurrentInventoryDishId(),arr=BN_PACKAGING_MAP[id]?.[mode];if(!arr?.[idx])return;arr.splice(idx,1);persistAllState();bnRenderInventoryDishEditor();}
+    function bnPackEdit(dishId) {
+      const dish=MENU_ITEMS.find(x=>x.id===dishId);if(!dish)return;
+      const current=BN_PACKAGING_MAP[dishId]||{};
+      const mode=(prompt(`Packaging mode for ${dish.name}: dinein or takeaway`,"takeaway")||"").toLowerCase();if(!["dinein","takeaway"].includes(mode))return;
+      const currentStr=(current[mode]||[]).map(([k,n])=>`${k}:${n}`).join(",");
+      const raw=prompt("Packaging codes and units separated by commas, e.g. momo-box:1,chutney-cup:3 (empty clears)",currentStr);if(raw===null)return;
+      const rules=[];
+      if(raw.trim())for(const part of raw.split(",")){const [k,n]=part.trim().split(":");if(!INVENTORY_ITEMS.some(i=>i.id==="bn-"+k||i.id===k)||!Number.isFinite(+n)||+n<=0)return showNotification("Invalid packaging code or count: "+part);rules.push([k,+n]);}
+      BN_PACKAGING_MAP[dishId]={...current,[mode]:rules};persistAllState();bnRenderPackagingEditor();showNotification("Packaging mapping updated.");
+    }
+    function bnRenderPackagingEditor() {
+      const el=document.getElementById("bn-packaging-editor");if(!el)return;
+      el.innerHTML=MENU_ITEMS.map(d=>`<div class="flex items-center justify-between gap-2 border-b py-1"><span>${escapeHtml(d.name)}</span><button class="bg-stone-200 dark:bg-stone-700 rounded px-2 py-1" onclick="bnPackEdit('${d.id}')">Edit Dine-in / Takeaway</button></div>`).join("");
+    }
     function applyLoyaltyTenPercentDiscount() {
       const session = ACTIVE_TABLE_ORDERS[activePosTable];
       if (!session) return;
       const sub = session.lines.reduce((s, l) => s + l.price * l.qty, 0);
-      document.getElementById("pos-discount-input").value = String(Math.round(sub * 0.10));
-      renderPosCart();
-      showNotification("Applied 10% Regular Customer Loyalty Discount!");
+      document.getElementById("pos-discount-input").value = String(Math.round(sub * (BN_POLICIES.staffDiscountPercent / 100)));
+      bnDiscountChanged();
+      showNotification("Applied staff-allowed regular customer discount.");
     }
 
     function renderPosCategories() {
@@ -3090,6 +3775,54 @@
       CUSTOMER_CRM[cleanPhone].totalSpent += Number(amount) || 0;
     }
 
+    // Local financial review: cost is UNKNOWN until every recipe and packaging unit has a verified price.
+    // The authenticated chain backend independently recalculates all prices and costs server-side.
+    function bnEstimateOrderDirectCost(lines, servingMode, carryBags) {
+      const missing = [], consumption = new Map();
+      function add(id,qty,context) {
+        const amount=Number(qty);
+        if (!(amount>0) || !Number.isFinite(amount)) {missing.push(`${context}: invalid quantity`);return;}
+        const item=INVENTORY_ITEMS.find(i=>i.id===id);
+        if (!item) {missing.push(`${context}: missing inventory ${id}`);return;}
+        const unitCost=Number(item.unitCost);
+        if (!(unitCost>0) || !Number.isFinite(unitCost)) {missing.push(`${context}: unit cost unverified for ${item.name}`);return;}
+        const prev=consumption.get(id)||{name:item.name,qty:0,unitCost};
+        prev.qty+=amount; consumption.set(id,prev);
+      }
+      for (const line of (lines||[])) {
+        const multiplier=Number(line.qty);
+        if (!(multiplier>0) || !Number.isFinite(multiplier)){missing.push(`Invalid dish quantity: ${line.name}`);continue;}
+        const recipe=RECIPE_MAP[line.id];
+        if (!Array.isArray(recipe) || recipe.length===0) missing.push(`Recipe missing: ${line.name}`);
+        else for (const r of recipe) add(r.invId,Number(r.qty)*multiplier,`Recipe ${line.name}`);
+        for (const ad of (line.addons||[])) {
+          if (ad.invId) add(ad.invId,Number(ad.invQty)*multiplier,`Add-on ${ad.name}`);
+          else if (Number(ad.price)>0) missing.push(`Stock mapping missing: add-on ${ad.name}`);
+        }
+        const rawPairs=BN_PACKAGING_MAP[line.id]?.[servingMode];
+        if (!Array.isArray(rawPairs)) missing.push(`Packaging map missing: ${line.name} (${servingMode})`);
+        else for (const pair of rawPairs) {
+          const itemId=INVENTORY_ITEMS.some(i=>i.id===pair[0])?pair[0]:`bn-${pair[0]}`;
+          add(itemId,Number(pair[1])*multiplier,`Packaging ${line.name}`);
+        }
+      }
+      const bags=Number(carryBags||0);
+      if (!Number.isInteger(bags)||bags<0) missing.push("Invalid carry-bag quantity");
+      else if(bags>0) add("bn-carry-bag",bags,"Carry bags");
+      const knownCost=Array.from(consumption.values()).reduce((sum,x)=>sum+x.qty*x.unitCost,0);
+      return {verified: missing.length===0, cost:Math.round(knownCost*100)/100, missing:[...new Set(missing)], lines:Array.from(consumption.values())};
+    }
+    function bnDateMatchesOwnerPeriod(dateISO) {
+      const preset=document.getElementById("owner-date-filter")?.value||"today";
+      const day=String(dateISO||"");
+      const today=getTodayISO();
+      if(preset==="today")return day===today;
+      if(preset==="all")return true;
+      const from=document.getElementById("report-from-date")?.value||today;
+      const to=document.getElementById("report-to-date")?.value||today;
+      return day>=from && day<=to;
+    }
+
     function settlePosBill() {
       if (isSubmittingOrder) return;
       ensureActiveTableSession();
@@ -3105,13 +3838,26 @@
       const phone = document.getElementById("pos-customer-phone")?.value.trim() || "";
       const paymentMode = document.getElementById("pos-payment-mode")?.value || "Cash";
       const subtotal = session.lines.reduce((s, l) => s + l.price * l.qty, 0);
-      const discount = Math.min(subtotal, Math.max(0, Number(document.getElementById("pos-discount-input")?.value) || 0));
+      const discountInput=Number(document.getElementById("pos-discount-input")?.value);
+      if(!Number.isFinite(discountInput)||discountInput<0||discountInput>subtotal){isSubmittingOrder=false;showNotification("Discount must be between ₹0 and the subtotal.");return;}
+      const discount = discountInput;
       const taxable = Math.max(0, subtotal - discount);
       const gstRate = Number(document.getElementById("pos-gst-select")?.value) || 0;
       const gstAmount = Math.round((taxable * gstRate) / 100);
       const grandTotal = taxable + gstAmount;
-      const cost = session.lines.reduce((s, l) => s + (l.costPrice || 35) * l.qty, 0);
+      const costReview = bnEstimateOrderDirectCost(session.lines, session.servingMode||"dinein", Number(session.carryBags||0));
+      const cost = costReview.verified ? costReview.cost : null;
+      if (!costReview.verified) showNotification(`Bill direct cost unverified (${costReview.missing.length} missing mappings/costs); HQ profit must not treat this as zero.`);
 
+      if (!bnDiscountAllowed(subtotal,discount)) {isSubmittingOrder=false;showNotification(`Discount above ${BN_POLICIES.staffDiscountPercent}% requires owner approval before billing.`);return;}
+      if(paymentMode==="Udhaar") {
+        if(customer==="Walk-in"||customer.length<2||!/^[6-9]\d{9}$/.test(phone)){isSubmittingOrder=false;showNotification("Udhaar requires customer name and valid 10-digit mobile number.");return;}
+        const creditCap=bnCustomerCreditLimit(phone);
+        if(bnCreditBalance(phone)+grandTotal>creditCap){isSubmittingOrder=false;showNotification(`Udhaar limit ₹${creditCap} exceeded (current ₹${bnCreditBalance(phone)}). Owner must change this customer's limit before billing.`);return;}
+      }
+      // No finalized bill exists until this point; discount may not be changed afterward.
+      window.BN_CURRENT_PACK_MODE=session.servingMode||"dinein";
+      window.BN_CURRENT_CARRY_BAGS=Number(session.carryBags||0);
       const invoiceNum = String(CAFE_CONFIG.nextBillSeq || 10482);
       CAFE_CONFIG.nextBillSeq = (Number(CAFE_CONFIG.nextBillSeq) || 10482) + 1;
       const kotNum = Number(CAFE_CONFIG.nextKotSeq) || 20;
@@ -3138,13 +3884,23 @@
         gstAmount,
         revenue: grandTotal,
         cost,
-        profit: grandTotal - cost,
+        profit: costReview.verified ? grandTotal - gstAmount - cost : null,
+        costVerified: costReview.verified,
+        costMissing: costReview.missing,
+        knownDirectCost: costReview.cost,
+        netSalesExcludingGst: grandTotal - gstAmount,
+        inventoryDeducted: true,
+        servingMode:window.BN_CURRENT_PACK_MODE,carryBags:window.BN_CURRENT_CARRY_BAGS,
+        creditOutstanding:paymentMode==="Udhaar"?grandTotal:0,creditDueDate:paymentMode==="Udhaar"?new Date(Date.now()+86400000).toISOString().slice(0,10):null,outletId:BN_OUTLET.id,
         summary: session.lines.map(l => `${l.name} x${l.qty}`).join(", ")
       };
 
       const stockNote = deductInventoryForOrder(newOrder.items, invoiceNum, `${customer} (${activePosTable})`);
       ORDER_LOGS.unshift(newOrder);
+      BN_DISCOUNT_APPROVAL=null;window.BN_CURRENT_CARRY_BAGS=0;
       updateCustomerCrmRecord(phone, customer, grandTotal);
+      if (session.loyaltyOptIn && /^[6-9]\d{9}$/.test(phone) && CUSTOMER_CRM[phone]) { CUSTOMER_CRM[phone].loyaltyOptIn = true; CUSTOMER_CRM[phone].lastSeen = new Date().toISOString(); }
+      recordAudit("Bill settled", `#${invoiceNum} • ${customer} • ₹${grandTotal} • ${paymentMode}`);
 
       ACTIVE_TABLE_ORDERS[activePosTable] = { lines: [], customer: "", phone: "", waAlert: "" };
       persistAllState();
@@ -3498,25 +4254,34 @@
       const logEl = document.getElementById("inventory-deduction-log");
       const valEl = document.getElementById("inv-total-valuation");
 
-      const valuation = INVENTORY_ITEMS.reduce((s, i) => s + (Number(i.stock) || 0) * (Number(i.unitCost) || 0), 0);
+      const valuation = INVENTORY_ITEMS.filter(i=>i.tracked!==false).reduce((s, i) => s + (Number(i.stock) || 0) * (Number(i.unitCost) || 0), 0);
       if (valEl) valEl.textContent = `₹${valuation}`;
 
-      grid.innerHTML = INVENTORY_ITEMS.map(item => {
-        const low = item.stock <= (item.lowThreshold || 15);
+      const catFilter=document.getElementById("bn-inventory-category");
+      const categories=bnAvailableInventoryCategories();
+      if(catFilter){const current=catFilter.value;catFilter.innerHTML=`<option value="all">All categories</option>`+categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");catFilter.value=categories.includes(current)?current:"all";}
+      const category=catFilter?.value||"all";
+      const search=(document.getElementById("bn-inventory-search")?.value||"").trim().toLowerCase();
+      const visibleItems=INVENTORY_ITEMS.filter(i=>(category==="all"||(i.category||"Ingredients")===category)&&(!search||(i.name+" "+(i.category||"")+" "+(i.barcode||"")).toLowerCase().includes(search)));
+      const count=document.getElementById("bn-inv-count");if(count)count.textContent=`Showing ${visibleItems.length} of ${INVENTORY_ITEMS.length} items`;
+      grid.innerHTML = visibleItems.map(item => {
+        const low = item.tracked !== false && item.stock <= (item.lowThreshold ?? 15);
         return `
           <div class="p-3 rounded-2xl bg-white dark:bg-stone-900 border ${low ? 'border-red-400 bg-red-50/20 dark:bg-red-950/20' : 'border-stone-200 dark:border-stone-800'} flex flex-col justify-between gap-2">
             <div class="flex items-start justify-between">
               <div>
-                <h4 class="font-heading font-bold text-xs sm:text-sm">${item.name}</h4>
-                <p class="text-[10px] text-stone-400">₹${item.unitCost || 0}/${item.unit} • Alert &le; ${item.lowThreshold || 15}${item.barcode ? ` • Barcode: ${escapeHtml(item.barcode)}` : ""}</p>
+                <h4 class="font-heading font-bold text-xs sm:text-sm">${escapeHtml(item.name)}</h4>
+                <p class="text-[10px] text-stone-400">${escapeHtml(item.category||"Ingredients")} • ₹${item.unitCost || 0}/${item.unit} • Alert &le; ${item.lowThreshold ?? 15}${item.barcode ? ` • Barcode: ${escapeHtml(item.barcode)}` : ""}</p>
               </div>
               <div class="text-right">
-                <span class="text-xl font-black ${low ? 'text-red-600' : 'text-emerald-600'}">${item.stock}</span>
+                <span class="text-xl font-black ${low ? 'text-red-600' : 'text-emerald-600'}">${item.tracked===false?"Not counted":item.stock}</span>
                 <span class="block text-[10px] text-stone-400 uppercase">${item.unit}</span>
               </div>
             </div>
             <div class="flex items-center justify-between gap-1 pt-2 border-t border-stone-100 dark:border-stone-800 text-[11px]">
               <div class="flex gap-1">
+                <button onclick="bnEditInventoryItem('${item.id}')" class="px-2 py-1 rounded bg-indigo-700 text-white font-bold">Edit</button>
+                ${item.category==="Add-ons & Toppings"?`<button onclick="bnGoToAddons()" class="px-2 py-1 rounded bg-purple-700 text-white font-bold">Edit Add-on</button>`:""}
                 <button onclick="adjustInventoryStock('${item.id}', -1, 'Manual Deduction')" class="px-2 py-1 rounded bg-stone-100 dark:bg-stone-800 font-bold">-1</button>
                 <button onclick="adjustInventoryStock('${item.id}', -1, 'Spoilage / Wastage')" class="px-2 py-1 rounded bg-rose-50 dark:bg-rose-950/50 text-rose-600 font-bold">Spoil</button>
                 <button onclick="adjustInventoryStock('${item.id}', 10, 'Manual Restock')" class="px-2 py-1 rounded bg-emerald-50 dark:bg-emerald-950/50 text-emerald-700 font-bold">+10</button>
@@ -3541,6 +4306,7 @@
             <span class="px-2 py-0.5 rounded bg-amber-100 dark:bg-amber-950 text-amber-900 dark:text-amber-200 font-mono font-black shrink-0">${l.formula}</span>
           </div>
         `).join("");
+      bnRenderInventoryDishEditor();
       refreshLucideIcons();
     }
 
@@ -3549,7 +4315,7 @@
       if (!item) return;
       const prev = item.stock;
       const next = Math.max(0, prev + delta);
-      item.stock = next;
+      item.stock = next; item.tracked=true;
       INVENTORY_LOGS.unshift({
         id: Date.now() + Math.random(),
         billNo: reason === "Spoilage / Wastage" ? "SPOIL" : "MANUAL",
@@ -3564,10 +4330,10 @@
 
     function setExactInventoryStock(invId) {
       const item = INVENTORY_ITEMS.find(i => i.id === invId);
-      const val = parseInt(document.getElementById(`inv-set-${invId}`)?.value, 10);
-      if (!item || isNaN(val) || val < 0) return;
+      const val = Number(document.getElementById(`inv-set-${invId}`)?.value);
+      if (!item || !Number.isFinite(val) || val < 0) return;
       const prev = item.stock;
-      item.stock = val;
+      item.stock = val; item.tracked=true;
       INVENTORY_LOGS.unshift({
         id: Date.now() + Math.random(),
         billNo: "OVERRIDE",
@@ -3606,26 +4372,18 @@
     function useManualBarcode() { const value = document.getElementById("barcode-manual-input")?.value.trim(); if (!value) return; document.getElementById("new-inv-barcode").value = value; closeBarcodeScanner(); }
 
     function addNewInventoryIngredient() {
-      const name = document.getElementById("new-inv-name")?.value.trim();
-      const stock = parseInt(document.getElementById("new-inv-stock")?.value, 10);
-      const unit = document.getElementById("new-inv-unit")?.value.trim() || "units";
-      const cost = parseFloat(document.getElementById("new-inv-unit-cost")?.value) || 0;
-      if (!name) return;
-      const barcode = document.getElementById("new-inv-barcode")?.value.trim() || "";
-      if (barcode && INVENTORY_ITEMS.some(i => i.barcode === barcode)) { showNotification("This barcode is already assigned to an inventory item."); return; }
-      INVENTORY_ITEMS.push({ id: "inv-" + Date.now(), name, stock: isNaN(stock) ? 100 : stock, unit, lowThreshold: 15, unitCost: cost, barcode });
-      document.getElementById("new-inv-name").value = "";
-      document.getElementById("new-inv-stock").value = "";
-      document.getElementById("new-inv-unit").value = "";
-      document.getElementById("new-inv-unit-cost").value = "";
-      document.getElementById("new-inv-barcode").value = "";
-      persistAllState();
-      renderInventoryTab();
-      showNotification(`Added ${name} to Inventory!`);
+      const val=id=>document.getElementById(id)?.value.trim()||"";
+      const name=val("new-inv-name"),q=val("new-inv-stock"),unit=val("new-inv-unit")||"pcs",cat=val("new-inv-category")||"Ingredients",c=val("new-inv-unit-cost"),barcode=val("new-inv-barcode");
+      if(!name||name.length>120)return showNotification("Enter an item name.");
+      if((q!==""&&(!Number.isFinite(Number(q))||Number(q)<0))||(c!==""&&(!Number.isFinite(Number(c))||Number(c)<0)))return showNotification("Enter a valid stock quantity and cost.");
+      if(barcode&&INVENTORY_ITEMS.some(i=>i.barcode===barcode))return showNotification("This barcode is already assigned to an inventory item.");
+      INVENTORY_ITEMS.push({id:"inv-"+Date.now()+"-"+Math.random().toString(36).slice(2,6),name,category:cat,stock:q===""?0:Number(q),tracked:q!=="",unit,lowThreshold:0,unitCost:c===""?0:Number(c),barcode});
+      ["new-inv-name","new-inv-stock","new-inv-unit","new-inv-unit-cost","new-inv-barcode"].forEach(id=>document.getElementById(id).value="");
+      persistAllState();renderInventoryTab();bnRenderInventoryDishEditor();showNotification(name+" added under "+cat+".");
     }
-
     function resetDefaultInventory() {
-      INVENTORY_ITEMS.forEach(i => i.stock = 100);
+      if(!confirm("This resets ALL counted stock to 100 regardless of units. Continue?"))return;
+      INVENTORY_ITEMS.forEach(i => {if(i.tracked!==false)i.stock = 100;});
       persistAllState();
       renderInventoryTab();
       showNotification("All ingredient stocks reset to 100!");
@@ -3710,7 +4468,8 @@
       const chips = document.getElementById("global-addons-chips");
       chips.innerHTML = GLOBAL_ADDONS.map((ad, idx) => `
         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-purple-50 dark:bg-purple-950/60 border border-purple-200 dark:border-purple-800 text-xs font-bold">
-          <span>${ad.name} (${ad.price > 0 ? `+₹${ad.price}` : 'Free'})</span>
+          <span>${escapeHtml(ad.name)} (${ad.price > 0 ? `+₹${ad.price}` : 'Free'}) • ${ad.invId ? `${ad.invQty} ${escapeHtml(INVENTORY_ITEMS.find(i=>i.id===ad.invId)?.name||ad.invId)}` : "no stock use"}</span>
+          <button onclick="bnEditAddon(${idx})" class="text-purple-700 dark:text-purple-300 font-bold underline text-[10px]">Edit</button>
           <button onclick="GLOBAL_ADDONS.splice(${idx}, 1); persistAllState(); renderRecipesTab();" class="text-red-500 font-black">×</button>
         </span>
       `).join("");
@@ -3742,7 +4501,7 @@
               <select id="rec-sel-${dish.id}" class="flex-1 p-1.5 bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg text-[11px]">
                 ${invOpts}
               </select>
-              <input type="number" id="rec-qty-${dish.id}" value="1" min="1" class="w-12 p-1.5 text-center bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" />
+              <input type="number" id="rec-qty-${dish.id}" value="1" min="0.01" step="any" class="w-16 p-1.5 text-center bg-stone-50 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 rounded-lg font-bold" />
               <button onclick="linkIngredientToDish('${dish.id}')" class="px-2.5 py-1.5 bg-purple-700 text-white rounded-lg font-bold text-[11px]">+ Link</button>
             </div>
           </div>
@@ -3752,7 +4511,8 @@
 
     function linkIngredientToDish(dishId) {
       const invId = document.getElementById(`rec-sel-${dishId}`)?.value;
-      const qty = parseInt(document.getElementById(`rec-qty-${dishId}`)?.value, 10) || 1;
+      const qty = Number(document.getElementById(`rec-qty-${dishId}`)?.value);
+      if(!Number.isFinite(qty)||qty<=0)return showNotification("Enter a positive recipe quantity (grams/ml allowed).");
       if (!invId) return;
       if (!RECIPE_MAP[dishId]) RECIPE_MAP[dishId] = [];
       const existing = RECIPE_MAP[dishId].find(l => l.invId === invId);
@@ -3763,17 +4523,37 @@
     }
 
     function addNewGlobalAddon() {
-      const name = document.getElementById("new-addon-name")?.value.trim();
-      const price = parseFloat(document.getElementById("new-addon-price")?.value) || 0;
-      const invId = document.getElementById("new-addon-inv")?.value || "";
-      if (!name) return;
-      GLOBAL_ADDONS.push({ id: "add-" + Date.now(), name, price, invId, invQty: invId ? 1 : 0 });
-      document.getElementById("new-addon-name").value = "";
-      document.getElementById("new-addon-price").value = "";
-      persistAllState();
-      renderRecipesTab();
+      const name=document.getElementById("new-addon-name")?.value.trim();
+      const price=Number(document.getElementById("new-addon-price")?.value||0);
+      const invId=document.getElementById("new-addon-inv")?.value||"";
+      const qty=Number(document.getElementById("new-addon-qty")?.value||1);
+      if(!name||name.length>100||!Number.isFinite(price)||price<0||!Number.isFinite(qty)||qty<=0)return showNotification("Enter a valid add-on, selling price and usage quantity.");
+      GLOBAL_ADDONS.push({id:"add-"+Date.now(),name,price,invId,invQty:invId?qty:0});
+      document.getElementById("new-addon-name").value="";
+      document.getElementById("new-addon-price").value="";
+      document.getElementById("new-addon-qty").value="1";
+      persistAllState();renderRecipesTab();showNotification(name+" add-on created.");
     }
-
+    function bnEditAddon(index){
+      const ad=GLOBAL_ADDONS[index];if(!ad)return;
+      document.getElementById("bn-edit-addon-index").value=String(index);
+      document.getElementById("bn-edit-addon-name").value=ad.name||"";
+      document.getElementById("bn-edit-addon-price").value=String(ad.price||0);
+      const sel=document.getElementById("bn-edit-addon-stock");
+      sel.innerHTML=`<option value="">No inventory deduction</option>`+INVENTORY_ITEMS.map(i=>`<option value="${escapeHtml(i.id)}">${escapeHtml(i.name)} (${escapeHtml(i.unit)})</option>`).join("");
+      sel.value=ad.invId||"";
+      document.getElementById("bn-edit-addon-qty").value=String(ad.invQty||0);
+      document.getElementById("bn-edit-addon-modal").classList.remove("hidden");
+    }
+    function bnCloseAddonEdit(){document.getElementById("bn-edit-addon-modal").classList.add("hidden");}
+    function bnSaveAddonEdit(){
+      const index=Number(document.getElementById("bn-edit-addon-index").value),ad=GLOBAL_ADDONS[index];if(!ad)return;
+      const name=document.getElementById("bn-edit-addon-name").value.trim(),price=Number(document.getElementById("bn-edit-addon-price").value),id=document.getElementById("bn-edit-addon-stock").value,qty=Number(document.getElementById("bn-edit-addon-qty").value);
+      if(!name||name.length>100||!Number.isFinite(price)||price<0||(id&&(!INVENTORY_ITEMS.some(i=>i.id===id)||!Number.isFinite(qty)||qty<=0)))return showNotification("Enter a name, valid price, inventory item and positive usage quantity.");
+      Object.assign(ad,{name,price,invId:id,invQty:id?qty:0});
+      recordAudit("Add-on updated",name+" • "+(INVENTORY_ITEMS.find(i=>i.id===id)?.name||"no stock"));
+      persistAllState();bnCloseAddonEdit();renderRecipesTab();showNotification("Add-on updated.");
+    }
     function resetDefaultRecipes() {
       RECIPE_MAP = JSON.parse(JSON.stringify(DEFAULT_RECIPE_MAP));
       persistAllState();
@@ -3948,8 +4728,9 @@
                 return `
                   <div class="py-3 flex items-center justify-between gap-2 ${o.voided ? 'opacity-55 bg-red-50/30 px-2 rounded-xl' : ''}">
                     <div>
-                      <p class="text-xs font-bold text-stone-500">#${o.billNo} <span class="text-[10px] font-normal ml-1">• ${o.customer} (${o.table})</span></p>
-                      <p class="text-[10px] font-bold uppercase text-stone-400">${formatShortMonthDate(o.dateISO)} • ${o.time}</p>
+                      <p class="text-xs font-bold text-stone-500">#${escapeHtml(String(o.billNo||""))} <span class="text-[10px] font-normal ml-1">• ${escapeHtml(o.customer||"")} (${escapeHtml(o.table||"")})</span></p>
+                      <p class="text-[10px] font-bold uppercase text-stone-400">${formatShortMonthDate(o.dateISO)} • ${escapeHtml(o.time||"")}</p>
+                      <p class="text-[10px] ${o.costVerified===true?"text-emerald-600":"text-amber-700"}">${o.costVerified===true?"Direct cost verified":"Direct cost unverified — review ingredient/packaging rates"}</p>
                       <div class="flex items-center gap-6 mt-1.5">
                         <div>
                           <p class="text-[10px] text-stone-400">Total</p>
@@ -3957,7 +4738,7 @@
                         </div>
                         <div>
                           <p class="text-[10px] text-stone-400">Type</p>
-                          <p class="font-extrabold text-xs text-stone-900 dark:text-white">${o.paymentMode}</p>
+                          <p class="font-extrabold text-xs text-stone-900 dark:text-white">${escapeHtml(o.paymentMode||"")}</p>
                         </div>
                       </div>
                     </div>
@@ -3967,7 +4748,7 @@
                         <i data-lucide="printer" class="w-4 h-4"></i>
                       </button>
                       ${!o.voided ? `
-                        <button onclick="voidOrderByIndex(${realIdx})" class="px-2 py-1.5 rounded-lg bg-red-100 text-red-700 text-[11px] font-extrabold" title="Void Bill & Restore Stock">
+                        <button onclick="voidOrderByIndex(${realIdx})" class="px-2 py-1.5 rounded-lg bg-red-100 text-red-700 text-[11px] font-extrabold" title="Void Bill (does not automatically restore consumed stock)">
                           Void
                         </button>
                       ` : `<span class="text-[10px] font-black text-red-600">VOID</span>`}
@@ -4154,19 +4935,33 @@
     }
 
     function renderOwnerDashboard() {
+      const elId=document.getElementById("bn-outlet-id");if(elId)elId.value=BN_OUTLET.id;
+      const elName=document.getElementById("bn-outlet-name");if(elName)elName.value=BN_OUTLET.name;
+      const elLimit=document.getElementById("bn-limit");if(elLimit)elLimit.value=String(BN_POLICIES.creditLimit);
+      const elDisc=document.getElementById("bn-discount-limit");if(elDisc)elDisc.value=String(BN_POLICIES.staffDiscountPercent);
+      bnRenderCreditSummary();
       renderActiveOwnerReportPanel();
       const orders = getFilteredOwnerOrders(false).filter(o => !o.voided);
-      const revenue = orders.reduce((s, o) => s + (Number(o.revenue) || 0), 0);
-      const cost = orders.reduce((s, o) => s + (Number(o.cost) || 0), 0);
-      const expenses = EXPENSE_LOGS.reduce((s, e) => s + (Number(e.amount) || 0), 0);
-      const netProfit = revenue - cost - expenses;
-      const margin = revenue > 0 ? Math.round((netProfit / revenue) * 100) : 0;
-
-      document.getElementById("kpi-revenue").textContent = `₹${revenue}`;
-      document.getElementById("kpi-cost").textContent = `₹${cost}`;
-      document.getElementById("kpi-expenses").textContent = `₹${expenses}`;
-      document.getElementById("kpi-net-profit").textContent = `₹${netProfit}`;
-      document.getElementById("kpi-orders-margin").textContent = `${orders.length} • ${margin}%`;
+      const grossSales = orders.reduce((s,o)=>s+(Number(o.revenue)||0),0);
+      const gstTotal = orders.reduce((s,o)=>s+(Number(o.gstAmount)||0),0);
+      const netSales = grossSales - gstTotal;
+      const knownCosts = orders.reduce((s,o)=>s+(Number(o.cost)||0),0);
+      // Older bills (without costVerified) must also be reviewed before a profit claim.
+      const unverifiedOrders = orders.filter(o=>o.costVerified!==true);
+      const expenses = EXPENSE_LOGS.filter(e => !e.voided && bnDateMatchesOwnerPeriod(e.dateISO))
+        .reduce((s, e) => s + (Number(e.amount) || 0), 0);
+      const estimate = netSales - knownCosts - expenses;
+      const margin = netSales > 0 && !unverifiedOrders.length ? Math.round((estimate/netSales)*100) : null;
+      const money=n=>"₹"+Number(n).toLocaleString("en-IN",{maximumFractionDigits:2});
+      document.getElementById("kpi-revenue").textContent = money(grossSales);
+      document.getElementById("kpi-cost").textContent = unverifiedOrders.length ? money(knownCosts)+" + unverified" : money(knownCosts);
+      document.getElementById("kpi-expenses").textContent = money(expenses);
+      document.getElementById("kpi-net-profit").textContent = unverifiedOrders.length ? "Unverified" : money(estimate);
+      document.getElementById("kpi-orders-margin").textContent = `${orders.length} • ${margin===null?"N/A":margin+"%"}`;
+      const info=document.getElementById("bn-financial-verification-note");
+      if(info) info.textContent = unverifiedOrders.length
+        ? `${unverifiedOrders.length} of ${orders.length} bills have incomplete or legacy-unverified recipe/packaging costs. Do not use this period as net profit. Known direct costs: ${money(knownCosts)}; tax shown separately. Expenses are matched to the chosen date range.`
+        : `Estimated operating contribution: net sales excluding ${money(gstTotal)} GST, minus verified direct costs and dated operating expenses. Still excludes unposted rent, salaries, tax liabilities and unrecorded costs; not certified net profit.`;
 
       // Staff Accounts (Masked Passcodes)
       const staffList = document.getElementById("owner-staff-accounts-list");
@@ -4210,25 +5005,31 @@
         const yearRows = STAFF_ATTENDANCE.filter(a => (a.clockInISO || "").slice(0,4) === yearKey);
         const fmt = m => `${Math.floor(m/60)}h ${m%60}m`;
         const byStaff = STAFF_ACCOUNTS.map(st => { const rows = STAFF_ATTENDANCE.filter(a => a.staffId === st.id); return `<span class="inline-block mr-3 mb-1"><b>${escapeHtml(st.name)}</b>: ${fmt(mins(rows))} total (${rows.filter(a=>a.clockOutISO).length} shifts)</span>`; }).join("");
-        attendanceEl.innerHTML = `<div class="flex items-center justify-between gap-2 mb-1"><span class="font-extrabold text-indigo-900 dark:text-indigo-200">Staff Attendance — ${monthKey} / ${yearKey}</span><button onclick="exportStaffAttendanceCSV()" class="px-2 py-1 bg-indigo-700 text-white rounded-lg text-[10px] font-bold">Export CSV</button></div><div class="grid grid-cols-2 gap-2"><div>Month hours: <b>${fmt(mins(monthRows))}</b> (${monthRows.length} logins)</div><div>Year hours: <b>${fmt(mins(yearRows))}</b> (${yearRows.length} logins)</div></div><div class="mt-2 border-t border-indigo-200 dark:border-indigo-800 pt-2">${byStaff || "No staff profiles"}</div><p class="text-[10px] mt-1 text-stone-500">Open shifts are counted only after logout. Attendance is stored on this device and included in backup/cloud sync.</p>`;
+        attendanceEl.innerHTML = `<div class="flex items-center justify-between gap-2 mb-1"><span class="font-extrabold text-indigo-900 dark:text-indigo-200">Staff Attendance — ${monthKey} / ${yearKey}</span><button onclick="exportStaffAttendanceCSV()" class="px-2 py-1 bg-indigo-700 text-white rounded-lg text-[10px] font-bold">Export CSV</button></div><div class="grid grid-cols-2 gap-2"><div>Month hours: <b>${fmt(mins(monthRows))}</b> (${monthRows.length} logins)</div><div>Year hours: <b>${fmt(mins(yearRows))}</b> (${yearRows.length} logins)</div></div><div class="mt-2 border-t border-indigo-200 dark:border-indigo-800 pt-2">${byStaff || "No staff profiles"}</div><p class="text-[10px] mt-1 text-stone-500">If a staff member forgets to log out, the next login closes that session but its hours are excluded because the true logout time is unknown. Attendance is stored on this device and included in backup/cloud sync.</p>`;
       }
 
       // Expected Cash Drawer Today
       const todayCash = ORDER_LOGS.filter(o => !o.voided && o.dateISO === getTodayISO() && o.paymentMode === "Cash")
-        .reduce((s, o) => s + (Number(o.revenue) || 0), 0);
+        .reduce((s, o) => s + (Number(o.revenue) || 0), 0)
+        + BN_CREDIT_PAYMENTS.filter(p=>p.method==="Cash" && p.outletId===BN_OUTLET.id && p.at?.slice(0,10)===getTodayISO())
+          .reduce((s,p)=>s+(Number(p.amount)||0),0);
       document.getElementById("drawer-expected-cash").textContent = String(todayCash);
       calculateCashDrawer();
+      renderCashReconciliationHistory();
 
       // Expenses & CRM
       document.getElementById("owner-expenses-list").innerHTML = EXPENSE_LOGS.map((e, idx) => `
         <div class="p-2 rounded-xl bg-stone-50 dark:bg-stone-800 flex items-center justify-between">
-          <span>${e.title} <span class="text-[10px] text-stone-400">(${e.dateISO})</span></span>
+          <span>${escapeHtml(e.title)} <span class="text-[10px] text-stone-400">(${escapeHtml(e.category||"Legacy")}, ${escapeHtml(e.dateISO||"")})</span></span>
           <div class="flex items-center gap-2">
             <strong class="text-rose-600">-₹${e.amount}</strong>
-            <button onclick="EXPENSE_LOGS.splice(${idx}, 1); persistAllState(); renderOwnerDashboard();" class="text-red-500 font-black">×</button>
+            ${!e.voided ? `<button onclick="voidExpenseByIndex(${idx})" class="text-red-500 font-bold">Void</button>` : `<span class="text-[10px] font-black text-red-600">VOID</span>`}
           </div>
         </div>
       `).join("");
+
+      const auditEl = document.getElementById("owner-audit-log");
+      if (auditEl) auditEl.innerHTML = AUDIT_LOGS.slice(0,40).map(a => `<div class="flex flex-wrap justify-between gap-2 border-b border-stone-100 dark:border-stone-800 py-1"><span><b>${escapeHtml(a.action)}</b> — ${escapeHtml(a.details || "")}</span><span class="text-stone-400">${escapeHtml(a.actor || "System")} • ${escapeHtml(new Date(a.at).toLocaleString())}</span></div>`).join("") || "No audited actions yet.";
 
       const crmEntries = Object.entries(CUSTOMER_CRM);
       document.getElementById("owner-crm-list").innerHTML = crmEntries.length === 0
@@ -4312,11 +5113,22 @@
     function voidOrderByIndex(idx) {
       const ord = ORDER_LOGS[idx];
       if (!ord || ord.voided) return;
+      const reason = (prompt(`Reason for voiding bill #${ord.billNo}:`) || "").trim();
+      if (!reason) { showNotification("Void cancelled. A reason is required for the audit record."); return; }
+      if (!confirm(`Void bill #${ord.billNo} for ₹${ord.revenue}? This action will be recorded.`)) return;
+      if(ord.paymentMode==="Udhaar" && BN_CREDIT_PAYMENTS.some(p=>p.phone===ord.phone && p.outletId===BN_OUTLET.id)) {
+        showNotification("Udhaar payment history exists for this customer. Reconcile repayments with the owner before voiding."); return;
+      }
       ord.voided = true;
-      restoreInventoryForVoidedOrder(ord);
+      ord.voidReason = reason;
+      ord.voidedAt = new Date().toISOString();
+      ord.voidedBy = activeStaffUser?.name || "Owner";
+      // Do not automatically restore ingredient/packaging stock: already-prepared food may be wasted.
+      // Owner can record physically recovered stock separately under Inventory. 
+      recordAudit("Bill voided", `#${ord.billNo} • ₹${ord.revenue} • ${reason}`);
       persistAllState();
       renderOwnerDashboard();
-      showNotification(`Voided #${ord.billNo} and restored deducted ingredients!`);
+      showNotification(`Bill #${ord.billNo} voided. Check physical stock and adjust manually if recovered.`);
     }
 
     function calculateCashDrawer() {
@@ -4334,15 +5146,54 @@
       badge.textContent = diff === 0 ? "Exact Match (₹0)" : diff > 0 ? `Excess: +₹${diff}` : `Short: -₹${Math.abs(diff)}`;
     }
 
+    function voidExpenseByIndex(idx) {
+      const expense = EXPENSE_LOGS[idx];
+      if (!expense || expense.voided) return;
+      const reason = (prompt(`Reason for voiding expense “${expense.title}”:`) || "").trim();
+      if (!reason) { showNotification("Expense not changed. A reason is required."); return; }
+      if (!confirm(`Void expense ₹${expense.amount}?`)) return;
+      expense.voided = true; expense.voidReason = reason; expense.voidedAt = new Date().toISOString();
+      recordAudit("Expense voided", `${expense.title} • ₹${expense.amount} • ${reason}`);
+      persistAllState(); renderOwnerDashboard();
+    }
+
+    function saveCashReconciliation() {
+      const fields = ["note-500","note-200","note-100","note-50","note-20","note-10"];
+      const counts = {};
+      for (const id of fields) {
+        const el = document.getElementById(id); const n = Number(el?.value);
+        if (!Number.isInteger(n) || n < 0) { showNotification("Enter valid non-negative note counts."); return; }
+        counts[id] = n;
+      }
+      const counted = 500*counts["note-500"] + 200*counts["note-200"] + 100*counts["note-100"] + 50*counts["note-50"] + 20*counts["note-20"] + 10*counts["note-10"];
+      const expected = Number(document.getElementById("drawer-expected-cash")?.textContent) || 0;
+      const row = { id: Date.now(), dateISO: getTodayISO(), savedAt: new Date().toISOString(), expectedCash: expected, countedCash: counted, difference: counted-expected, noteCounts: counts, savedBy: activeStaffUser?.name || "Owner" };
+      CASH_RECONCILIATIONS.unshift(row); recordAudit("Cash closing saved", `Expected ₹${expected} • Counted ₹${counted} • Difference ₹${counted-expected}`);
+      persistAllState(); renderCashReconciliationHistory();
+      showNotification(`Cash closing saved. Difference: ₹${counted-expected}.`);
+    }
+    function renderCashReconciliationHistory() {
+      const el = document.getElementById("cash-reconciliation-history"); if (!el) return;
+      el.innerHTML = CASH_RECONCILIATIONS.slice(0,8).map(r => `<div class="flex justify-between gap-2 border-b border-stone-200 dark:border-stone-700 py-1"><span>${escapeHtml(r.dateISO)} • ${escapeHtml(r.savedBy || "")}</span><b>Expected ₹${r.expectedCash} / Counted ₹${r.countedCash} / Diff ₹${r.difference}</b></div>`).join("") || "No cash closings saved yet.";
+    }
+
     function addDailyExpense() {
-      const title = document.getElementById("exp-title")?.value.trim();
-      const amount = parseFloat(document.getElementById("exp-amount")?.value) || 0;
-      if (!title || amount <= 0) return;
-      EXPENSE_LOGS.unshift({ id: Date.now(), dateISO: getTodayISO(), title, amount });
-      document.getElementById("exp-title").value = "";
-      document.getElementById("exp-amount").value = "";
-      persistAllState();
-      renderOwnerDashboard();
+      const title = (document.getElementById("exp-title")?.value||"").trim();
+      const amount = Number(document.getElementById("exp-amount")?.value);
+      const dateISO = document.getElementById("bn-expense-date")?.value || getTodayISO();
+      const category = document.getElementById("bn-expense-category")?.value || "Other";
+      if (!title || !(amount>0) || !Number.isFinite(amount) || !/^\d{4}-\d{2}-\d{2}$/.test(dateISO) || !Number.isFinite(Date.parse(dateISO)) || new Date(dateISO).toISOString().slice(0,10)!==dateISO) {
+        showNotification("Enter expense title, valid date and amount above ₹0."); return;
+      }
+      if (["Rent","Staff salaries"].includes(category) && EXPENSE_LOGS.some(e=>!e.voided && e.category===category && e.title.toLowerCase()===title.toLowerCase() && String(e.dateISO).slice(0,7)===dateISO.slice(0,7))) {
+        showNotification("That rent/payroll expense is already recorded this month. Void/correct it instead of duplicating.");return;
+      }
+      EXPENSE_LOGS.unshift({id:Date.now(),dateISO,title,amount,category,createdAt:new Date().toISOString(),createdBy:activeStaffUser?.name||"Owner"});
+      recordAudit("Expense added", `${category} • ${title} • ${dateISO} • ₹${amount}`);
+      document.getElementById("exp-title").value="";
+      document.getElementById("exp-amount").value="";
+      persistAllState(); renderOwnerDashboard();
+      showNotification("Expense logged on its actual date.");
     }
 
     function renderOwnerCategoriesManager() {
@@ -4417,8 +5268,9 @@
       if (!getAllMenuCategories().some(c => c.toLowerCase() === cat.toLowerCase())) {
         MENU_CATEGORIES.push(cat);
       }
+      const newDishId="dish-"+Date.now();
       MENU_ITEMS.push({
-        id: "dish-" + Date.now(),
+        id: newDishId,
         name,
         category: cat,
         price,
@@ -4426,6 +5278,8 @@
         image: pendingNewDishImageDataUrl || "",
         desc: "Freshly prepared house specialty."
       });
+      if(BN_COFFEE_RECIPES[name]) RECIPE_MAP[newDishId]=[{invId:"bn-coffee-beans",qty:BN_COFFEE_RECIPES[name]}];
+      bnMergeCatalog();
       pendingNewDishImageDataUrl = "";
       const lbl = document.getElementById("new-dish-photo-label");
       if (lbl) lbl.textContent = "Photo";
@@ -4517,20 +5371,18 @@
       const box = document.getElementById("cfg-floor-tables-chips");
       box.innerHTML = FLOOR_TABLES.map((t, idx) => `
         <span class="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-stone-100 dark:bg-stone-800 border border-stone-300 dark:border-stone-700 font-bold">
-          ${t}
-          ${FLOOR_TABLES.length > 1 ? `<button onclick="FLOOR_TABLES.splice(${idx}, 1); renderFloorTableSettingsChips();" class="text-red-500 font-black">×</button>` : ''}
+          ${escapeHtml(t)}
+          ${FLOOR_TABLES.length > 3 ? `<button type="button" onclick="bnRemoveFloorTable(${idx})" class="text-red-500 font-black" title="Remove empty table">×</button>` : ''}
         </span>
       `).join("");
     }
-
     function addCustomFloorTable() {
-      const val = document.getElementById("new-floor-table-name")?.value.trim();
-      if (!val || FLOOR_TABLES.includes(val)) return;
-      FLOOR_TABLES.push(val);
-      document.getElementById("new-floor-table-name").value = "";
-      renderFloorTableSettingsChips();
+      const el=document.getElementById("new-floor-table-name"),val=(el?.value||"").trim().replace(/\s+/g," ");
+      if(!val||val.length>40||/[<>]/.test(val))return showNotification("Enter a valid table name up to 40 characters.");
+      if(FLOOR_TABLES.some(t=>t.toLowerCase()===val.toLowerCase()))return showNotification("Table already exists.");
+      FLOOR_TABLES.push(val);el.value="";
+      persistAllState();renderFloorTableSettingsChips();renderPosFloorTables();showNotification(val+" added.");
     }
-
     function saveCafeSettings() {
       CAFE_CONFIG.cafeName = document.getElementById("cfg-cafe-name")?.value.trim() || "Brew Nagri";
       CAFE_CONFIG.contactPhone = document.getElementById("cfg-contact-phone")?.value.trim() || "";
@@ -4572,7 +5424,8 @@
     function exportFullBackupJson() {
       const blob = new Blob([JSON.stringify({
         CAFE_CONFIG, MENU_ITEMS, MENU_PROMO, MENU_CATEGORIES, INVENTORY_ITEMS, RECIPE_MAP, GLOBAL_ADDONS,
-        FLOOR_TABLES, ORDER_LOGS, EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, STAFF_ATTENDANCE
+        FLOOR_TABLES, ACTIVE_TABLE_ORDERS, ORDER_LOGS, INVENTORY_LOGS, EXPENSE_LOGS, CUSTOMER_CRM, STAFF_ACCOUNTS, SHIFT_HANDOVERS, STAFF_ATTENDANCE, CASH_RECONCILIATIONS, AUDIT_LOGS,
+        BN_PACKAGING_MAP, BN_CREDIT_PAYMENTS, BN_CUSTOMER_LIMITS, BN_POLICIES, BN_OUTLET, OWNER_PIN, CLOUD_CONFIG
       }, null, 2)], { type: "application/json" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
@@ -4592,10 +5445,28 @@
           if (Array.isArray(data.MENU_CATEGORIES)) MENU_CATEGORIES = data.MENU_CATEGORIES;
           getAllMenuCategories();
           if (data.INVENTORY_ITEMS) INVENTORY_ITEMS = data.INVENTORY_ITEMS;
+          if (data.INVENTORY_LOGS) INVENTORY_LOGS = data.INVENTORY_LOGS;
           if (data.RECIPE_MAP) RECIPE_MAP = data.RECIPE_MAP;
+          if (data.GLOBAL_ADDONS) GLOBAL_ADDONS = data.GLOBAL_ADDONS;
+          if (data.FLOOR_TABLES) FLOOR_TABLES = data.FLOOR_TABLES;
+          if (data.ACTIVE_TABLE_ORDERS) ACTIVE_TABLE_ORDERS = data.ACTIVE_TABLE_ORDERS;
           if (data.ORDER_LOGS) ORDER_LOGS = data.ORDER_LOGS;
+          if (data.EXPENSE_LOGS) EXPENSE_LOGS = data.EXPENSE_LOGS;
+          if (data.CUSTOMER_CRM) CUSTOMER_CRM = data.CUSTOMER_CRM;
           if (data.STAFF_ACCOUNTS) STAFF_ACCOUNTS = data.STAFF_ACCOUNTS;
           if (data.SHIFT_HANDOVERS) SHIFT_HANDOVERS = data.SHIFT_HANDOVERS;
+          if (data.STAFF_ATTENDANCE) STAFF_ATTENDANCE = data.STAFF_ATTENDANCE;
+          if (data.CASH_RECONCILIATIONS) CASH_RECONCILIATIONS = data.CASH_RECONCILIATIONS;
+          if (data.AUDIT_LOGS) AUDIT_LOGS = data.AUDIT_LOGS;
+          if (data.BN_PACKAGING_MAP && typeof data.BN_PACKAGING_MAP==="object") BN_PACKAGING_MAP = data.BN_PACKAGING_MAP;
+          if (Array.isArray(data.BN_CREDIT_PAYMENTS)) BN_CREDIT_PAYMENTS = data.BN_CREDIT_PAYMENTS;
+          if (data.BN_CUSTOMER_LIMITS && typeof data.BN_CUSTOMER_LIMITS==="object") BN_CUSTOMER_LIMITS = data.BN_CUSTOMER_LIMITS;
+          if (data.BN_POLICIES && typeof data.BN_POLICIES==="object") BN_POLICIES = {...BN_POLICIES,...data.BN_POLICIES};
+          if (data.BN_OUTLET && typeof data.BN_OUTLET==="object") BN_OUTLET = {id:String(data.BN_OUTLET.id||BN_OUTLET.id),name:String(data.BN_OUTLET.name||BN_OUTLET.name)};
+          bnMergeCatalog();
+          bnMigrateDefaultTables();
+          if (data.OWNER_PIN) OWNER_PIN = data.OWNER_PIN;
+          if (data.CLOUD_CONFIG) CLOUD_CONFIG = { ...CLOUD_CONFIG, ...data.CLOUD_CONFIG };
           if (data.CAFE_CONFIG) CAFE_CONFIG = { ...CAFE_CONFIG, ...data.CAFE_CONFIG };
           await migratePlainPasscodesToHashes();
           persistAllState();
@@ -4612,18 +5483,11 @@
     document.addEventListener("DOMContentLoaded", async () => {
       loadAllLocalState();
       await migratePlainPasscodesToHashes();
+      const expenseDate=document.getElementById("bn-expense-date");
+      if(expenseDate&&!expenseDate.value) expenseDate.value=getTodayISO();
 
       const params = new URLSearchParams(window.location.search);
-      if (params.get("cloudUrl")) {
-        CLOUD_CONFIG.dbUrl = params.get("cloudUrl");
-        CLOUD_CONFIG.workspaceId = params.get("ws") || "brewnagri-main";
-        localStorage.setItem("bn_cloud_config", JSON.stringify(CLOUD_CONFIG));
-        // Scrub cloudUrl from browser address bar & history immediately after linking
-        try {
-          const cleanUrl = window.location.pathname + (params.get("table") ? `?table=${encodeURIComponent(params.get("table"))}` : "");
-          window.history.replaceState({}, document.title, cleanUrl);
-        } catch (e) {}
-      }
+      // No legacy cloudUrl magic-link acceptance: old shared database snapshots are unsafe.
       if (params.get("table")) {
         const tbl = params.get("table");
         const pill = document.getElementById("table-context-pill");
@@ -4640,14 +5504,13 @@
       const savedLayout = localStorage.getItem("bn_layout_mode") || (window.innerWidth >= 1024 ? "windows" : "mobile");
       setDeviceLayoutMode(savedLayout);
       setThermalRollWidth(CAFE_CONFIG.printerWidth || "80mm", false);
+      bnMergeCatalog();
       applyCafeBrandHeader();
       updateBadges();
       renderCustomerMenu();
       refreshLucideIcons();
 
-      if (CLOUD_CONFIG.dbUrl) {
-        pullFromCloudNow(true);
-      }
+      if (CLOUD_CONFIG.dbUrl && !BN_HOLD_CLOUD) { pullFromCloudNow(true); }
 
       // Reset 15-min inactivity lock timer on user interaction
       ["click", "keydown", "touchstart"].forEach(evt => {
